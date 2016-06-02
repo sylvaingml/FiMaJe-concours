@@ -1,0 +1,52 @@
+{
+    "categories": {
+        "Figurines": [{
+                "code": "JU",
+                "label": "Junior"
+            }, {
+                "code": "DF",
+                "label": "Débutant Fantastique"
+            }, {
+                "code": "DH",
+                "label": "Débutant Historique"
+            }, {
+                "code": "CF",
+                "label": "Confirmé Fantastique"
+            }, {
+                "code": "CH",
+                "label": "Confirmé Historique"
+            }, {
+                "code": "MF",
+                "label": "Master Fantastique"
+            }, {
+                "code": "MH",
+                "label": "Master Historique"
+            }, {
+                "code": "CT",
+                "label": "Création / Transfo peint"
+            }, {
+                "code": "S",
+                "label": "Sculpture non peint"
+            }, {
+                "code": "STM",
+                "label": "Thème annuel"
+            }, {
+                "code": "GK",
+                "label": "Garage Kit"
+            }],
+        "Maquettes": [{
+                "code": "MA",
+                "label": "Avions"
+            }, {
+                "code": "MBA",
+                "label": "Bateaux"
+            }, {
+                "code": "MC",
+                "label": "Véhicules civils"
+            }, {
+                "code": "MB",
+                "label": "Véhicules militaires"
+            }]
+    },
+    "sections": ["Figurines", "Maquettes"]
+}

@@ -1,0 +1,63 @@
+<form class="m-b-2">
+
+  <div class="card">
+    <div class="card-header">
+      <h2><span class="label label-pill label-default">2</span>
+        Vos pièces
+      </h2>
+    </div>
+
+    <div class="card-block">                    
+      <h3 class="m-t-1 m-b-2">Les pièces enregistrées</h3>
+
+      <ul id="registeredItems" class="list-group">
+        <li class="fmj-item list-group-item" data-trigger="template" >
+          <div class="row">
+            <div class="col-xs-8 col-md-10">
+              <var class="fmj-item-name">Pièce enregistrée</var>
+              <small><var class="fmj-item-group label label-info label-pill" >Group</var></small>
+              <small><var class="fmj-item-category label label-info label-pill" data-value="CODE">Catégorie</var></small>
+            </div>
+            <div class="col-xs-4 col-md-2">
+              <button type="button" class="btn btn-sm btn-danger-outline pull-xs-right" value="del">
+                &times;
+                <span class="hidden-md-down">Enlever</span>
+              </button>
+            </div>
+          </div>
+
+        </li>
+      </ul>
+    </div>
+
+    <div class="card-footer">
+      <h3 class="m-t-1 m-b-2">Ajoutez une pièce</h3>
+
+      <div class="row form-group">
+        <label class="form-control-label col-xs-3  col-md-1">Nom:<sup class="required-input">*</sup></label>
+        <div class="col-xs-9 col-md-5">
+          <input class="form-control" type="text" name="item_name" maxlength="80" required="required">
+        </div>
+
+        <div class="clearfix hidden-md-up"></div>
+
+        <label class="form-control-label col-xs-3 col-md-2">Catégorie:<sup class="required-input">*</sup></label>
+        <div class="col-xs-9 col-md-4">
+          <select class="c-select form-control" name="item_category">
+            <option disabled="disabled">Choisissez une catégorie</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="text-xs-right">
+        <button class="btn btn-success btn-sm" type="button" name="add_item">Ajouter</button>
+      </div>
+
+    </div>
+  </div>
+
+</form>
+
+<script src="public/js/FMJContestantItems.js" ></script>
+<script src="public/js/FMJContestItem.js" ></script>
+<script src="public/js/FMJContestItemEditor.js" ></script>

@@ -1,0 +1,90 @@
+{
+    "order": 11,
+    "code": "JU",
+    "label": "Junior",
+    "group": "Figurines"
+}
+{
+    "order": 12,
+    "code": "DF",
+    "label": "Débutant Fantastique",
+    "group": "Figurines"
+}
+{
+    "order": 12,
+    "code": "DH",
+    "label": "Débutant Historique",
+    "group": "Figurines"
+}
+{
+    "order": 13,
+    "code": "CF",
+    "label": "Confirmé Fantastique",
+    "group": "Figurines"
+}
+{
+    "order": 13,
+    "code": "CH",
+    "label": "Confirmé Historique",
+    "group": "Figurines"
+}
+{
+    "order": 14,
+    "code": "MF",
+    "label": "Master Fantastique",
+    "group": "Figurines"
+}
+{
+    "order": 14,
+    "code": "MH",
+    "label": "Master Historique",
+    "group": "Figurines"
+}
+{
+    "order": 15,
+    "code": "CT",
+    "label": "Création / Transfo peint",
+    "group": "Figurines"
+}
+{
+    "order": 16,
+    "code": "S",
+    "label": "Sculpture non peint",
+    "group": "Figurines"
+}
+{
+    "order": 17,
+    "code": "STM",
+    "label": "Thème annuel",
+    "group": "Figurines"
+}
+{
+    "order": 18,
+    "code": "GK",
+    "label": "Garage Kit",
+    "group": "Figurines"
+}
+{
+    "order": 21,
+    "code": "MA",
+    "label": "Avions",
+    "group": "Maquettes"
+}
+{
+    "order": 22,
+    "code": "MBA",
+    "label": "Bateaux",
+    "group": "Maquettes"
+}
+{
+    "order": 23,
+    "code": "MC",
+    "label": "Véhicules civils",
+    "group": "Maquettes"
+}
+{
+    "order": 24,
+    "code": "MB",
+    "label": "Véhicules militaires",
+    "group": "Maquettes"
+}

@@ -1,0 +1,14 @@
+<#if licenseFirst??>
+${licenseFirst}
+</#if>
+${licensePrefix} FiMaJe, gestion du concours
+${licensePrefix}
+${licensePrefix} Creative Commons 
+${licensePrefix} Attribution - Pas d’Utilisation Commerciale 3.0 France 
+${licensePrefix} http://creativecommons.org/licenses/by-nc/3.0/fr/
+${licensePrefix}
+${licensePrefix} Auteurs: Sylvain Gamel, club « La Compagnie des Trolls » Antibes, France
+${licensePrefix}
+<#if licenseLast??>
+${licenseLast}
+</#if>

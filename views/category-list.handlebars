@@ -1,0 +1,33 @@
+{{> page-header this }}
+
+<h2>Liste des catégories</h2>
+
+<p>
+  Cette liste représente toutes les catégories ouvertes pour le concours actif.
+</p>
+
+{{#if message }}
+<div class="card card-warning">
+  <div class="card-header">
+    <strong>Erreur</strong>
+  </div>
+  <div class="card-body">
+    <p>{{ message }}</p>
+  </div>
+</div>
+{{/if}}
+
+{{#if categories}}
+
+<table>
+  <tr>
+    <th>Code</th> <th>Description</th> <th>Catégorie</th>
+  </tr>
+{{#each categories}}
+  <tr>
+    <td>{{code}}</td> <td>{{label}}</td> <td>{{group}}</td>
+  </tr>
+{{/each}}
+</table>
+
+{{/if}}

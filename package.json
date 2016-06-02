@@ -1,0 +1,27 @@
+{
+  "name": "fimaje-concours",
+  "version": "1.0.0",
+  "description": "A simple management tool to organize miniature painting contests.",
+  "main": "register.js",
+  "scripts": {
+    "run": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sylvain Gamel, Cie des Trolls Antibes",
+  "license": "Creative Commons, Attribution - Pas d’Utilisation Commerciale 3.0 France http://creativecommons.org/licenses/by-nc/3.0/fr/",
+  "dependencies": {
+    "body-parser": "^1.15.1",
+    "config": "^1.20.4",
+    "cookie-parser": "^1.4.3",
+    "errorhandler": "^1.4.3",
+    "express": "^4.13.4",
+    "express-handlebars": "^3.0.0",
+    "handlebars": "^4.0.5",
+    "method-override": "^2.3.6",
+    "mongodb": "^2.1.21",
+    "morgan": "^1.7.0"
+  },
+  "devDependencies": {
+    "grunt": "^1.0.1"
+  }
+}
