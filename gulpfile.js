@@ -19,6 +19,9 @@ var source_css = "./src/scss";
 var destination_css = target_dir + "/css";
 var destination_js  = target_dir + "/js";
 
+var karmaConf = "karma.conf.js"
+
+
 // ===== DEPENDENCIES
 
 var gulp = require('gulp');
@@ -102,6 +105,23 @@ gulp.task('clean:javascript', function () {
 });
 
 
+// ====== UNIT TESTS
+
+var UTServer = require('karma').Server;
+
+gulp.task('karma', function(done) {
+  new UTServer({
+    configFile: __dirname + "/" + karmaConf,
+    singleRun: false
+  }, done).start();
+});
+
+
+
+// ====== UI UNIT TESTS
+
+// TODO
+
 // ====== BUILD
 
 gulp.task('build', [ 'build:css', 'build:javascript' ]);
@@ -109,4 +129,8 @@ gulp.task('build', [ 'build:css', 'build:javascript' ]);
 
 // ====== CLEAN
 
-gulp.task('clean', [ 'clean:css' ]);
+gulp.task('clean', [ 'clean:css', 'clean:javascript' ]);
+
+// ====== TESTS
+
+gulp.task('test', [ 'karma' ]);

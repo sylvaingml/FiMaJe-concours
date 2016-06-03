@@ -16,7 +16,7 @@ describe( "Basic object to store an artwork description.", function ()
   var catName  = "Amateur";
   var catGroup = "peinture";
   
-  var item = new FMJUserItem(name, catCode, catName, catGroup);
+  var item = new FMJContestItem(name, catCode, catName, catGroup);
   
   it( "Expecting a valid instance from constructor.", function () {
     expect( item ).toBeDefined();
