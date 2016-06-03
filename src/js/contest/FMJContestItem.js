@@ -17,9 +17,9 @@
  * @param {type} categoryName
  * @param {type} categoryGroup
  * 
- * @returns {FMJUserItem}
+ * @returns {FMJContestItem}
  */
-function FMJUserItem(name, categoryCode, categoryName, categoryGroup) {
+function FMJContestItem(name, categoryCode, categoryName, categoryGroup) {
     this.name = name;
     this.categoryCode = categoryCode;
     this.categoryName = categoryName;

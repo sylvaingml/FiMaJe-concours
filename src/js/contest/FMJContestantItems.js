@@ -56,7 +56,7 @@ FMJContestantItems.prototype.getIndexForItemWithUID = function (uid)
 
 /** Add a new item to user's list.
  * 
- * @param {FMJUserItem} newItem
+ * @param {FMJContestItem} newItem
  * 
  * @returns {void}
  */

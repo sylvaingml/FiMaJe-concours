@@ -66,7 +66,7 @@ FMJContestItemEditor.prototype.startListeners = function() {
         // TODO: add to the main model
         var categoryCode = me.$categorySelect.val();
         
-        var newItem = new FMJUserItem(
+        var newItem = new FMJContestItem(
                 me.$itemName.val().trim(),
                 categoryCode,
                 me.categoryName[ categoryCode ],
