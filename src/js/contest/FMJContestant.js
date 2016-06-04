@@ -42,12 +42,12 @@ FMJContestant.prototype.areUserInfoValid = function() {
 
 FMJContestant.prototype.toJSON = function() {
   var submission = {
-    lastName:  JSON.stringify( this.lastNameFld.val() ),
-    firstName: JSON.stringify( this.firstNameFld.val() ),
-    email:     JSON.stringify( this.emailFld.val() ),
-    phone:     JSON.stringify( this.phoneFld.val() ),
-    club:      JSON.stringify( this.clubFld.val() )
+    lastName:  this.lastNameFld.val().trim(),
+    firstName: this.firstNameFld.val().trim(),
+    email:     this.emailFld.val().trim(),
+    phone:     this.phoneFld.val().trim(),
+    club:      this.clubFld.val().trim()
   };
   
-  return JSON.stringify(submission);
+  return submission;
 };

@@ -112,7 +112,7 @@ var UTServer = require('karma').Server;
 gulp.task('karma', function(done) {
   new UTServer({
     configFile: __dirname + "/" + karmaConf,
-    singleRun: false
+    singleRun: false,
   }, done).start();
 });
 
