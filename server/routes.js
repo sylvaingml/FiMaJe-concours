@@ -39,7 +39,7 @@ module.exports = function(app)
   router.get('/register', register.index);
 
   // Register a new person and their items
-  router.get('/api/register', register.index);
+  router.post('/api/register', register.put);
 
   app.use(router);
 };

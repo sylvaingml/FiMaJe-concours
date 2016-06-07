@@ -125,5 +125,5 @@ FMJContestantItems.prototype.areRegisteredItemsValid = function() {
 
 
 FMJContestantItems.prototype.toJSON = function() {
-  return JSON.stringify(this.registeredItems);
+  return this.registeredItems;
 };

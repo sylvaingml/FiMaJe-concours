@@ -46,7 +46,11 @@ FMJContestant.prototype.toJSON = function() {
     firstName: this.firstNameFld.val().trim(),
     email:     this.emailFld.val().trim(),
     phone:     this.phoneFld.val().trim(),
-    club:      this.clubFld.val().trim()
+    club:      this.clubFld.val().trim(),
+    
+    // Some additional info
+    registeredOnline: true,
+    
   };
   
   return submission;

@@ -33,7 +33,7 @@ module.exports = function(app)
   app.use(bodyParser.urlencoded({'extended': true}));
   app.use(bodyParser.json());
   app.use(methodOverride());
-  app.use(cookieParser('some-secret-value-here'));
+  //app.use(cookieParser('some-secret-value-here'));
   
   routes(app);//moving the routes to routes folder.
 

@@ -80,8 +80,8 @@ FMJContestSubmission.prototype.sendUserSubmission = function() {
 
 FMJContestSubmission.prototype.toJSON = function() {
     var json = {
-        "userInfo": this.userInfo,
-        "items":    this.userSubmission
+        "userInfo": this.userInfo.toJSON(),
+        "items":    this.userSubmission.toJSON()
     };
     
     return json;
