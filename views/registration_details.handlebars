@@ -1,0 +1,103 @@
+{{> page-header this }}
+
+<h2>Votre inscription</h2>
+
+<p>
+  Merci de bien vouloir imprimer ce document et le présenter au moment de 
+  l'enregistrement des pièces lors du FiMaJe.
+</p>
+
+<div class="card">
+  <div class="card-block">                    
+    <h3>Informations personnelles</h3>
+
+    <div class="row">
+      <div class="col-xs-4 text-xs-right">
+        Nom/Prénom&nbsp;:
+      </div>
+      <div class="col-xs-8">
+        {{ userInfo.firstName }} {{ userInfo.lastName }}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-4 text-xs-right">
+        Email&nbsp;:
+      </div>
+      <div class="col-xs-8">
+        {{ userInfo.email }}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-4 text-xs-right">
+        Téléphone&nbsp;:
+      </div>
+      <div class="col-xs-8">
+        {{ userInfo.phone }}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-4 text-xs-right">
+        Club&nbsp;:
+      </div>
+      <div class="col-xs-8">
+        {{ userInfo.club }}
+      </div>
+    </div>
+  </div>
+
+  <div class="card-block">
+    <h3>Détails de l'inscription</h3>
+
+    <div class="row">
+      <div class="col-xs-4 text-xs-right">
+        Date d'inscription&nbsp;:
+      </div>
+      <div class="col-xs-8">
+        {{ userInfo.registerDateDisplay }}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-4 text-xs-right">
+        Clé d'accès&nbsp;:
+      </div>
+      <div class="col-xs-8">
+        {{ userInfo.accessKey }}
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Pièces enregistrées</h2>
+  </div>
+
+  <div class="card-block">
+    <table class="table" >
+      <tr>
+        <th>Pièce</th> 
+        <th>Catégorie</th>
+        <th>Famille</th>
+      </tr>
+      {{#each items}}
+      <tr>
+        <td>{{name}}</td> 
+        <td>{{ category_name categoryCode }} ({{ categoryCode }})</td>
+        <td>{{ category_group categoryCode }}</td>
+      </tr>
+      {{/each}}
+    </table>
+
+  </div>
+
+</div>
+
+
+<div class="text-xs-right">
+  <button class="btn btn-info-outline btn-sm" type="button" onclick="javascript: print()">Imprimer...</button>
+</div>

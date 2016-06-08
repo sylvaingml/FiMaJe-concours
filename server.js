@@ -27,7 +27,7 @@ app = configure(app);
 
 // ===== Application Routing
 
-app.get('/', function(req, res){
+app.get('/about', function(req, res){
    res.send('FiMaJe, version 1.0.0 - 2016 Sylvain Gamel et la Compagnie des Trolls (Antibes, France)'); 
 });
 

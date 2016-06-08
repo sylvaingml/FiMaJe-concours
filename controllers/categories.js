@@ -102,6 +102,31 @@ function findListOfCategoriesAndGroups(onSuccessFn, onErrorFn)
 }
 
 module.exports = {
+    get_categories_by_code: function(onSuccessCallback) { 
+        var onError = function(error) {
+            return onSuccessCallback({});
+        };
+        
+        var onSuccess = function(list) {
+            var categoryMap = {};
+
+            for ( var idx = 0 ; list && idx < list.length ; ++idx ) {
+                var category = list[idx];
+                
+                categoryMap[ category.code ] = {
+                    label: category.label,
+                    group: category.group
+                };
+            }
+            
+            return onSuccessCallback(categoryMap);
+        };
+        
+        return findListOfCategories(onSuccess, onError);
+    },
+    
+    // -----
+    
     /** Returns the list of categories as JSON data.
      * 
      * @param {type} request

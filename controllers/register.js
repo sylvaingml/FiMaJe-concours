@@ -13,6 +13,8 @@ var settings = require('config');
 
 var MongoClient = require('mongodb').MongoClient;
 
+var categories = require('../controllers/categories');
+
 
 module.exports = {
     /** Render the user's submission form to register to the contest.
@@ -28,9 +30,91 @@ module.exports = {
     },
     
     
+    get_report: function(request, response)
+    {
+        response.render("register_report", {});
+    },
+
+    search: function(request, response)
+    {
+        response.render("registration_search", {
+            helpers: {
+                has_error_not_found: function() { return false; }
+            }
+        });
+    },
+
     get_details: function(request, response)
     {
-        response.render("register_show", {});
+        var handleSuccessFn = function(model)
+        {
+            var displayDate = model.userInfo.registerDate.toLocaleString('fr-FR', {
+                weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+                hour: '2-digit', minutes: '2-digit', hour12: false
+            });
+            
+            model.userInfo.registerDateDisplay = displayDate;
+            
+            // Add some helpers
+            
+            model.helpers = {
+                category_name: function(code) {
+                    var fullName = "--";
+                    
+                    if ( model.categories 
+                      && model.categories[ code ]
+                      && model.categories[ code ].label )
+                    {
+                        fullName = model.categories[ code ].label;
+                    }
+                    
+                    return fullName;
+                },
+                
+                category_group: function(code) {
+                    var fullName = "--";
+                    
+                    if ( model.categories 
+                      && model.categories[ code ]
+                      && model.categories[ code ].group )
+                    {
+                        fullName = model.categories[ code ].group;
+                    }
+                    
+                    return fullName;
+                }
+            };
+            
+            
+            var handleGotCategories = function(categories) {
+                model.categories = categories;
+                
+                return response.render('registration_details', model);
+            };
+
+            return categories.get_categories_by_code(handleGotCategories);
+        };
+
+
+        var handleErrorFn = function(err)
+        {
+            var model = {
+                error: 404,
+                
+                helpers: {
+                    has_error_not_found: function() {
+                        return true; 
+                    }
+                }
+            };
+
+            return response.render('registration_search', model);
+        };
+        
+        var email = request.body.email;
+        var accessKey = request.body.accessKey;
+        
+        return findUserSubmission(email, accessKey, handleSuccessFn, handleErrorFn);
     },
 
     
@@ -59,7 +143,11 @@ module.exports = {
         var handleSuccessFn = function(data)
         {
             var model = {
-                "submission": data
+                "submission": data,
+                
+                "userEmail": data.ops[0].userInfo.email,
+                "accessKey": data.ops[0].userInfo.accessKey,
+                "registerDate": data.ops[0].userInfo.registerDate
             };
             response.status(200).json(model);
             // TODO: render a response page
@@ -85,8 +173,13 @@ module.exports = {
 };
 
 
-
 function createDbObjectFromRequest(requestData) {
+    var now = new Date();
+    // Generate some non-random numeric key as double identification to access registration
+    var accessKey = (now.getTime() % 420000).toString();
+    
+    (new Date()).getTime() % 420024
+    
     var dbObject = {
         
         userInfo: {
@@ -97,7 +190,9 @@ function createDbObjectFromRequest(requestData) {
             club: "",
             
             registeredOnline: false,
-            registerDate:     new Date()
+            registerDate:     new Date(),
+            
+            accessKey: accessKey
         },
         
         items: []
@@ -155,3 +250,32 @@ function registerUserSubmission(submissionDetails, onSuccessFn, onErrorFn)
     });
 }
     
+    
+function findUserSubmission(userEmail, accessKey, onSuccessFn, onErrorFn)
+{
+    return MongoClient.connect(settings.get('db_url'), function(err, db)
+    {
+        if ( err ) {
+            console.error('Unable to connect to MongoDB: ' + err);
+            onErrorFn(err);
+        }
+        else {
+            var dbTable = db.collection('ContestSubmission');
+            
+            var query = {
+                'userInfo.email':     userEmail, 
+                'userInfo.accessKey': accessKey
+            };
+            
+            dbTable.find(query).limit(1).next( function(err, result) {
+                if ( err || null == result) {
+                    onErrorFn(err);
+                }
+                else {
+                    onSuccessFn(result);
+                    db.close();
+                }
+            });
+        }
+    });
+}

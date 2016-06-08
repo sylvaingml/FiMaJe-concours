@@ -19,6 +19,10 @@ function FMJContestSubmission()
 
   this.conditionsAcceptedChkBox = $( 'input[name=ackConditions]' );
   this.validateBtn = $( 'button[name=register]' );
+  
+  this.successInfo        = $( '#success-info' );
+  this.registeredEmailVar = $( '#registeredEmail' );
+  this.accessKeyVar       = $( '#accessKey' );
 
   // Related forms
 
@@ -67,6 +71,7 @@ FMJContestSubmission.prototype.sendUserSubmission = function() {
     })
     .done(function(data) {
         console.log( "Done: " + data );
+      me.handleSubmissionSucceed(data);
     })
     .fail(function(error) {
         console.log( "error: " + error );
@@ -76,6 +81,17 @@ FMJContestSubmission.prototype.sendUserSubmission = function() {
     });
 };
 
+
+FMJContestSubmission.prototype.handleSubmissionSucceed = function(response) {
+    // Hide non-relevant information
+    $('.fmj-hide-on-success').hide();
+    
+    // Update information and show them
+    this.registeredEmailVar.html(response[ 'userEmail' ])
+    this.accessKeyVar.html(response[ 'accessKey' ]);
+    
+    this.successInfo.removeAttr('hidden');
+};
 
 
 FMJContestSubmission.prototype.toJSON = function() {

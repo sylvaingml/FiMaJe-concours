@@ -1,0 +1,50 @@
+{{> page-header this }}
+
+<h2>Retrouvez votre inscription</h2>
+
+<p>
+  Vous pouvez afficher à nouveau les détails de votre inscription à
+  l'aide de ce formulaire.
+  
+  Vous devez simplement fournir les éléments suivants&nbsp;:
+</p>
+
+{{#if error }}
+<div class="alert alert-danger" role="alert">
+  <strong>Erreur&nbsp;:</strong>
+  <p>
+    Désolé, aucune inscription ne semble correspondre à l'adresse
+    email et au numéro de référence indiqués.
+  </p>
+</div>
+{{/if}}
+
+<form action="/registration-details" method="POST" >
+  
+  <div class="card">
+    <div class="card-header">
+      <h2>Identification de votre inscription</h2>
+    </div>
+
+    <div class="card-block">                    
+      <div class="row form-group">
+        <label class="form-control-label col-xs-3  col-md-2">Email:<sup class="required-input">*</sup></label>
+        <div class="col-xs-9 col-md-4">
+          <input class="form-control" type="text" name="email" maxlength="80" required="required">
+        </div>
+
+        <div class="clearfix hidden-md-up"></div>
+
+        <label class="form-control-label col-xs-3 col-md-2">Numéro d'inscription:<sup class="required-input">*</sup></label>
+        <div class="col-xs-9 col-md-4">
+          <input class="form-control" type="text" name="accessKey" maxlength="6" required="required">
+        </div>
+      </div>
+    </div>
+    
+    <div class="card-footer text-xs-right">
+      <button class="btn btn-primary btn-lg" name="search" type="submit">Afficher</button>
+    </div>
+  </div>
+  
+</form>

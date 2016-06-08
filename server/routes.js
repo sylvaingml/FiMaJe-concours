@@ -13,11 +13,16 @@
 var express = require('express');
 var router  = express.Router();
 
+var home       = require('../controllers/home');
 var categories = require('../controllers/categories');
 var register   = require('../controllers/register');
 
 module.exports = function(app)
 {
+  // ===== Home screen
+  
+  router.get('/', home.index);
+
   // ===== Managing categories
   
   // Display the list of categories
@@ -37,6 +42,12 @@ module.exports = function(app)
   
   // Display the registration form
   router.get('/register', register.index);
+
+  // Display the registration search
+  router.get('/registration-search', register.search);
+
+  // Display the registration search
+  router.post('/registration-details', register.get_details);
 
   // Register a new person and their items
   router.post('/api/register', register.put);

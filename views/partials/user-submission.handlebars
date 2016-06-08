@@ -1,4 +1,4 @@
-<form>
+<form class="fmj-hide-on-success" >
   <div class="card">
     <div class="card-block">                    
       <label class="c-input c-checkbox">
@@ -17,3 +17,33 @@
     </div>
   </div>                    
 </form>
+
+
+<!-- Reponse notification on success -->
+<div id="success-info" class="card card-success-outline" hidden="hidden">
+  <div class="card-header">
+    <h2 class="card-title">Vos références</h2>
+  </div>
+  
+  <div class="card-block">
+    <div class="row">
+      <span class='col-xs-6 col-md-3'>email&nbsp;:</span>
+      <span class='col-xs-6 col-md-3'><var id="registeredEmail"></var></span>
+      
+      <span class='col-xs-6 col-md-3'>code d'accès&nbsp;:</span>
+      <span class='col-xs-6 col-md-3'><var id="accessKey"></var></span>
+    </div>
+  </div>
+  
+  <div class="card-block">
+    <blockquote class="card-blockquote">
+      Merci d'imprimez ce formulaire.
+      Une copie physique vous sera demandée sur place au moment de 
+      l'enregistrement des pièces.
+    </blockquote>
+  </div>
+  
+  <div class="card-footer text-xs-right">
+    <button class="btn btn-info-outline btn-sm" type="button" onclick="javascript: print()">Imprimer...</button>
+  </div>
+</div>                    
