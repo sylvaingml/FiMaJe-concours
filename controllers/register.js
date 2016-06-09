@@ -117,6 +117,53 @@ module.exports = {
         return findUserSubmission(email, accessKey, handleSuccessFn, handleErrorFn);
     },
 
+
+    get_all: function(request, response)
+    {
+        var handleSuccessFn = function(model)
+        {
+            var today = new Date();
+            var displayDate = today.toLocaleString('fr-FR', {
+                weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+                hour: '2-digit', minutes: '2-digit', hour12: false
+            });
+            
+            var returnedModel = {
+                reportDate:        today,
+                reportDisplayDate: displayDate,
+                
+                registration: model,
+                
+                helpers: {
+                    format_date: function(aDate) {
+                        return aDate.toLocaleString('fr-FR', {
+                            day: '2-digit', month: '2-digit', year: 'numeric'
+                        });
+                    }
+                }
+            };
+            
+            return response.render('registration_list', returnedModel);
+        };
+
+
+        var handleErrorFn = function(err)
+        {
+            var model = {
+                error: 500,
+                
+                helpers: {
+                    has_error_backend_issue: function() {
+                        return true; 
+                    }
+                }
+            };
+
+            return response.render('home', model);
+        };
+        
+        return findAllUserSubmission(handleSuccessFn, handleErrorFn);
+    },
     
     /** From a JSON object, add a new person and their items in the contest.
      * 
@@ -270,6 +317,35 @@ function findUserSubmission(userEmail, accessKey, onSuccessFn, onErrorFn)
             dbTable.find(query).limit(1).next( function(err, result) {
                 if ( err || null == result) {
                     onErrorFn(err);
+                }
+                else {
+                    onSuccessFn(result);
+                    db.close();
+                }
+            });
+        }
+    });
+}
+
+
+function findAllUserSubmission(onSuccessFn, onErrorFn)
+{
+    return MongoClient.connect(settings.get('db_url'), function(err, db)
+    {
+        if ( err ) {
+            console.error('Unable to connect to MongoDB: ' + err);
+            onErrorFn(err);
+        }
+        else {
+            var dbTable = db.collection('ContestSubmission');
+            var sorting = [
+                ['userInfo.lastName', 1],
+                ['userInfo.firstName', 1]
+            ];
+            
+            dbTable.find().sort(sorting).toArray( function(error, result) {
+                if ( error || null == result) {
+                    onErrorFn(error);
                 }
                 else {
                     onSuccessFn(result);

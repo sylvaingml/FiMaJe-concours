@@ -1,0 +1,41 @@
+{{> page-header this }}
+
+<h2>Inscriptions au {{reportDisplayDate}}</h2>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Nom/Prénom</th>
+      <th>Email</th>
+      <th>Téléphone</th>
+      <th>Club</th>
+      <th>Inscrit le...</th>
+      <th>Pièces</th>
+    </tr>
+  </thead>
+      
+  <tbody>
+    {{#each registration}}
+    <tr>
+      <td>{{ userInfo.firstName }} {{ userInfo.lastName }}</td>
+      <td>{{ userInfo.email }}</td>
+      <td>{{ userInfo.phone }}</td>
+      <td>{{ userInfo.club }}</td>
+      <td>{{ format_date userInfo.registerDate }}</td>
+      <td>
+        <ul>
+          {{#each items }}
+          <li>{{name}} ({{ categoryCode }})</li> 
+          {{/each}}
+        </ul>
+      </td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+<div class="m-t-2 text-xs-right">
+  <button class="btn btn-info-outline btn-sm" type="button" onclick="javascript: print()">Imprimer...</button>
+</div>
+
+{{> page-footer this }}

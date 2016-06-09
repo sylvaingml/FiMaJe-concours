@@ -52,6 +52,11 @@ module.exports = function(app)
   // Register a new person and their items
   router.post('/api/register', register.put);
 
+  // ===== Registering to the contest
+  
+  // Display the registration search
+  router.get('/admin/registration', register.get_all);
+
   app.use(router);
 };
 
