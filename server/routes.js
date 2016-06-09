@@ -16,6 +16,7 @@ var router = express.Router();
 var basicAuth = require('basic-auth');
 
 var home = require('../controllers/home');
+var admin = require('../controllers/admin');
 var categories = require('../controllers/categories');
 var register = require('../controllers/register');
 
@@ -80,6 +81,9 @@ module.exports = function(app)
 
 
     // ===== Registering to the contest
+
+    // Display the administration console
+    router.get('/admin', authenticate, admin.index);
 
     // Display the registration search
     router.get('/admin/registration', authenticate, register.get_all);
