@@ -31,6 +31,7 @@ app.get('/about', function(req, res){
    res.send('FiMaJe, version 1.0.0 - 2016 Sylvain Gamel et la Compagnie des Trolls (Antibes, France)'); 
 });
 
+
 // ===== Start application server
 
 app.listen(app.get('port'), function() {

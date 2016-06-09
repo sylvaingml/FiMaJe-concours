@@ -10,6 +10,7 @@
   "author": "Sylvain Gamel, Cie des Trolls Antibes",
   "license": "Creative Commons, Attribution - Pas d’Utilisation Commerciale 3.0 France http://creativecommons.org/licenses/by-nc/3.0/fr/",
   "dependencies": {
+    "basic-auth": "^1.0.4",
     "body-parser": "^1.15.1",
     "bootstrap": "^4.0.0-alpha.2",
     "config": "^1.20.4",
