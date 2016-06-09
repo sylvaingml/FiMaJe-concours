@@ -30,13 +30,16 @@ function FMJContestSubmission()
   this.userSubmission = new FMJContestantItems();
   this.newItemForm = new FMJContestItemEditor( this.userSubmission );
   
+  // Properties
+   
+  this.eventSource = $('body');
+  
   // Inner listeners
   
   var me = this;
   
   this.conditionsAcceptedChkBox.on('change', function() {
     var allowed = me.isSubmissionAllowed();
-    
     me.validateBtn.prop("disabled", ! allowed );
   });
   
@@ -45,6 +48,11 @@ function FMJContestSubmission()
     
     console.log("SUBMIT!");
     me.sendUserSubmission();
+  });
+  
+  this.eventSource.on("can-submit.fmj.contestant", function() {
+    var allowed = me.isSubmissionAllowed();
+    me.validateBtn.prop("disabled", ! allowed );
   });
 }
 ;

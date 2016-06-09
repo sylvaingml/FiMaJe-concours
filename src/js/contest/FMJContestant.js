@@ -23,6 +23,30 @@ function FMJContestant() {
     this.emailFld     = $('input[name=userEmail]');
     this.phoneFld     = $('input[name=userPhone]');
     this.clubFld      = $('input[name=userClub]');
+    
+    this.changeEmitter = $('body');
+    
+    // Properties
+    
+    this.canSubmit = false;
+    
+    // Track changes
+    
+    var me = this;
+    var onChangeFn = function() {
+        var valid = me.areUserInfoValid();
+        
+        if ( valid !== this.canSubmit ) {
+            me.canSubmit = valid;
+            me.changeEmitter.trigger("can-submit.fmj.contestant");
+        }
+    };
+    
+    this.lastNameFld.on('change', onChangeFn);
+    this.firstNameFld.on('change', onChangeFn);
+    this.emailFld.on('change', onChangeFn);
+    this.phoneFld.on('change', onChangeFn);
+    this.clubFld.on('change', onChangeFn);
 };
 
 
@@ -49,8 +73,7 @@ FMJContestant.prototype.toJSON = function() {
     club:      this.clubFld.val().trim(),
     
     // Some additional info
-    registeredOnline: true,
-    
+    registeredOnline: true
   };
   
   return submission;
