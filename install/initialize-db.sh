@@ -6,3 +6,5 @@ cd $(dirname $0)
 
 mongoimport --db FiMaJe --collection Categories --drop --file ./data-defaults/default-categories.json
 
+mongoimport --db FiMaJe --collection Users --drop --file ./data-defaults/default-users.json
+
