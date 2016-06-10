@@ -15,14 +15,23 @@ var settings = require('config');
 var MongoClient = require('mongodb').MongoClient;
 var exphbs = require('express-handlebars');
 
+var bcrypt = require('bcrypt');
+
 var basicAuth = require('basic-auth');
 
 // ===== IMPLEMENTATION
 
+var saltRounds = 10;
+
+function createStorablePassword(password) {
+    return bcrypt.hashSync(password, saltRounds);
+}
+
+
 function unauthorized(res) {
-        res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
-        return res.send(401);
-    }
+    res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+    return res.send(401);
+}
 
 function authenticate(req, res, next) {
     var user = basicAuth(req);
@@ -30,7 +39,13 @@ function authenticate(req, res, next) {
     if ( ! user || ! user.name || ! user.pass ) {
         return unauthorized(res);
     }
-    else if ( user.name === 'admin' && user.pass === 'admin' ) {
+
+    var proposedPassword = createStorablePassword(user.pass);
+    var existingPassword = createStorablePassword('admin');
+    
+    var isMatching = bcrypt.compareSync(user.pass, existingPassword);
+
+    if ( user.name === 'admin' && isMatching ) {
         return next();
     }
     else {
@@ -43,7 +58,8 @@ function authenticate(req, res, next) {
 
 
 module.exports = {
-    authenticate: authenticate
+    authenticate: authenticate,
+    createStorablePassword: createStorablePassword
 };
 
     
