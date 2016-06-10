@@ -13,12 +13,12 @@
 var express = require('express');
 var router = express.Router();
 
-var basicAuth = require('basic-auth');
-
 var home = require('../controllers/home');
 var admin = require('../controllers/admin');
 var categories = require('../controllers/categories');
 var register = require('../controllers/register');
+
+var authentification = require('../controllers/authentification');
 
 module.exports = function(app)
 {
@@ -55,38 +55,13 @@ module.exports = function(app)
     // Register a new person and their items
     router.post('/api/register', register.put);
 
-
-    // ===== Access restriction
-
-    // Asynchronous Auth
-
-    var authenticate = function(req, res, next) {
-        var unauthorized = function(res) {
-            res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
-            return res.send(401);
-        };
-
-        var user = basicAuth(req);
-
-        if ( ! user || ! user.name || ! user.pass ) {
-            return unauthorized(res);
-        }
-        else if ( user.name === 'admin' && user.pass === 'admin' ) {
-            return next();
-        }
-        else {
-            return unauthorized(res);
-        }
-    };
-
-
     // ===== Registering to the contest
 
     // Display the administration console
-    router.get('/admin', authenticate, admin.index);
+    router.get('/admin', authentification.authenticate, admin.index);
 
     // Display the registration search
-    router.get('/admin/registration', authenticate, register.get_all);
+    router.get('/admin/registration', authentification.authenticate, register.get_all);
 
     app.use(router);
 };
