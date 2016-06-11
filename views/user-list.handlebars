@@ -58,10 +58,10 @@
       <tbody>
         {{#each users}}
         <tr>
-          <td scope="row">{{row_number @index}}</td>
+          <th scope="row">{{row_number @index}}</th>
           <td>{{login}}</td> 
           <td>{{fullName}}</td> 
-          <td>{{email}}</td> 
+          <td>{{{email_link email}}}</td> 
           <td>
             {{#each groups}} {{this}} {{/each}}
           </td>
