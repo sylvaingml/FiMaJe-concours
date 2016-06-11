@@ -1,41 +1,51 @@
 {{> page-header this }}
 
-<h2>Inscriptions au {{reportDisplayDate}}</h2>
+<section>
+  <header>
+    <h2>Inscriptions <small class="text-muted">le {{format_date reportDate pattern="D MMMM" }}</small></h2>
+  </header> 
 
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Nom/Prénom</th>
-      <th>Email</th>
-      <th>Téléphone</th>
-      <th>Club</th>
-      <th>Inscrit le...</th>
-      <th>Pièces</th>
-    </tr>
-  </thead>
-      
-  <tbody>
-    {{#each registration}}
-    <tr>
-      <td>{{ userInfo.firstName }} {{ userInfo.lastName }}</td>
-      <td>{{ userInfo.email }}</td>
-      <td>{{ userInfo.phone }}</td>
-      <td>{{ userInfo.club }}</td>
-      <td>{{ format_date userInfo.registerDate }}</td>
-      <td>
-        <ul>
-          {{#each items }}
-          <li>{{name}} ({{ categoryCode }})</li> 
-          {{/each}}
-        </ul>
-      </td>
-    </tr>
-    {{/each}}
-  </tbody>
-</table>
 
-<div class="m-t-2 text-xs-right">
-  <button class="btn btn-info-outline btn-sm" type="button" onclick="javascript: print()">Imprimer...</button>
-</div>
+  <article>
+    <table class="table table-striped">
+      <thead class="thead-inverse">
+        <tr>
+          <th></th>
+          <th>Nom/Prénom</th>
+          <th>Email</th>
+          <th>Téléphone</th>
+          <th>Club</th>
+          <th>Inscrit le...</th>
+          <th>Pièces</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {{#each registration}}
+        <tr>
+          <th scope="row">{{row_number @index}}</th>
+          <td>{{ userInfo.firstName }} {{ userInfo.lastName }}</td>
+          <td>{{{ email_link userInfo.email }}}</td>
+          <td>{{{ phone_link userInfo.phone }}}</td>
+          <td>{{ userInfo.club }}</td>
+          <td>{{ format_date userInfo.registerDate pattern="ddd DD MMMM" }}</td>
+          <td>
+            <ul>
+              {{#each items }}
+              <li>{{name}} ({{ categoryCode }})</li> 
+              {{/each}}
+            </ul>
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+
+    <div class="m-t-2 text-xs-right">
+      <button class="btn btn-info-outline btn-sm" type="button" onclick="javascript: print()">Imprimer...</button>
+    </div>
+  </article>
+
+</section>
 
 {{> page-footer this }}

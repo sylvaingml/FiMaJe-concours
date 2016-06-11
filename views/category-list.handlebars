@@ -1,37 +1,48 @@
 {{> page-header this }}
 
-<h2>Liste des catégories</h2>
+<section>
+  <header>
+    <h2>Liste des catégories</h2>
+  </header>
 
-<div class="alert alert-info">
-  <p>
-    Cette liste représente toutes les catégories ouvertes pour le concours actif.
-  </p>
-</div>
+  <article class="alert alert-info">
+    <p>
+      Cette liste représente toutes les catégories ouvertes pour le concours actif.
+    </p>
+  </article>
 
-{{#if message }}
-<div class="card card-warning">
-  <div class="card-header">
-    <strong>Erreur</strong>
-  </div>
-  <div class="card-body">
-    <p>{{ message }}</p>
-  </div>
-</div>
-{{/if}}
+  {{#if message }}
+  <article class="card card-warning">
+    <div class="card-header">
+      <strong>Erreur</strong>
+    </div>
+    <div class="card-body">
+      <p>{{ message }}</p>
+    </div>
+  </article>
+  {{/if}}
 
-{{#if categories}}
+  {{#if categories}}
 
-<table class="table table-striped">
-  <tr>
-    <th>Code</th> <th>Description</th> <th>Catégorie</th>
-  </tr>
-{{#each categories}}
-  <tr>
-    <td>{{code}}</td> <td>{{label}}</td> <td>{{group}}</td>
-  </tr>
-{{/each}}
-</table>
+  <article>
+    <table class="table table-striped">
+      <thead class="thead-inverse">
+        <tr>
+          <th>Code</th> <th>Description</th> <th>Catégorie</th>
+        </tr>
+      </thead>
 
-{{/if}}
+      <tbody>
+        {{#each categories}}
+        <tr>
+          <td>{{code}}</td> <td>{{label}}</td> <td>{{group}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </article>
+
+  {{/if}}
+</section>
 
 {{> page-footer this }}

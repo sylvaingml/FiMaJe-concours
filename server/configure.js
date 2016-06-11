@@ -27,28 +27,31 @@ var methodOverride = require('method-override');
 // Obviously allow to customize error management
 var errorHandler = require('errorhandler');
 
+var templateHelpers = require('../helpers/common-helpers');
+
 module.exports = function(app)
 {
-  app.use(morgan('dev'));
-  app.use(bodyParser.urlencoded({'extended': true}));
-  app.use(bodyParser.json());
-  app.use(methodOverride());
-  //app.use(cookieParser('some-secret-value-here'));
-  
-  routes(app);//moving the routes to routes folder.
+    app.use(morgan('dev'));
+    app.use(bodyParser.urlencoded({'extended': true}));
+    app.use(bodyParser.json());
+    app.use(methodOverride());
+    //app.use(cookieParser('some-secret-value-here'));
 
-  app.use('/public/', express.static(path.join(__dirname, '../public')));
+    routes(app);//moving the routes to routes folder.
 
-  if ( 'development' === app.get('env') ) {
-    app.use(errorHandler());
-  }
+    app.use('/public/', express.static(path.join(__dirname, '../public')));
 
-  app.engine('handlebars', exphbs.create({
-    defaultLayout: 'default',
-    layoutsDir: app.get('views') + '/layouts',
-    partialsDir: [ app.get('views') + '/partials' ]
-  }).engine);
-  app.set('view engine', 'handlebars');
+    if ( 'development' === app.get('env') ) {
+        app.use(errorHandler());
+    }
 
-  return app;
+    app.engine('handlebars', exphbs.create({
+        defaultLayout: 'default',
+        layoutsDir: app.get('views') + '/layouts',
+        partialsDir: [ app.get('views') + '/partials' ],
+        helpers: templateHelpers
+    }).engine);
+    app.set('view engine', 'handlebars');
+
+    return app;
 };

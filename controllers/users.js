@@ -57,11 +57,7 @@ function getUserList(request, response) {
             var model = {
                 "users": users,
                 
-                helpers: {
-                    row_number: function(index) {
-                        return index + 1;
-                    }
-                }
+                helpers: {}
             };
             response.render('user-list.handlebars', model);
         };

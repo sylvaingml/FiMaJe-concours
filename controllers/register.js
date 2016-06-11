@@ -134,13 +134,7 @@ module.exports = {
                 
                 registration: model,
                 
-                helpers: {
-                    format_date: function(aDate) {
-                        return aDate.toLocaleString('fr-FR', {
-                            day: '2-digit', month: '2-digit', year: 'numeric'
-                        });
-                    }
-                }
+                helpers: {}
             };
             
             return response.render('registration_list', returnedModel);
