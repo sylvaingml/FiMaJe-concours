@@ -71,21 +71,127 @@
                 Actions
               </button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="#">Éditer les informations</a>
-                <a class="dropdown-item" href="#">Éditer les groupes</a>
-                <a class="dropdown-item" href="#">Modifier le mot de passe</a>
+                <button type="button" class="dropdown-item" onclick="userAdmin.showInfoEditor('{{_id}}');">Éditer les informations</button>
+                <button type="button" class="dropdown-item" onclick="userAdmin.showGroupEditor('{{_id}}');">Éditer les groupes</button>
+                <button type="button" class="dropdown-item" onclick="userAdmin.showPasswordEditor('{{_id}}');">Modifier le mot de passe</button>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Supprimer</a>
+                <button type="button" class="dropdown-item" onclick="userAdmin.askDeletion('{{_id}}');">Supprimer</button>
               </div>
             </div>
           </td>
         </tr>
         {{/each}}
       </tbody>
+
     </table>
+
+    <hr>
+
+    <div class="row">
+      <div class="col-xs-12 col-md-6">
+        <button class="btn btn-success-outline btn-sm" type="button" onclick="javascript: print()">Ajouter un utilisateur</button>
+      </div>
+      <div class="col-xs-12 col-md-6 text-md-right">
+        <button class="btn btn-primary-outline btn-sm" type="button" onclick="javascript: print()">Imprimer...</button>              
+      </div>
+    </div>
+
+
   </article>
 
   {{/if}}
 </section>
 
 {{> page-footer this }}
+
+
+{{!-- MODAL FOR INFORMATION EDITOR --}}
+
+<div id="userInfoEditor" class="modal fade">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Modifier les informations de <var class="fmj-edit-login">LOGIN</var></h4>
+      </div>
+
+      <div class="modal-body">
+        <form>
+
+          <fieldset class="form-group">
+            <label for="fullName">Nom complet</label>
+            <input type="text" class="form-control" id="fullName" placeholder="Saisir ici le nom et le prénom">
+          </fieldset>
+
+          <fieldset class="form-group">
+            <label for="email">Adresse email</label>
+            <input type="email" class="form-control" id="email" placeholder="Saisir ici l'adresse courriel de cet utilisateur">
+          </fieldset>
+
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+        <button type="button" class="btn btn-primary">Valider</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+{{!-- MODAL FOR PASSWORD EDITOR --}}
+
+<div id="passwordEditor" class="modal fade">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Changer le mot de passe de <var class="fmj-password-login">LOGIN</var></h4>
+      </div>
+
+      <div class="modal-body">
+        <form>
+          <fieldset class="form-group">
+            <label for="password">Nouveau mot de passe&nbsp;:</label>
+            <input type="password" class="form-control" id="password" value="" >
+          </fieldset>
+
+          <fieldset class="form-group">
+            <label for="passwordConfirmation">Confirmez ce mot de passe&nbsp;:</label>
+            <input type="password" class="form-control" id="passwordConfirmation" value="" >
+          </fieldset>
+
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+        <button type="button" class="btn btn-primary">Valider</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+{{!-- MODAL FOR DELETION --}}
+
+<div id="deleteConfirm" class="modal fade">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Supprimer l'utilisateur <var class="fmj-password-login">LOGIN</var></h4>
+      </div>
+
+      <div class="modal-body">
+          <p class="lead">
+              Si vous confirmer cette action l'utilisateur n'aura plus d'accès
+              à cette application.
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+        <button type="button" class="btn btn-danger">Supprimer l'utilisateur</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script type="text/javascript" src="/public/js/FiMaJe-admin.js" ></script>

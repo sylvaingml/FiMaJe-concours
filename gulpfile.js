@@ -94,8 +94,15 @@ gulp.task('copy-js-src-contest', function () {
     //.pipe(copy(destination_js, { prefix: 3 }));
 });
 
+gulp.task('copy-js-src-admin', function () {
+  return gulp.src(source_js+'/admin/*.js')
+    .pipe(concat('FiMaJe-admin.js'))
+    .pipe(gulp.dest(destination_js));
+    //.pipe(copy(destination_js, { prefix: 3 }));
+});
 
-gulp.task('build:javascript', [ 'js-libs', 'copy-js-src-contest' ]);
+
+gulp.task('build:javascript', [ 'js-libs', 'copy-js-src-contest', 'copy-js-src-admin' ]);
 
 
 gulp.task('clean:javascript', function () {

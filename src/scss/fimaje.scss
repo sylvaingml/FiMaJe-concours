@@ -11,9 +11,6 @@ Auteurs: Sylvain Gamel, club « La Compagnie des Trolls » Antibes, France
 */
 
 @import "./page-footer";
+@import "./core";
 
-label {
-    sup.required-input {
-        color: red;
-    }
-}
+@import "./core-print";
