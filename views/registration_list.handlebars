@@ -11,12 +11,13 @@
       <thead class="thead-inverse">
         <tr>
           <th></th>
-          <th>Code</th>
-          <th>Nom/Prénom</th>
-          <th>Email</th>
-          <th>Téléphone</th>
+          <th>Code, Inscrit le...
+          </th>
+          <th>
+            Nom/Prénom, Email, Téléphone
+            </span>
+          </th>
           <th>Club</th>
-          <th>Inscrit le...</th>
           <th>Pièces</th>
         </tr>
       </thead>
@@ -24,13 +25,19 @@
       <tbody>
         {{#each registration}}
         <tr>
-          <th scope="row">{{row_number @index}}</th>
-          <th>{{ userInfo.accessKey }}</th>
-          <td>{{ userInfo.firstName }} {{ userInfo.lastName }}</td>
-          <td>{{{ email_link userInfo.email }}}</td>
-          <td>{{{ phone_link userInfo.phone }}}</td>
+          <th scope="row">
+            {{row_number @index}}
+          </th>
+          <td>
+            <div>{{ userInfo.accessKey }}</div>
+            <div>{{ format_date userInfo.registerDate pattern="ddd DD MMMM" }}</div>
+          </td>
+          <td>
+              <div>{{ userInfo.firstName }} <span class="text-smallcaps">{{ userInfo.lastName }}</span></div>
+              <div>{{{ email_link userInfo.email }}}</div>
+              <div>{{{ phone_link userInfo.phone }}}</div>
+          </td>
           <td>{{ userInfo.club }}</td>
-          <td>{{ format_date userInfo.registerDate pattern="ddd DD MMMM" }}</td>
           <td>
             <ul>
               {{#each items }}
@@ -43,7 +50,7 @@
       </tbody>
     </table>
 
-    <div class="m-t-2 text-xs-right">
+    <div class="m-t-2 text-xs-right hidden-print">
       <button class="btn btn-info-outline btn-sm" type="button" onclick="javascript: print()">Imprimer...</button>
     </div>
   </article>

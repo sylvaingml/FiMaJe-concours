@@ -6,7 +6,7 @@
     <h2>Gestion des utilisateurs</h2>
   </header>
 
-  <article class="alert alert-info">
+  <article class="alert alert-info hidden-print">
     <p>
       Cette page vous permet de gérer les accès à l'application.
     </p>
@@ -52,7 +52,7 @@
           <th>Nom complet</th> 
           <th>Email</th> 
           <th>Groupes</th>
-          <th>Actions</th>
+          <th class="hidden-print">Actions</th>
         </tr>        
       </thead>
       <tbody>
@@ -65,7 +65,7 @@
           <td>
             {{#each groups}} {{this}} {{/each}}
           </td>
-          <td>
+          <td class="hidden-print" >
             <div class="btn-group">
               <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Actions
@@ -87,7 +87,7 @@
 
     <hr>
 
-    <div class="row">
+    <div class="row hidden-print">
       <div class="col-xs-12 col-md-6">
         <button class="btn btn-success-outline btn-sm" type="button" onclick="javascript: print()">Ajouter un utilisateur</button>
       </div>

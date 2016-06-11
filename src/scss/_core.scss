@@ -19,3 +19,14 @@ label {
         color: red;
     }
 }
+
+
+.text-smallcaps {
+    font-variant: small-caps;
+}
+
+thead th .row {
+    &:after {
+        display: none;
+    }
+}
