@@ -1,0 +1,12 @@
+{
+    "code":  "god",
+    "label": "Administration"
+}
+{
+    "code":  "wizard",
+    "label": "Organisation"
+}
+{
+    "code":  "elf",
+    "label": "Juge"
+}

@@ -1,25 +1,50 @@
 {{> page-header this }}
 
-<h2 class="card-title">Gestion du concours</h2>
-
 <div class="alert alert-danger">
   <p class="lead">
     Espace réservé aux organisateurs.
   </p>
 </div>
 
+<section>
+  
+  <header>
+    <h2 class="card-title">Gestion du concours</h2>
+  </header>
+
 <div class="card-deck-wrapper m-t-2" >
   <div class="card-deck">  
     
     <div class="card" >
+      <div class="card-header">
+        <h3>Inscriptions</h3>
+      </div>
+      <div class="card-block">
+        <ul class="nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/registration">Liste des inscriptions</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/categories">Liste des catégories</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  
+    <div class="card" >
+      <div class="card-header">
+        <h3>Accès utilisateurs</h3>
+      </div>
       <div class="card-block">
         
-        <a href="/admin/registration">Liste des inscriptions</a>
+        <a href="/admin/users">Gestion des utilisateurs</a>
       </div>
     </div>
   
     
   </div>
 </div>
+
+</section>
 
 {{> page-footer this }}

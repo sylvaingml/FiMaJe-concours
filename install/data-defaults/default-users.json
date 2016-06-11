@@ -1,6 +1,18 @@
 {
     "login": "admin",
     "email": "contact@FiMaJe.fr",
-    "role":  "god",
+    "fullName": "Cie des Trolls",
+    
+    "groups":  [ "god" ],
+    
+    "password": ""
+}
+{
+    "login": "philou",
+    "email": "philou@LaCompagnieDesTrolls.fr",
+    "fullName": "Philippe",
+    
+    "groups":  [ "wizard" ],
+    
     "password": ""
 }

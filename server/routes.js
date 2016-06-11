@@ -15,6 +15,7 @@ var router = express.Router();
 
 var home = require('../controllers/home');
 var admin = require('../controllers/admin');
+var adminUsers = require('../controllers/users');
 var categories = require('../controllers/categories');
 var register = require('../controllers/register');
 
@@ -55,13 +56,24 @@ module.exports = function(app)
     // Register a new person and their items
     router.post('/api/register', register.put);
 
-    // ===== Registering to the contest
-
+    // ===== ADMINISTRATION
+    
+    var enterAsGod = function(req, res, next) {
+        return authentification.authenticate('god', req, res, next);
+    };
+    
     // Display the administration console
-    router.get('/admin', authentification.authenticate, admin.index);
+    router.get('/admin', enterAsGod, admin.index);
+
+    // ===== Manage Users
+    
+    // Display the administration console
+    router.get('/admin/users', enterAsGod, adminUsers.index);
+    
+    // ===== Manage Contest
 
     // Display the registration search
-    router.get('/admin/registration', authentification.authenticate, register.get_all);
+    router.get('/admin/registration', enterAsGod, register.get_all);
 
     app.use(router);
 };

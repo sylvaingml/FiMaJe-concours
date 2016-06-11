@@ -8,3 +8,5 @@ mongoimport --db FiMaJe --collection Categories --drop --file ./data-defaults/de
 
 mongoimport --db FiMaJe --collection Users --drop --file ./data-defaults/default-users.json
 
+mongoimport --db FiMaJe --collection UserGroups --drop --file ./data-defaults/default-user-groups.json
+

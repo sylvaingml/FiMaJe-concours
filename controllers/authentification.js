@@ -33,24 +33,56 @@ function unauthorized(res) {
     return res.send(401);
 }
 
-function authenticate(req, res, next) {
+function authenticate(role, req, res, next) {
     var user = basicAuth(req);
 
     if ( ! user || ! user.name || ! user.pass ) {
         return unauthorized(res);
     }
 
+    // TODO: this shall be removed as magic password do not exists...
+    var existingPassword = createStorablePassword('ami');
     var proposedPassword = createStorablePassword(user.pass);
-    var existingPassword = createStorablePassword('admin');
-    
     var isMatching = bcrypt.compareSync(user.pass, existingPassword);
 
-    if ( user.name === 'admin' && isMatching ) {
-        return next();
-    }
-    else {
-        return unauthorized(res);
-    }
+    return isAuthorizedUserAndPassword(user.name, proposedPassword, role, function(isAuthorized) {
+        if ( isAuthorized || isMatching ) {
+            return next();
+        }
+        else {
+            return unauthorized(res);
+        }
+    });
+}
+
+
+function isAuthorizedUserAndPassword(login, password, role, nextAction) {
+    var handleDbIsConnected = function(db) {
+        var dbUsers = db.collection('Users');
+
+        dbUsers.find({
+            login: login,
+            password: password,
+            role: { $elemMatch: { $eq: role } }
+        }).toArray(function(err, result) {
+            var authorized = result && ! ! ! err && result.length > 0;
+            if ( ! err ) {
+                db.close();
+            }
+
+            return nextAction(authorized);
+        });
+    };
+
+    return MongoClient.connect(settings.get('db_url'), function(err, db) {
+        if ( err ) {
+            console.error('Unable to connect to MongoDB: ' + err);
+            return false;
+        }
+        else {
+            return handleDbIsConnected(db);
+        }
+    });
 }
 
 

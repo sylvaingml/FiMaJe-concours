@@ -1,0 +1,91 @@
+{{> page-header this }}
+
+<section>
+
+  <header>
+    <h2>Gestion des utilisateurs</h2>
+  </header>
+
+  <article class="alert alert-info">
+    <p>
+      Cette page vous permet de gérer les accès à l'application.
+    </p>
+    <p>
+      Consultez la liste des utilisateurs, ajoutez ou supprimez des accès.
+      Et pour chaque personne, indiquez quels sont les droits dont elle dispose.
+    </p>
+  </article>
+
+
+  {{#if error_code }}
+  <article class="card card-warning">
+    <div class="card-header">
+      <strong>Erreur</strong>
+    </div>
+
+    <div class="card-body">
+      <p>{{message}}</p>
+      {{!--
+    {{#if error_code == "DB.open" }}
+      <p>Erreur de connection sur la base de données.</p>
+      {{/if}}
+      {{#if error_code == "DB.fetch" }}
+      <p>
+        Erreur lors de la récupération des données. 
+        Merci de signaler le problème à l'organisation.
+      </p>
+      {{/if}}
+      --}}
+    </div>
+  </article>
+  {{/if}}
+
+
+  {{#if users}}
+
+  <article>
+    <table class="table table-striped">
+      <thead class="thead-inverse">
+        <tr>
+          <th></th> 
+          <th>Identifiant</th> 
+          <th>Nom complet</th> 
+          <th>Email</th> 
+          <th>Groupes</th>
+          <th>Actions</th>
+        </tr>        
+      </thead>
+      <tbody>
+        {{#each users}}
+        <tr>
+          <td scope="row">{{row_number @index}}</td>
+          <td>{{login}}</td> 
+          <td>{{fullName}}</td> 
+          <td>{{email}}</td> 
+          <td>
+            {{#each groups}} {{this}} {{/each}}
+          </td>
+          <td>
+            <div class="btn-group">
+              <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Actions
+              </button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="#">Éditer les informations</a>
+                <a class="dropdown-item" href="#">Éditer les groupes</a>
+                <a class="dropdown-item" href="#">Modifier le mot de passe</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">Supprimer</a>
+              </div>
+            </div>
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </article>
+
+  {{/if}}
+</section>
+
+{{> page-footer this }}
