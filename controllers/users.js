@@ -52,34 +52,37 @@ function findListOfCategories(onSuccess, onError) {
 // ===== Requests handlers
 
 function getUserList(request, response) {
-    var handleSuccessFn = function(users)
-        {
-            var model = {
-                "users": users,
-                
-                helpers: {}
-            };
-            response.render('user-list.handlebars', model);
+    var handleSuccessFn = function(users) {
+        var model = {
+            "users": users,
+            helpers: {}
+        };
+        response.render('admin/user-list.handlebars', model);
+    };
+
+    var handleErrorFn = function(err) {
+        console.error("Users - Error: " + err);
+        var model = {
+            "message": err
         };
 
-        var handleErrorFn = function(err)
-        {
-            console.error("Users - Error: " + err);
-            var model = {
-                "message": err
-            };
+        response.render('admin/user-list.handlebars', model);
+    };
 
-            response.render('user-list.handlebars', model);
-        };
+    return findListOfCategories(handleSuccessFn, handleErrorFn);
+}
 
-        return findListOfCategories(handleSuccessFn, handleErrorFn);
+function askForNewUser(request, response) {
+    return response.render('admin/user-create.handlebars', {});
 }
 
 // ===== EXPORTED MODULE
 
 
 module.exports = {
-    index: getUserList
+    index: getUserList,
+    
+    add_user: askForNewUser
 };
 
     

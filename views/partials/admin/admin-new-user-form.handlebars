@@ -1,0 +1,93 @@
+<form class="m-b-2">
+
+  <fieldset class="form-group">
+    <div class="row">
+      <div class="col-xs-12 col-md-4  text-md-right">
+        <label for="login" class="form-control-label">Identifiant<sup class="required-input">*</sup>&nbsp;:</label>
+      </div>
+      <div class="col-xs-12 col-md-8">
+        <input type="text" class="form-control" id="login" placeholder="Identifiant de connection" required="required">
+        <p class="text-muted">
+          L'identifiant ne doit pas contenir d'espaces et se compose de lettres, de chiffres et des caractères '-', '_'.
+          <em>Attention, cet identifiant ne pourra pas être modifié ultérieurement.</em>
+        </p>
+      </div>
+    </div>
+
+    <div class="clearfix m-b-1"></div>
+
+    <div class="row">
+      <div class="col-xs-12 col-md-4  text-md-right">
+        <label for="fullName" class="form-control-label">Nom complet<sup class="required-input">*</sup>&nbsp;:</label>
+      </div>
+      <div class="col-xs-12 col-md-8">
+        <input type="text" class="form-control" id="fullName" placeholder="Saisir ici le nom et le prénom" required="required">
+        <p class="text-muted">
+          Idéalement le nom et le prénom d'une personne, ou un nom générique pour les comptes comme
+          'admin', 'orga', etc...
+        </p>
+      </div>
+    </div>
+
+    <div class="clearfix m-b-1"></div>
+
+    <div class="row">
+      <div class="col-xs-12 col-md-4  text-md-right">
+        <label for="email" class="form-control-label">Adresse email&nbsp;:</label>
+      </div>
+      <div class="col-xs-12 col-md-8">
+        <input type="email" class="form-control" id="email" placeholder="Saisir ici l'adresse courriel de cet utilisateur">
+        <p class="text-muted">
+          Une adresse email valide est souhaitable, mais peut être vide.
+        </p>
+      </div>
+    </div>
+
+    <div class="clearfix m-b-1"></div>
+
+    <div class="row">
+      <div class="col-xs-12 col-md-4  text-md-right">
+        <label for="password" class="form-control-label">Mot de passe<sup class="required-input">*</sup>&nbsp;:</label>
+      </div>
+      <div class="col-xs-12 col-md-8">
+        <input type="password" class="form-control" id="password" value=""  required="required">
+      </div>
+    </div>
+
+    <div class="clearfix m-b-1"></div>
+
+    <div class="row">
+      <div class="col-xs-12 col-md-4  text-md-right">
+        <label for="passwordConfirmation" class="form-control-label">Confirmez ce mot de passe<sup class="required-input">*</sup>&nbsp;:</label>
+      </div>
+      <div class="col-xs-12 col-md-8">
+        <input type="password" class="form-control" id="passwordConfirmation" value=""  required="required">
+        <p class="text-muted">
+          Aucune contrainte sur le mot de passe, mais évitez quelques chose de trop court ou d'évident comme «123456»...
+          Optez plus pour quelque chose comme «2-Troll+mous».
+        </p>
+      </div>
+    </div>
+
+  </fieldset>
+  
+  <div class="row">
+    <div class="col-xs-12">
+      <label><sup class="required-input">*</sup></label> Indique un champ obligatoire.
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="row">
+    <div class="col-xs-12 col-md-6 text-md-left">
+      <button class="btn btn-primary-outline btn-lg" type="button" name="cancel" onclick="javascript: history.back();">Annuler</button>
+    </div>
+    <div class="col-xs-12 col-md-6 text-md-right">
+      <button class="btn btn-success btn-lg" type="submit" name="add_item">Ajouter l'utilisateur</button>
+    </div>
+  </div>
+  
+  
+</form>
+

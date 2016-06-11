@@ -70,6 +70,9 @@ module.exports = function(app)
     // Display the administration console
     router.get('/admin/users', enterAsGod, adminUsers.index);
     
+    // Display the administration console
+    router.get('/admin/add-user', enterAsGod, adminUsers.add_user);
+    
     // ===== Manage Contest
 
     // Display the registration search

@@ -21,6 +21,6 @@ module.exports = {
      */
     index: function(request, response)
     {
-        response.render("admin", {});
+        response.render("admin/home", {});
     }
 };
