@@ -13,6 +13,7 @@
     Author     : Sylvain Gamel <contact@SylvainGamel.fr>
 */
 
+// ===== FORMS
 
 label {
     sup.required-input {
@@ -20,11 +21,24 @@ label {
     }
 }
 
+.fmj-action-bar {
+    @include media-breakpoint-down(sm) {
+        .btn {
+            width: 100%;
+        }
+    }
+}
+
+// ===== CUSTOM TYPOGRAPHY
 
 .text-smallcaps {
     font-variant: small-caps;
 }
 
+// ===== TABLES
+
+// Ensure that using a row in a th will not break vertical alignments
+//
 thead th .row {
     &:after {
         display: none;

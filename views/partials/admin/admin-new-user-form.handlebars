@@ -1,4 +1,4 @@
-<form class="m-b-2">
+
 
   <fieldset class="form-group">
     <div class="row">
@@ -70,24 +70,30 @@
     </div>
 
   </fieldset>
-  
-  <div class="row">
-    <div class="col-xs-12">
-      <label><sup class="required-input">*</sup></label> Indique un champ obligatoire.
-    </div>
-  </div>
 
   <hr>
 
-  <div class="row">
+  <div class="row fmj-action-bar">
     <div class="col-xs-12 col-md-6 text-md-left">
-      <button class="btn btn-primary-outline btn-lg" type="button" name="cancel" onclick="javascript: history.back();">Annuler</button>
+      <button class="btn btn-primary-outline btn-lg" type="button" name="cancel" >Annuler</button>
+      <div><small class="text-muted">Retourne à la liste des utilisateurs.</small></div>
     </div>
+    
+    <div class="clearfix m-b-1 hidden-md-up"></div>
+
     <div class="col-xs-12 col-md-6 text-md-right">
       <button class="btn btn-success btn-lg" type="submit" name="add_item" disabled="disabled">Ajouter l'utilisateur</button>
     </div>
   </div>
+
+  <div class="row m-t-2 fmj-action-bar">
+    <div class="col-xs-12 col-md-8">
+      <label><sup class="required-input">*</sup></label> Indique un champ obligatoire.
+    </div>
+
+    <div class="col-xs-12 col-md-4 text-md-right">
+      <button class="btn btn-danger-outline" type="button" name="reset">Vider le formulaire</button>
+    </div>
+  </div>
   
-  
-</form>
 

@@ -175,8 +175,6 @@ module.exports = {
         
         if ( !isJSON ) {
             return response.status(400).json({ message: "Requète invalide" });
-            // TODO: 
-            //response.render('register_error.handlebars', model);
         }
         
         var submisionDetails = createDbObjectFromRequest(request.body.data);

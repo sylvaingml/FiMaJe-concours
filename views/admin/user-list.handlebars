@@ -83,7 +83,7 @@
                 <button type="button" class="dropdown-item" onclick="userAdmin.showGroupEditor('{{_id}}');">Éditer les groupes</button>
                 <button type="button" class="dropdown-item" onclick="userAdmin.showPasswordEditor('{{_id}}');">Modifier le mot de passe</button>
                 <div class="dropdown-divider"></div>
-                <button type="button" class="dropdown-item" onclick="userAdmin.askDeletion('{{_id}}');">Supprimer</button>
+                <button type="button" class="dropdown-item" onclick="userAdmin.askDeletion('{{_id}}', '{{login}}', '{{fullName}}');">Supprimer</button>
               </div>
             </div>
           </td>
@@ -179,27 +179,16 @@
 </div><!-- /.modal -->
 
 {{!-- MODAL FOR DELETION --}}
-
-<div id="deleteConfirm" class="modal fade">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Supprimer l'utilisateur <var class="fmj-password-login">LOGIN</var></h4>
-      </div>
-
-      <div class="modal-body">
-          <p class="lead">
-              Si vous confirmer cette action l'utilisateur n'aura plus d'accès
-              à cette application.
-        </p>
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-        <button type="button" class="btn btn-danger">Supprimer l'utilisateur</button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+{{> admin/modal-user-delete this }}
 
 <script type="text/javascript" src="/public/js/FiMaJe-admin.js" ></script>
+
+<script type="text/javascript" >
+var userAdmin;
+
+// Create the main form
+$(function() {
+    userAdmin = new FMJUserAdmin();
+});
+
+</script>

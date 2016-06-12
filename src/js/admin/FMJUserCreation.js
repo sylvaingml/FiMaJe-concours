@@ -20,13 +20,20 @@ function FMJUserCreation() {
     this.passwordFld = $('#password');
     this.passwordConfirmationFld = $('#passwordConfirmation');
 
+    this.cancelBtn = $('button[name=cancel]');
+    this.resetBtn = $('button[name=reset]');
     this.submitBtn = $('button[type=submit]');
+
+    // Hide all errors
+
+    $('.alert.alert-success').hide().removeAttr('hidden');
+    $('.alert.alert-warning').hide().removeAttr('hidden');
 
     // Validators
 
     this.loginRegEx = /^[a-zA-Z\-_0-9]+$/g;
 
-    
+
     // Event listeners
     var me = this;
 
@@ -45,6 +52,22 @@ function FMJUserCreation() {
     });
     this.passwordConfirmationFld.on('change, blur', function(event) {
         me.onPasswordsUpdate($(event.currentTarget));
+    });
+
+    this.cancelBtn.on('click', function() {
+        document.location = '/admin/users';
+    });
+
+    this.resetBtn.on('click', function() {
+        me.onReset();
+    });
+
+    this.submitBtn.on('click', function(event) {
+        // This is a submit button, but we want our own submission model
+        event.preventDefault();
+        event.stopPropagation();
+
+        me.onSubmit();
     });
 }
 
@@ -76,12 +99,86 @@ FMJUserCreation.prototype.onPasswordsUpdate = function(inputFld) {
     this.updateSubmitButton(this.checkIsSubmitAllowed());
 };
 
+FMJUserCreation.prototype.onSubmit = function() {
+    var userProfile = {
+        login: this.loginFld.val(),
+        name: this.nameFld.val(),
+        email: this.emailFld.val(),
+        password: this.passwordFld.val()
+    };
+
+    // Block multiple submit, and give safe state on success.
+    this.submitBtn.attr('disabled', 'disabled');
+
+    this.submitUserCreation(userProfile);
+};
+
+FMJUserCreation.prototype.onReset = function() {
+    this.clearForm();
+};
+
+// ----- Clear the form
+
+FMJUserCreation.prototype.clearForm = function() {
+    this.loginFld.val('');
+    this.emailFld.val('');
+    this.nameFld.val('');
+    this.passwordFld.val('');
+    this.passwordConfirmationFld.val('');
+
+    this.updateFieldWarning(this.loginFld, true);
+    this.updateFieldWarning(this.emailFld, true);
+    this.updateFieldWarning(this.nameFld, true);
+    this.updateFieldWarning(this.passwordFld, true);
+    this.updateFieldWarning(this.passwordConfirmationFld, true);
+
+    this.updateFieldSuccess(this.passwordFld, false);
+    this.updateFieldSuccess(this.passwordConfirmationFld, false);
+};
+
+// ----- User Creation
+
+FMJUserCreation.prototype.userCreationSuccess = function(profile) {
+    $('.alert.alert-success').show();
+    $('.alert.alert-warning').hide();
+
+    this.clearForm();
+};
+
+FMJUserCreation.prototype.userCreationFailed = function() {
+    $('.alert.alert-success').hide();
+    $('.alert.alert-warning').show();
+};
+
+FMJUserCreation.prototype.submitUserCreation = function(profile) {
+    var url = "/api/admin/add-user";
+    var me = this;
+
+    $.post(url, {
+        'dataType': "application/json",
+        'data': profile
+    })
+      .done(function(data) {
+          console.log("Done: " + data);
+          me.userCreationSuccess(data);
+      })
+      .fail(function(error) {
+          console.log("error: " + error);
+          me.userCreationFailed();
+      });
+};
+
 // ===== VALIDATION
 
 FMJUserCreation.prototype.checkIsSubmitAllowed = function() {
-    return this.checkLoginValue()
-      && this.checkNameValue()
-      && this.checkPasswordValues();
+    // Make sure that all verification functions are called before combining
+    // the results.
+    //
+    var loginOk = this.checkLoginValue();
+    var nameOk = this.checkNameValue();
+    var passwordOk = this.checkPasswordValues();
+
+    return loginOk && nameOk && passwordOk;
 };
 
 
@@ -113,8 +210,8 @@ FMJUserCreation.prototype.checkPasswordValues = function() {
     var password1 = this.passwordFld.val();
     var password2 = this.passwordConfirmationFld.val();
 
-    var valid = (password1 === password2) 
-      && (password1.length > 0) 
+    var valid = (password1 === password2)
+      && (password1.length > 0)
       && (password1.length > 0);
 
     this.updateFieldWarning(this.passwordFld, valid);

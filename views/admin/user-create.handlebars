@@ -5,6 +5,15 @@
   <header>
     <h2 class="card-title">Ajout d'un compte utilisateur</h2>
   </header>
+  
+  <p class="alert alert-warning" hidden='hidden' >
+    Une erreur a empêché la création du nouvel utilisateur.
+    Merci d'essayer ultérieurement.
+  </p>
+
+  <p class="alert alert-success" hidden='hidden' >
+    L'utilisateur a bien été créé.
+  </p>
 
   {{> admin/admin-new-user-form this }}
 

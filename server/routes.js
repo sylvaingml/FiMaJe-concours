@@ -67,11 +67,18 @@ module.exports = function(app)
 
     // ===== Manage Users
     
-    // Display the administration console
+    // Display the list of users
     router.get('/admin/users', enterAsGod, adminUsers.index);
     
-    // Display the administration console
+    // Display the user creation form
     router.get('/admin/add-user', enterAsGod, adminUsers.add_user);
+    
+    // Validate a user's creation
+    router.post('/api/admin/add-user', enterAsGod, adminUsers.add_user_confirmed);
+    
+    // Validate a user's deletion
+    router.post('/api/admin/delete-user', enterAsGod, adminUsers.delete_user);
+    
     
     // ===== Manage Contest
 
