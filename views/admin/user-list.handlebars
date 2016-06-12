@@ -44,7 +44,15 @@
   {{#if users}}
 
   <article>
-    <table class="table table-striped">
+    <table class="table table-striped fmj-user-list">
+        <colgroup>
+          <col class="col-empty">
+          <col class="col-uid">
+          <col class="col-name">
+          <col class="col-email">
+          <col class="col-groups">
+          <col class="col-actions">
+      </colgroup>
       <thead class="thead-inverse">
         <tr>
           <th></th> 
@@ -67,7 +75,7 @@
           </td>
           <td class="hidden-print" >
             <div class="btn-group">
-              <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <button type="button" class="btn btn-sm btn-secondary dropdown-toggle btn-block" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Actions
               </button>
               <div class="dropdown-menu">
