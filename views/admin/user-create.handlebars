@@ -1,7 +1,7 @@
 {{> page-header this }}
 
 <section>
-  
+
   <header>
     <h2 class="card-title">Ajout d'un compte utilisateur</h2>
   </header>
@@ -10,4 +10,18 @@
 
 </section>
 
+<script type="text/javascript" src="/public/js/FiMaJe-admin.js" ></script>
+
 {{> page-footer this }}
+
+<script>
+
+var userForm;
+
+// Create the main form
+$(function() {
+    userForm = new FMJUserCreation();
+});
+
+
+</script>
