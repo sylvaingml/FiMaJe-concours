@@ -32,7 +32,36 @@ FMJUserAdmin.prototype.showPasswordEditor = function(uid) {
 
 // ----- USER DELETION
 
-FMJUserAdmin.prototype.reallyDeleteUser = function(uid) {
+FMJUserAdmin.prototype.userDeleted = function(uid) {
+    this.deleteConfirmModal.modal('hide');
+    
+    // Don't bother doing AJAX stuff, just reload...
+    document.location.href = "/admin/users"
+};
+
+FMJUserAdmin.prototype.userDeletionFailed = function(uid) {
+    // Show the error panel
+    $('.alert.alert-warning', this.deleteConfirmModal).show();
+    
+    // Enable button again
+    var deleteBtn = $('button[name=delete]', this.deleteConfirmModal);
+    deleteBtn.prop('disabled', false);
+};
+
+FMJUserAdmin.prototype.reallyDeleteUser = function(uid, login) {
+    var url = "/api/admin/delete-user";
+    var me = this;
+
+    $.post(url, {
+        'dataType': "application/json",
+        'data': { _id: uid, login: login }
+    })
+      .done(function(data) {
+          me.userDeleted(data);
+      })
+      .fail(function(error) {
+          me.userDeletionFailed();
+      });
     };
     
 FMJUserAdmin.prototype.deletionModalReady = function(uid, login, name) {
@@ -42,8 +71,18 @@ FMJUserAdmin.prototype.deletionModalReady = function(uid, login, name) {
     $('var.fmj-login', this.deleteConfirmModal).text(login);
     $('var.fmj-name', this.deleteConfirmModal).text(name);
 
-    $('button[name=delete]', this.deleteConfirmModal).one('click', function() {
-        me.reallyDeleteUser(uid);
+    // Hide error
+    
+    $('.alert.alert-warning', this.deleteConfirmModal).removeAttr('hidden').hide();
+    
+    // Unblock button if needed and send request
+    
+    var deleteBtn = $('button[name=delete]', this.deleteConfirmModal);
+    
+    deleteBtn.prop('disabled', false);
+    deleteBtn.one('click', function() {
+        deleteBtn.prop('disabled', true);
+        me.reallyDeleteUser(uid, login);
     });
 };
 

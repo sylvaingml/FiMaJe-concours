@@ -21,7 +21,7 @@ var basicAuth = require('basic-auth');
 
 // ===== IMPLEMENTATION
 
-var saltRounds = 10;
+var saltRounds = 13;
 
 function createStorablePassword(password) {
     return bcrypt.hashSync(password, saltRounds);

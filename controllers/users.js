@@ -13,6 +13,8 @@
 var settings = require('config');
 
 var MongoClient = require('mongodb').MongoClient;
+var ObjectID = require('mongodb').ObjectID;
+
 var exphbs = require('express-handlebars');
 
 var authentification = require('./authentification');
@@ -37,6 +39,62 @@ function findListOfCategories(onSuccess, onError) {
         });
     };
 
+    return MongoClient.connect(settings.get('db_url'), function(err, db) {
+        if ( err ) {
+            console.error('Unable to connect to MongoDB: ' + err);
+            return onError({
+                error_code: 'DB.open',
+                message: "Database connection error."
+            });
+        }
+        else {
+            return handleDbIsConnected(db);
+        }
+    });
+}
+
+function deleteUserInDB(userInfo, onSuccess, onError) {
+    var objId = ObjectID.createFromHexString(userInfo._id);
+    var userQuery = {
+        _id:   objId,
+        login: userInfo.login
+    };
+
+    var handleUserFound = function(db, dbUsers) {
+        dbUsers.deleteOne(userQuery, {}, function(err, result) {
+            if ( err ) {
+                return onError({
+                    error_code: 'DB.delete',
+                    message: "Error deleting user."
+                });
+            }
+            else {
+                db.close();
+                return onSuccess(result);
+            }
+        });
+    };
+
+    var handleDbIsConnected = function(db) {
+        var dbUsers = db.collection('Users');
+
+        return dbUsers.find(userQuery, { login: 1 })
+          .toArray()
+          .then(function(existing) {
+              if ( 0 === existing.length ) {
+                  // ERROR, not found
+                  return onError({
+                      error_code: 'DB.notFound',
+                      message: "Error deleting user. Login not found."
+                  });
+              }
+              else {
+                  return handleUserFound(db, dbUsers);
+              }
+          });
+    };
+    
+    
     return MongoClient.connect(settings.get('db_url'), function(err, db) {
         if ( err ) {
             console.error('Unable to connect to MongoDB: ' + err);
@@ -178,7 +236,36 @@ function createUser(request, response) {
 }
 
 function deleteUser(request, response) {
+    var handleSuccessFn = function(result) {
+        var model = {};
 
+        response.status(200).json(model);
+    };
+
+    var handleErrorFn = function(err) {
+        var model = {
+            "error": err
+        };
+
+        response.status(400).json(model);
+    };
+
+    // Check request
+
+    var isJSON = request.body.dataType === 'application/json';
+
+    if ( ! isJSON ) {
+        return response.status(400).json({message: "Requète invalide"});
+    }
+
+    // Get information from request to build user
+
+    var model = {
+        login: request.body.data.login,
+        _id: request.body.data._id
+    };
+
+    return deleteUserInDB(model, handleSuccessFn, handleErrorFn);
 }
 
 // ===== EXPORTED MODULE
