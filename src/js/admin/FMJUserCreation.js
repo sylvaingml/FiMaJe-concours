@@ -11,17 +11,29 @@
 
 
 function FMJUserCreation() {
+    var me = this;
 
     // UI Binding
-
-    this.loginFld = $('#login');
-    this.nameFld = $('#fullName');
-    this.emailFld = $('#email');
-    this.passwordFld = $('#password');
-    this.passwordConfirmationFld = $('#passwordConfirmation');
+    
+    this.infoEditor = new FMJUserLoginEditor({
+        loginInput: '#login',
+        nameInput:  '#fullName',
+        emailInput: '#email'
+    },
+    function(valid) { 
+        me.updateSubmitButton(me.checkIsSubmitAllowed());
+    } );
+    
+    this.passwordEditor = new FMJUserPasswordEditor({
+        password1Input: '#password',
+        password2Input: '#passwordConfirmation'
+    },
+    function(valid) { 
+        me.updateSubmitButton(me.checkIsSubmitAllowed());
+    } );
 
     this.cancelBtn = $('button[name=cancel]');
-    this.resetBtn = $('button[name=reset]');
+    this.resetBtn  = $('button[name=reset]');
     this.submitBtn = $('button[type=submit]');
 
     // Hide all errors
@@ -29,30 +41,8 @@ function FMJUserCreation() {
     $('.alert.alert-success').hide().removeAttr('hidden');
     $('.alert.alert-warning').hide().removeAttr('hidden');
 
-    // Validators
-
-    this.loginRegEx = /^[a-zA-Z\-_0-9]+$/g;
-
-
     // Event listeners
     var me = this;
-
-    this.loginFld.on('change, blur', function() {
-        me.onLoginUpdate();
-    });
-    this.nameFld.on('change, blur', function() {
-        me.onNameUpdate();
-    });
-    this.emailFld.on('change, blur', function() {
-        me.onEmailUpdate();
-    });
-
-    this.passwordFld.on('change, blur', function() {
-        me.onPasswordsUpdate($(event.currentTarget));
-    });
-    this.passwordConfirmationFld.on('change, blur', function(event) {
-        me.onPasswordsUpdate($(event.currentTarget));
-    });
 
     this.cancelBtn.on('click', function() {
         document.location = '/admin/users';
@@ -73,38 +63,14 @@ function FMJUserCreation() {
 
 // ===== LISTENERS
 
-FMJUserCreation.prototype.onLoginUpdate = function() {
-    var value = this.loginFld.val().trim().substr(0, 20);
-    this.loginFld.val(value);
-
-    this.updateSubmitButton(this.checkIsSubmitAllowed());
-};
-
-FMJUserCreation.prototype.onNameUpdate = function() {
-    var value = this.nameFld.val().trim().substr(0, 80);
-    this.nameFld.val(value);
-
-    this.updateSubmitButton(this.checkIsSubmitAllowed());
-};
-
-FMJUserCreation.prototype.onEmailUpdate = function() {
-    var value = this.emailFld.val().trim().substr(0, 120);
-    this.emailFld.val(value);
-};
-
-FMJUserCreation.prototype.onPasswordsUpdate = function(inputFld) {
-    var value = inputFld.val().substr(0, 200);
-    inputFld.val(value);
-
-    this.updateSubmitButton(this.checkIsSubmitAllowed());
-};
 
 FMJUserCreation.prototype.onSubmit = function() {
     var userProfile = {
-        login: this.loginFld.val(),
-        name: this.nameFld.val(),
-        email: this.emailFld.val(),
-        password: this.passwordFld.val()
+        login: this.infoEditor.getLogin(),
+        name: this.infoEditor.getName(),
+        email: this.infoEditor.getEmail(),
+        
+        password: this.passwordEditor.getPassword()
     };
 
     // Block multiple submit, and give safe state on success.
@@ -120,20 +86,8 @@ FMJUserCreation.prototype.onReset = function() {
 // ----- Clear the form
 
 FMJUserCreation.prototype.clearForm = function() {
-    this.loginFld.val('');
-    this.emailFld.val('');
-    this.nameFld.val('');
-    this.passwordFld.val('');
-    this.passwordConfirmationFld.val('');
-
-    this.updateFieldWarning(this.loginFld, true);
-    this.updateFieldWarning(this.emailFld, true);
-    this.updateFieldWarning(this.nameFld, true);
-    this.updateFieldWarning(this.passwordFld, true);
-    this.updateFieldWarning(this.passwordConfirmationFld, true);
-
-    this.updateFieldSuccess(this.passwordFld, false);
-    this.updateFieldSuccess(this.passwordConfirmationFld, false);
+    this.infoEditor.clearForm();
+    this.passwordEditor.clearForm();
 };
 
 // ----- User Creation
@@ -159,11 +113,9 @@ FMJUserCreation.prototype.submitUserCreation = function(profile) {
         'data': profile
     })
       .done(function(data) {
-          console.log("Done: " + data);
           me.userCreationSuccess(data);
       })
       .fail(function(error) {
-          console.log("error: " + error);
           me.userCreationFailed();
       });
 };
@@ -174,66 +126,15 @@ FMJUserCreation.prototype.checkIsSubmitAllowed = function() {
     // Make sure that all verification functions are called before combining
     // the results.
     //
-    var loginOk = this.checkLoginValue();
-    var nameOk = this.checkNameValue();
-    var passwordOk = this.checkPasswordValues();
+    var loginOk = this.infoEditor.checkLoginValue();
+    var nameOk = this.infoEditor.checkNameValue();
+    var passwordOk = this.passwordEditor.checkPasswordValues();
 
     return loginOk && nameOk && passwordOk;
 };
 
 
-FMJUserCreation.prototype.checkLoginValue = function() {
-    var valid = (null !== this.loginFld.val().match(this.loginRegEx));
-
-    this.updateFieldWarning(this.loginFld, valid);
-
-    return valid;
-};
-
-FMJUserCreation.prototype.checkNameValue = function() {
-    var valid = this.nameFld.val().length > 0;
-
-    this.updateFieldWarning(this.nameFld, valid);
-
-    return valid;
-};
-
-FMJUserCreation.prototype.checkEmailValue = function() {
-    var valid = this.emailFld.val().length > 0;
-
-    this.updateFieldWarning(this.emailFld, valid);
-
-    return valid;
-};
-
-FMJUserCreation.prototype.checkPasswordValues = function() {
-    var password1 = this.passwordFld.val();
-    var password2 = this.passwordConfirmationFld.val();
-
-    var valid = (password1 === password2)
-      && (password1.length > 0)
-      && (password1.length > 0);
-
-    this.updateFieldWarning(this.passwordFld, valid);
-    this.updateFieldWarning(this.passwordConfirmationFld, valid);
-
-    this.updateFieldSuccess(this.passwordFld, valid);
-    this.updateFieldSuccess(this.passwordConfirmationFld, valid);
-
-    return valid;
-};
-
 // ===== UI ELEMENT STATE CHANGES
-
-FMJUserCreation.prototype.updateFieldWarning = function(input, valid) {
-    input.toggleClass('form-control-warning', ! valid);
-    input.parent().toggleClass('has-warning', ! valid);
-};
-
-FMJUserCreation.prototype.updateFieldSuccess = function(input, valid) {
-    input.toggleClass('form-control-success', valid);
-    input.parent().toggleClass('has-success', valid);
-};
 
 
 FMJUserCreation.prototype.updateSubmitButton = function(valid) {
