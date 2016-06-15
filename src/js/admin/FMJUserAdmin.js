@@ -41,6 +41,8 @@ FMJUserAdmin.prototype.userInfoUpdateFailed = function(user) {
 };
     
 FMJUserAdmin.prototype.submitUserUpdateRequest = function(user) {
+    this.updateUpdateInfoButton(false);
+    
     var updateRequest = {
         // Identification
         _id:   user._id,

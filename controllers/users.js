@@ -53,6 +53,59 @@ function findListOfCategories(onSuccess, onError) {
     });
 }
 
+
+function updateUserInDB(userInfo, onSuccess, onError) {
+    var objId = ObjectID.createFromHexString(userInfo._id);
+    var userQuery = {
+        _id:   objId,
+        login: userInfo.login
+    };
+    
+    var updateQuery = {
+        $set: { fullName: userInfo.fullName, email: userInfo.email }
+    };
+    
+    
+    var handleDbIsConnected = function(db) {
+        var dbUsers = db.collection('Users');
+        
+        var options = {
+            fields: { password: 0 }
+        };
+
+        return dbUsers.findAndModify(userQuery, { login: 1 }, updateQuery, 
+            options,
+            function(error, result) {
+              if ( error || 0 == result.ok ) {
+                  // ERROR, not found
+                  return onError({
+                      error_code: 'DB.notFound',
+                      message: "Error updating user. Login not found."
+                  });
+              }
+              else {
+                  db.close();
+                  return onSuccess(result.value);
+              }
+          });
+    };
+    
+    
+    return MongoClient.connect(settings.get('db_url'), function(err, db) {
+        if ( err ) {
+            console.error('Unable to connect to MongoDB: ' + err);
+            return onError({
+                error_code: 'DB.open',
+                message: "Database connection error."
+            });
+        }
+        else {
+            return handleDbIsConnected(db);
+        }
+    });    
+}
+
+
 function deleteUserInDB(userInfo, onSuccess, onError) {
     var objId = ObjectID.createFromHexString(userInfo._id);
     var userQuery = {
@@ -230,7 +283,7 @@ function createUser(request, response) {
 
     var model = {
         login: request.body.data.login,
-        name: request.body.data.name,
+        fullName: request.body.data.fullName,
         email: (request.body.data.email) ? request.body.data.email : "",
         password: hashedPassword,
         groups: [ ]
@@ -273,8 +326,42 @@ function deleteUser(request, response) {
 }
 
 function updateUserInfo(request, response) {
-    return response.status(400).json({error: "TO IMPLEMENT"});
-};
+    var handleSuccessFn = function(result) {
+        var model = {
+            "user": result,
+            helpers: {}
+        };
+
+        response.status(200).json(model);
+    };
+
+    var handleErrorFn = function(err) {
+        console.error("Create User - Error: " + err);
+        var model = {
+            "error": err
+        };
+
+        response.status(400).json(model);
+    };
+
+    // Check request
+
+    var isJSON = request.body.dataType === 'application/json';
+
+    if ( ! isJSON ) {
+        return response.status(400).json({message: "Requète invalide"});
+    }
+
+    // Get information from request to build user
+
+    var model = {
+        _id: request.body.data._id,
+        login: request.body.data.login,
+        fullName: request.body.data.fullName,
+        email: (request.body.data.email) ? request.body.data.email : ""
+    };
+
+    return updateUserInDB(model, handleSuccessFn, handleErrorFn);};
     
     
 // ===== EXPORTED MODULE
