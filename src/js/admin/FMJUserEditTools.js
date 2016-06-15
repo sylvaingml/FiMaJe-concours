@@ -24,7 +24,7 @@ function FMJUserEditTools_updateFieldSuccess(input, valid) {
 
 // ===== EDITOR FOR LOGIN / NAME / EMAIL
 
-function FMJUserLoginEditor(uiElementPath, onValidityUpdate) {
+function FMJUserLoginEditor(uiElementPath, onValidityUpdate, initialValues) {
     // UI Binding
     
     this.loginFld = $(uiElementPath[ 'loginInput' ]);
@@ -32,6 +32,18 @@ function FMJUserLoginEditor(uiElementPath, onValidityUpdate) {
     this.emailFld = $(uiElementPath[ 'emailInput' ]);
     
     this.onValidityUpdate = onValidityUpdate;
+    
+    // Prefill
+    
+    if ( initialValues && initialValues.login ) {
+        this.loginFld.val(initialValues.login);
+    }
+    if ( initialValues && initialValues.name ) {
+        this.nameFld.val(initialValues.name);
+    }
+    if ( initialValues && initialValues.email ) {
+        this.emailFld.val(initialValues.email);
+    }
     
     // Validators
 

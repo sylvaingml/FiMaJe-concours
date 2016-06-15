@@ -79,11 +79,11 @@
                 Actions
               </button>
               <div class="dropdown-menu">
-                <button type="button" class="dropdown-item" onclick="userAdmin.showInfoEditor('{{_id}}');">Éditer les informations</button>
-                <button type="button" class="dropdown-item" onclick="userAdmin.showGroupEditor('{{_id}}');">Éditer les groupes</button>
-                <button type="button" class="dropdown-item" onclick="userAdmin.showPasswordEditor('{{_id}}');">Modifier le mot de passe</button>
+                <button type="button" class="dropdown-item" onclick="userAdmin.showInfoEditor('{{_id}}', '{{escape login}}', '{{escape fullName}}', '{{escape email}}');">Éditer les informations</button>
+                <button type="button" class="dropdown-item" onclick="userAdmin.showGroupEditor('{{this}}');">Éditer les groupes</button>
+                <button type="button" class="dropdown-item" onclick="userAdmin.showPasswordEditor('{{_id}}', '{{escape login}}');">Modifier le mot de passe</button>
                 <div class="dropdown-divider"></div>
-                <button type="button" class="dropdown-item" onclick="userAdmin.askDeletion('{{_id}}', '{{login}}', '{{fullName}}');">Supprimer</button>
+                <button type="button" class="dropdown-item" onclick="userAdmin.askDeletion('{{_id}}', '{{escape login}}', '{{escape fullName}}');">Supprimer</button>
               </div>
             </div>
           </td>
@@ -114,37 +114,8 @@
 
 
 {{!-- MODAL FOR INFORMATION EDITOR --}}
+{{> admin/modal-user-info-edit this }}
 
-<div id="userInfoEditor" class="modal fade">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Modifier les informations de <var class="fmj-edit-login">LOGIN</var></h4>
-      </div>
-
-      <div class="modal-body">
-        <form>
-
-          <fieldset class="form-group">
-            <label for="fullName">Nom complet</label>
-            <input type="text" class="form-control" id="fullName" placeholder="Saisir ici le nom et le prénom">
-          </fieldset>
-
-          <fieldset class="form-group">
-            <label for="email">Adresse email</label>
-            <input type="email" class="form-control" id="email" placeholder="Saisir ici l'adresse courriel de cet utilisateur">
-          </fieldset>
-
-        </form>
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-        <button type="button" class="btn btn-primary">Valider</button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
 
 {{!-- MODAL FOR PASSWORD EDITOR --}}
 

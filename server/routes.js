@@ -79,6 +79,9 @@ module.exports = function(app)
     // Validate a user's deletion
     router.post('/api/admin/delete-user', enterAsGod, adminUsers.delete_user);
     
+    // Validate a user's info update (name and email only)
+    router.post('/api/admin/update-user', enterAsGod, adminUsers.update_user_info);
+    
     
     // ===== Manage Contest
 

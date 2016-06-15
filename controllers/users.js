@@ -167,7 +167,11 @@ function getUserList(request, response) {
     var handleSuccessFn = function(users) {
         var model = {
             "users": users,
-            helpers: {}
+            helpers: {
+                escape: function(input) {
+                    return escape(input);
+                }
+            }
         };
         response.render('admin/user-list.handlebars', model);
     };
@@ -268,6 +272,11 @@ function deleteUser(request, response) {
     return deleteUserInDB(model, handleSuccessFn, handleErrorFn);
 }
 
+function updateUserInfo(request, response) {
+    return response.status(400).json({error: "TO IMPLEMENT"});
+};
+    
+    
 // ===== EXPORTED MODULE
 
 
@@ -275,7 +284,8 @@ module.exports = {
     index: getUserList,
     add_user: askForNewUser,
     add_user_confirmed: createUser,
-    delete_user: deleteUser
+    delete_user: deleteUser,
+    update_user_info: updateUserInfo
 };
 
     

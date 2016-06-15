@@ -1,0 +1,33 @@
+<div id="userInfoEditor" class="modal fade">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Modifier les informations de <var class="fmj-login">LOGIN</var></h4>
+      </div>
+
+      <div class="modal-body">
+        <p class="alert alert-warning" hidden="hidden" >
+          Impossible de modifier les informations de cet utilisateur pour l'instant.
+          Réessayez dans quelques instants.
+        </p>
+
+        <form>
+          <fieldset class="form-group">
+            <label for="fullName">Nom complet&nbsp;:</label>
+            <input type="text" class="form-control" id="fullName" placeholder="Saisir ici le nom et le prénom">
+          </fieldset>
+
+          <fieldset class="form-group">
+            <label for="email">Adresse email&nbsp;:</label>
+            <input type="email" class="form-control" id="email" placeholder="Saisir ici l'adresse courriel de cet utilisateur">
+          </fieldset>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+        <button type="submit" class="btn btn-primary">Valider</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
