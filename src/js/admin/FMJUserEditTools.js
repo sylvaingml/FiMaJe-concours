@@ -67,12 +67,24 @@ FMJUserLoginEditor.prototype.getLogin = function() {
     return this.loginFld.val();
 };
 
+FMJUserLoginEditor.prototype.setLogin = function(value) {
+    this.loginFld.val(value);
+};
+
 FMJUserLoginEditor.prototype.getName = function() {
     return this.nameFld.val();
 };
 
+FMJUserLoginEditor.prototype.setName = function(value) {
+    this.nameFld.val(value);
+};
+
 FMJUserLoginEditor.prototype.getEmail = function() {
     return this.emailFld.val();
+};
+
+FMJUserLoginEditor.prototype.setEmail = function(value) {
+    this.emailFld.val(value);
 };
 
 FMJUserLoginEditor.prototype.clearForm = function() {

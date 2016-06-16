@@ -95,15 +95,16 @@
 
     <hr>
 
-    <div class="row hidden-print">
-      <div class="col-xs-12 col-md-6">
-        <a class="btn btn-success-outline btn-sm" href="/admin/add-user">Ajouter un utilisateur</a>
-      </div>
-      <div class="col-xs-12 col-md-6 text-md-right">
-        <button class="btn btn-primary-outline btn-sm" type="button" onclick="javascript: print()">Imprimer...</button>              
+    <div class="container hidden-print">
+      <div class="row">
+        <div class="col-xs-12 col-md-6">
+          <a class="btn btn-success-outline btn-sm" href="/admin/add-user">Ajouter un utilisateur</a>
+        </div>
+        <div class="col-xs-12 col-md-6 text-md-right">
+          <button class="btn btn-primary-outline btn-sm" type="button" onclick="javascript: print()">Imprimer...</button>              
+        </div>
       </div>
     </div>
-
 
   </article>
 
@@ -118,36 +119,8 @@
 
 
 {{!-- MODAL FOR PASSWORD EDITOR --}}
+{{> admin/modal-user-password-edit this }}
 
-<div id="passwordEditor" class="modal fade">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Changer le mot de passe de <var class="fmj-password-login">LOGIN</var></h4>
-      </div>
-
-      <div class="modal-body">
-        <form>
-          <fieldset class="form-group">
-            <label for="password">Nouveau mot de passe&nbsp;:</label>
-            <input type="password" class="form-control" id="password" value="" >
-          </fieldset>
-
-          <fieldset class="form-group">
-            <label for="passwordConfirmation">Confirmez ce mot de passe&nbsp;:</label>
-            <input type="password" class="form-control" id="passwordConfirmation" value="" >
-          </fieldset>
-
-        </form>
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-        <button type="button" class="btn btn-primary">Valider</button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
 
 {{!-- MODAL FOR DELETION --}}
 {{> admin/modal-user-delete this }}

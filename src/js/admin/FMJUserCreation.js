@@ -66,9 +66,9 @@ function FMJUserCreation() {
 
 FMJUserCreation.prototype.onSubmit = function() {
     var userProfile = {
-        login: this.infoEditor.getLogin(),
-        name: this.infoEditor.getName(),
-        email: this.infoEditor.getEmail(),
+        login:    this.infoEditor.getLogin(),
+        fullName: this.infoEditor.getName(),
+        email:    this.infoEditor.getEmail(),
         
         password: this.passwordEditor.getPassword()
     };
