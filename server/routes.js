@@ -82,6 +82,9 @@ module.exports = function(app)
     // Validate a user's info update (name and email only)
     router.post('/api/admin/update-user', enterAsGod, adminUsers.update_user_info);
     
+    // Validate a user's password update
+    router.post('/api/admin/update-user-password', enterAsGod, adminUsers.update_user_password);
+    
     
     // ===== Manage Contest
 

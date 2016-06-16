@@ -10,7 +10,13 @@
  */
 
 
-function FMJUserPasswordEdit() {
+function FMJUserPasswordEdit(modalId, successCallback) {
+    // Modal DOM objecty
+    this.modal = $('#'+modalId);
+    
+    // To be called when action will succeed (if ever)
+    this.successCallback = successCallback;
+
     var me = this;
 
     // UI Binding
@@ -23,6 +29,7 @@ function FMJUserPasswordEdit() {
         me.updateSubmitButton(me.checkIsSubmitAllowed());
     } );
     
+    this.loginVar  = $('var.fmj-login');
     this.cancelBtn = $('#passwordEditor button[name=cancel]');
     this.submitBtn = $('#passwordEditor button[type=submit]');
     
@@ -44,33 +51,87 @@ function FMJUserPasswordEdit() {
         event.preventDefault();
         event.stopPropagation();
 
-        me.onSubmit();
+        me.prepareRequest();
     });
     
     this.checkIsSubmitAllowed(false);
 }
 
+
+// ===== MODAL MANAGEMENT
+
+
+FMJUserPasswordEdit.prototype.showEditor = function(user) {
+    this.user = user;
+    
+    var me = this;
+    
+    var modalVisible = function() {
+        me.editorReady();
+    };
+    
+    var modalHidding = function() {
+        me.editorDismissed();  
+    };
+
+    this.modal.one("show.bs.modal", modalVisible);
+    this.modal.one("hidden.bs.modal", modalHidding);
+
+    this.modal.modal('show');
+};
+
+
+/** When modal is visible, update the UI content and setup listeners.
+ * 
+ * @returns {undefined}
+ */
+FMJUserPasswordEdit.prototype.editorReady = function() {
+    var me = this;
+    
+    // UI Updates and additional bindings
+    
+    this.loginVar.text(this.user.login);
+    this.alert.hide();
+    
+    this.updateSubmitButton(false);
+};
+
+
+/** When modal is closed, remove listeners and cleanup data.
+ * 
+ * @returns {undefined}
+ */
+FMJUserPasswordEdit.prototype.editorDismissed = function() {
+    this.submitBtn.off('click');
+    
+    this.user = {};
+};
+
+
 // ===== LISTENERS
 
 
-FMJUserPasswordEdit.prototype.onSubmit = function() {
+FMJUserPasswordEdit.prototype.prepareRequest = function() {
     var userProfile = {
-        _id: this.uid,
-        login: this.login,
+        _id:   this.user._id,
+        login: this.user.login,
         
-        password: this.passwordEditor.getPassword()
+        password: this.editor.getPassword()
     };
 
     // Block multiple submit, and give safe state on success.
     this.submitBtn.attr('disabled', 'disabled');
 
-    this.submitUserCreation(userProfile);
+    this.submitRequest(userProfile);
 };
 
-// ----- User Modification
+
+// ===== REQUEST SUBMISSION
+
 
 FMJUserPasswordEdit.prototype.userUpdateSuccess = function(profile) {
-    // TODO: hide modal, reload the page
+    this.modal.modal('hide');
+    this.successCallback();
 };
 
 FMJUserPasswordEdit.prototype.userUpdateFailed = function() {
@@ -79,8 +140,8 @@ FMJUserPasswordEdit.prototype.userUpdateFailed = function() {
     this.checkIsSubmitAllowed(true);
 };
 
-FMJUserPasswordEdit.prototype.submitUserUpdate = function(profile) {
-    var url = "/api/admin/change-password-user";
+FMJUserPasswordEdit.prototype.submitRequest = function(profile) {
+    var url = "/api/admin/update-user-password";
     var me = this;
 
     $.post(url, {
@@ -101,7 +162,7 @@ FMJUserPasswordEdit.prototype.checkIsSubmitAllowed = function() {
     // Make sure that all verification functions are called before combining
     // the results.
     //
-    var passwordOk = this.passwordEditor.checkPasswordValues();
+    var passwordOk = this.editor.checkPasswordValues();
 
     return passwordOk;
 };

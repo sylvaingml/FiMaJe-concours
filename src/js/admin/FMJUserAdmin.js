@@ -18,11 +18,9 @@ function FMJUserAdmin() {
     
     // UI Bindings
 
-    this.userInfoEditModal = new FMJUserInfoEdit('userInfoEditor', genericSuccessCallback);
-    
-    this.passwordEditorModal = $('#passwordEditor');
-    
-    this.deleteConfirmModal = new FMJUserDelete('deleteConfirm', genericSuccessCallback);
+    this.userInfoEditModal   = new FMJUserInfoEdit('userInfoEditor', genericSuccessCallback);
+    this.passwordEditorModal = new FMJUserPasswordEdit('passwordEditor', genericSuccessCallback);
+    this.deleteConfirmModal  = new FMJUserDelete('deleteConfirm', genericSuccessCallback);
 }
 
 FMJUserAdmin.prototype.refreshContent = function() {
@@ -49,9 +47,13 @@ FMJUserAdmin.prototype.showInfoEditor = function(uid, login, name, email) {
 
 // ----- UPDATE PASSWORD UPDATE
 
-FMJUserAdmin.prototype.showPasswordEditor = function(uid) {
-    this.passwordEditorModal.modal('show');
-
+FMJUserAdmin.prototype.showPasswordEditor = function(uid, login) {
+    var user = {
+        _id:   uid, 
+        login: unescape(login)
+    };
+    
+    this.passwordEditorModal.showEditor(user);
 };
 
 /** Public API to call to delete a user.
