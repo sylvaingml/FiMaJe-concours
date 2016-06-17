@@ -54,6 +54,10 @@ module.exports = {
             });
             
             model.userInfo.registerDateDisplay = displayDate;
+
+            model.categoryItems = createItemListPerCategory(model.items);
+
+
             
             // Add some helpers
             
@@ -188,9 +192,10 @@ module.exports = {
                 "accessKey": data.ops[0].userInfo.accessKey,
                 "registerDate": data.ops[0].userInfo.registerDate
             };
+            
+            model.categoryItems = createItemListPerCategory(data.ops[0].items);
+
             response.status(200).json(model);
-            // TODO: render a response page
-            //response.render('register_confirmation.handlebars', model);
         };
 
         var handleErrorFn = function(err)
@@ -346,4 +351,22 @@ function findAllUserSubmission(onSuccessFn, onErrorFn)
             });
         }
     });
+}
+
+
+function createItemListPerCategory(itemList) {
+    var categoryItems = {};
+    
+    for ( var index = 0 ; index < itemList.length ; ++index ) {
+        var category = itemList[ index ].categoryCode;
+        var name = itemList[ index ].name;
+        
+        if ( !categoryItems[ category ] ) {
+            categoryItems[ category ] = [];
+        }
+        
+        categoryItems[ category ].push(name);
+    }
+    
+    return categoryItems;
 }

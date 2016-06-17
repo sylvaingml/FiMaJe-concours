@@ -19,29 +19,29 @@
             <h3>Informations personnelles</h3>
 
             <div class="row">
-              <div class="col-xs-4 text-xs-right">Nom/Prénom&nbsp;:</div>
-              <div class="col-xs-8">
+              <div class="fmj-label col-xs-4 text-xs-right">Nom/Prénom&nbsp;:</div>
+              <div class="fmj-value col-xs-8">
                 {{ userInfo.firstName }} {{ userInfo.lastName }}
               </div>
             </div>
 
             <div class="row">
-              <div class="col-xs-4 text-xs-right">Email&nbsp;:</div>
-              <div class="col-xs-8">
+              <div class="fmj-label col-xs-4 text-xs-right">Email&nbsp;:</div>
+              <div class="fmj-value col-xs-8">
                 {{ userInfo.email }}
               </div>
             </div>
 
             <div class="row">
-              <div class="col-xs-4 text-xs-right">Téléphone&nbsp;:</div>
-              <div class="col-xs-8">
+              <div class="fmj-label col-xs-4 text-xs-right">Téléphone&nbsp;:</div>
+              <div class="fmj-value col-xs-8">
                 {{ userInfo.phone }}
               </div>
             </div>
 
             <div class="row">
-              <div class="col-xs-4 text-xs-right">Club&nbsp;:</div>
-              <div class="col-xs-8">
+              <div class="fmj-label col-xs-4 text-xs-right">Club&nbsp;:</div>
+              <div class="fmj-value col-xs-8">
                 {{ userInfo.club }}
               </div>
             </div>
@@ -54,19 +54,19 @@
             <h3>Détails de l'inscription</h3>
 
             <div class="row">
-              <div class="col-xs-4 text-xs-right">
+              <div class="fmj-label col-xs-4 text-xs-right">
                 Date d'inscription&nbsp;:
               </div>
-              <div class="col-xs-8">
+              <div class="fmj-value col-xs-8">
                 {{ userInfo.registerDateDisplay }}
               </div>
             </div>
 
             <div class="row">
-              <div class="col-xs-4 text-xs-right">
+              <div class="fmj-label col-xs-4 text-xs-right">
                 Clé d'accès&nbsp;:
               </div>
-              <div class="col-xs-8">
+              <div class="fmj-value col-xs-8">
                 {{ userInfo.accessKey }}
               </div>
             </div>
@@ -100,9 +100,51 @@
     </table>
 
   </article>
+  
+  {{!-- PRINTABLE SUMMARY FOR DISPLAYS --}}
+  
+  <hr class="cut-here">
+  
+  <article>
+        
+        {{#each categoryItems}}
+        <div class="card fmj-sticker" >
+          <div class="card-header">
+            <div class="row">
+              <div class="fmj-code col-xs-2">
+                {{ @key }}
+              </div>
+              <div class="fmj-category col-xs-10 text-xs-right">
+                {{ category_name @key }}<br>
+                {{ category_group @key }}
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-block">
+            {{#each this}}
+              {{#if true}}
+              <dl>
+                <dt>{{row_number @index}}</dt>
+                <dd>{{this}}</dd> 
+              </dl>
+              {{/if}}
+            {{/each}}
+          </div>
+          
+          <div class="card-footer">
+            N°&nbsp;: {{ ../userInfo.accessKey }}
+          </div>
+        </div>
+        {{/each}}
+        
+  </article>
+      
 
-  <div class="text-xs-right hidden-print">
+  <div class="text-xs-right hidden-print m-t-3">
     <button class="btn btn-info-outline btn-sm" type="button" onclick="javascript: print()">Imprimer...</button>
   </div>
 
-  {{> page-footer this }}
+</section>
+
+{{> page-footer this }}

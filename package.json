@@ -20,6 +20,7 @@
     "errorhandler": "^1.4.3",
     "express": "^4.13.4",
     "express-handlebars": "^3.0.0",
+    "express-pdf": "^1.2.2",
     "handlebars": "^4.0.5",
     "jquery": "^2.2.4",
     "method-override": "^2.3.6",
