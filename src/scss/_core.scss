@@ -81,7 +81,8 @@ article.fmj-stickers {
 
     .card-block {
         dl {
-            display: block;
+            display:    block;
+            text-align: left;
             
             dt, 
             dd {
@@ -107,6 +108,13 @@ article.fmj-stickers {
         border-radius:    0pt;
         border-top:       1pt #323232 solid;
         background-color: #f0f0f0;
+        
+        .fmj-id {
+            font-style:  normal;
+            font-weight: bold;
+            font-size:   16px;
+            font-stretch: expanded;
+        }
     }
 }
 

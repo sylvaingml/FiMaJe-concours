@@ -107,6 +107,12 @@
   
   <article class="fmj-stickers">
         
+    <p class="m-t-2 m-b-3 text-xs-left">
+      Merci d'imprimer cette page sur papier blanc. Les étiquettes ci-dessous seront 
+      <em>indispensables</em>
+      lors de l'enregistrement des pièces.
+    </p>
+    
         {{#each categoryItems}}
         <div class="card fmj-sticker" >
           <div class="card-header">
@@ -116,7 +122,7 @@
               </div>
               <div class="fmj-category col-xs-10 text-xs-right">
                 {{ category_name @key }}<br>
-                {{ category_group @key }}
+                <small>{{ category_group @key }}</small>
               </div>
             </div>
           </div>
@@ -133,7 +139,7 @@
           </div>
           
           <div class="card-footer">
-            N°&nbsp;: {{ ../userInfo.accessKey }}
+            N°&nbsp;: <var class="fmj-id">{{ ../userInfo.accessKey }}</var>
           </div>
         </div>
         {{/each}}
