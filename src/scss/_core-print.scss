@@ -15,6 +15,8 @@
 
 @media print {
     body {
+        position: relative;
+        
         width: 210mm;
         height: 297mm;
         
@@ -47,6 +49,13 @@
             padding: 0mm;
             margin:  0mm;
         }
+    }
+    
+    footer {
+        position: absolute;
+        bottom:   0mm;
+        left:     0mm;
+        right:    0mm;
     }
     
     h2 {
@@ -100,16 +109,3 @@
         }
     }
 }
-
-
-@media XXprint {
-    .fmj-sticker {
-        width:      80mm;
-        min-height: 70mm;
-        
-        margin: 10mm 10mm 10mm 0mm;
-    }
-    
-}
-
-

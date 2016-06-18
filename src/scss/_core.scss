@@ -13,6 +13,7 @@
     Author     : Sylvain Gamel <contact@SylvainGamel.fr>
 */
 
+
 // ===== FORMS
 
 label {
@@ -47,6 +48,15 @@ thead th .row {
 
 
 // ===== CONTEST REGISTRATION SHEET
+
+article.fmj-stickers {
+    text-align: center;
+    
+    .fmj-sticker:last-child {
+        margin-right: 0px;
+    }
+}
+
 
 .card.fmj-sticker {
     display: inline-block;
