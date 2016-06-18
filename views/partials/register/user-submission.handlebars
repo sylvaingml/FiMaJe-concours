@@ -12,7 +12,7 @@
         <a target="_blank" href="http://lacompagniedestrolls.jimdo.com/app/download/6137663461/2015+FIMAJE+REGLEMENT+DU+CONCOURS.pdf?t=1446021764">cette adresse</a>.
       </p>
     </div>
-    <div class="card-block text-xs-right">
+    <div class="card-block fmj-action-bar text-xs-right">
       <button class="btn btn-primary btn-lg" name="register" type="submit" disabled="disabled">Valider mon inscription</button>
     </div>
   </div>                    
@@ -24,26 +24,37 @@
   <div class="card-header">
     <h2 class="card-title">Vos références</h2>
   </div>
-  
+
   <div class="card-block">
     <div class="row">
-      <span class='col-xs-6 col-md-3'>email&nbsp;:</span>
-      <span class='col-xs-6 col-md-3'><var id="registeredEmail"></var></span>
-      
-      <span class='col-xs-6 col-md-3'>code d'accès&nbsp;:</span>
-      <span class='col-xs-6 col-md-3'><var id="accessKey"></var></span>
+      <span class='col-xs-12 col-sm-6 col-md-3'>email&nbsp;:</span>
+      <span class='col-xs-12 col-sm-6 col-md-3'><var id="registeredEmail" class="registeredEmail"></var></span>
+
+      <span class='col-xs-12 col-sm-6 col-md-3'>code d'accès&nbsp;:</span>
+      <span class='col-xs-12 col-sm-6 col-md-3'><var id="accessKey" class="accessKey"></var></span>
     </div>
   </div>
-  
+
   <div class="card-block">
     <blockquote class="card-blockquote">
-      Merci d'imprimez ce formulaire.
-      Une copie physique vous sera demandée sur place au moment de 
-      l'enregistrement des pièces.
+      <p>Votre inscription est enregistrée.</p>
+      <p class="alert alert-warning">
+        Conservez ces références, elles vous sont indispensables pour
+        retrouver votre fiche d'inscription.
+      </p>
+      <p>
+        Une copie papier vous sera demandée sur place au moment de 
+        l'enregistrement des pièces.
+      </p>
     </blockquote>
   </div>
-  
-  <div class="card-footer text-xs-right">
-    <button class="btn btn-info-outline btn-sm" type="button" onclick="javascript: print()">Imprimer...</button>
+
+  <div class="card-footer fmj-action-bar text-xs-right ">
+    <form action="/registration-details" method="POST" >
+      <input class="registeredEmail" type="hidden" name="email" value="">
+      <input class="accessKey" type="hidden" name="accessKey" value="">
+
+      <button class="btn btn-primary btn-lg" type="submit">Afficher et imprimer<br>votre bon d'inscription...</button>
+    </form>
   </div>
 </div>                    

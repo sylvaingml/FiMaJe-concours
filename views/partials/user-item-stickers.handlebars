@@ -1,0 +1,45 @@
+{{#if categoryItems}}
+
+<article class="fmj-stickers">
+  <hr class="cut-here">
+
+
+  <p class="m-t-2 m-b-3 text-xs-left">
+    Merci d'imprimer cette page sur papier blanc. Les étiquettes ci-dessous seront 
+    <em>indispensables</em>
+    lors de l'enregistrement des pièces.
+  </p>
+
+  {{#each categoryItems}}
+  <div class="card fmj-sticker" >
+    <div class="card-header">
+      <div class="row">
+        <div class="fmj-code col-xs-2">
+          {{ @key }}
+        </div>
+        <div class="fmj-category col-xs-10 text-xs-right">
+          {{ category_name @key }}<br>
+          <small>{{ category_group @key }}</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-block">
+      {{#each this}}
+      {{#if true}}
+      <dl>
+        <dt>{{row_number @index}}</dt>
+        <dd>{{this}}</dd> 
+      </dl>
+      {{/if}}
+      {{/each}}
+    </div>
+
+    <div class="card-footer">
+      N°&nbsp;: <var class="fmj-id">{{ ../userInfo.accessKey }}</var>
+    </div>
+  </div>
+  {{/each}}
+
+</article>
+{{/if}}

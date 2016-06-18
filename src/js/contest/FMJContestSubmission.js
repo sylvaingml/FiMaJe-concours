@@ -21,8 +21,11 @@ function FMJContestSubmission()
   this.validateBtn = $( 'button[name=register]' );
   
   this.successInfo        = $( '#success-info' );
+  // We are using classes as we have both displayed values and hidden inputs
   this.registeredEmailVar = $( '#registeredEmail' );
   this.accessKeyVar       = $( '#accessKey' );
+  this.registeredEmailHidden = $( '.registeredEmail' );
+  this.accessKeyHidden       = $( '.accessKey' );
 
   // Related forms
 
@@ -45,8 +48,6 @@ function FMJContestSubmission()
   
   this.validateBtn.on('click', function() {
     me.validateBtn.prop("disabled", true ); // Ensure we do not double submit
-    
-    console.log("SUBMIT!");
     me.sendUserSubmission();
   });
   
@@ -90,14 +91,18 @@ FMJContestSubmission.prototype.sendUserSubmission = function() {
 };
 
 
+
 FMJContestSubmission.prototype.handleSubmissionSucceed = function(response) {
     // Hide non-relevant information
     $('.fmj-hide-on-success').hide();
     
     // Update information and show them
-    this.registeredEmailVar.html(response[ 'userEmail' ])
+    this.registeredEmailVar.html(response[ 'userEmail' ]);
     this.accessKeyVar.html(response[ 'accessKey' ]);
-    
+
+    this.registeredEmailHidden.val(response[ 'userEmail' ]);
+    this.accessKeyHidden.val(response[ 'accessKey' ]);
+
     this.successInfo.removeAttr('hidden');
 };
 
