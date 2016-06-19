@@ -24,6 +24,17 @@ header {
     }
 }
 
+// ===== FOOTER
+
+.nav-item {
+    .nav-link,
+    .nav-sep {
+        display: block;
+        padding-top:    .425rem;
+        padding-bottom: .425rem;
+    }
+}
+
 // ===== FORMS
 
 label {
