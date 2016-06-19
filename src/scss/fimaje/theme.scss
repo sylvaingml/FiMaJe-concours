@@ -1,0 +1,130 @@
+/*
+ FiMaJe, gestion du concours
+
+ Creative Commons 
+ Attribution - Pas d’Utilisation Commerciale 3.0 France 
+ http://creativecommons.org/licenses/by-nc/3.0/fr/
+
+ Auteurs: Sylvain Gamel, club « La Compagnie des Trolls » Antibes, France
+
+*/
+/* 
+    Created on : 19 juin 2016, 19:45:13
+    Author     : Sylvain Gamel <contact@SylvainGamel.fr>
+*/
+
+$fmjColors: (
+paper:       #FFF5D0,
+paper-light: #FFFBED,
+
+paper-table:     #FFFEFA,
+paper-table-odd: #F7F6F0,
+
+invertedPaper: #7D4100,
+invertedText: #FFF5D0,
+
+outline: #2F160F,
+
+link:         #8D1008,
+link-visited: #DB190B,
+link-active:  #FC9C00,
+
+card-header-bg: #F3EAC6,
+card-footer-bg: #F3EAC6,
+card-border:    #7F5400,
+
+title:       #7D4100,
+title-muted: #7D5F3F
+);
+
+@media screen {
+    body {
+        background-color: map_get($fmjColors, paper);
+    }
+
+    header {
+
+        img {
+            border: 1px solid map_get($fmjColors, outline);
+        }
+        
+        h1 {
+            color: map_get($fmjColors, title);
+            
+            .text-muted {
+                color: map_get($fmjColors, title-muted);
+            }
+        }
+    }
+
+    footer {
+
+        .bg-inverse {
+            background-color: map_get($fmjColors, outline);
+            border-color: map_get($fmjColors, outline);
+            color: map_get($fmjColors, paper);
+        }
+    }
+
+
+    a {
+        color: map_get($fmjColors, link);
+
+        &:hover,
+            &:active,
+            &:focus {
+            color: map_get($fmjColors, link-active);
+        }
+
+        &:visited {
+            color: map_get($fmjColors, link-visited);
+        }
+    }
+
+    // ===== TABLES
+    
+    table.table.table-striped {
+        background-color: map_get($fmjColors, paper-table);
+        
+        tbody tr:nth-of-type(odd) {
+            background-color: map_get($fmjColors, paper-table-odd);
+        }
+    }
+    
+    // ===== PAGE CARDS
+
+    .card {
+        .card-header {
+            background-color: map_get($fmjColors, card-header-bg);
+        }
+
+        .card-footer {
+            background-color: map_get($fmjColors, card-footer-bg);
+        }
+
+        &,
+        .card-header,
+        .card-footer {
+            border-color: map_get($fmjColors, card-border);
+        }
+
+        &,
+        .card-block {
+            background-color: map_get($fmjColors, paper-light);
+        }
+
+        .card-block {
+            border-radius: inherit;
+        }
+    }
+
+    .card.card-inverse {
+        
+        &,
+        .card-block {
+            background-color: map_get($fmjColors, outline);
+            border-color: map_get($fmjColors, outline);
+            color: map_get($fmjColors, paper);
+        }
+    }
+}
