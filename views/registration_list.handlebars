@@ -29,7 +29,14 @@
             {{row_number @index}}
           </th>
           <td>
-            <div>{{ userInfo.accessKey }}</div>
+            <div>
+              <form action="/registration-details" method="POST" >
+                <input class="registeredEmail" type="hidden" name="email" value="{{ userInfo.email }}">
+                <input class="accessKey" type="hidden" name="accessKey" value="{{ userInfo.accessKey }}">
+
+                <button class="btn btn-link btn-sm" type="submit" title="Voir la fiche d'enregistrement...">{{ userInfo.accessKey }}</button>
+              </form>
+            </div>
             <div>{{ format_date userInfo.registerDate pattern="ddd DD MMMM" }}</div>
           </td>
           <td>
