@@ -79,11 +79,23 @@
                 Actions
               </button>
               <div class="dropdown-menu">
-                <button type="button" class="dropdown-item" onclick="userAdmin.showInfoEditor('{{_id}}', '{{escape login}}', '{{escape fullName}}', '{{escape email}}');">Éditer les informations</button>
-                <button type="button" class="dropdown-item" onclick="userAdmin.showGroupEditor('{{this}}');">Éditer les groupes</button>
-                <button type="button" class="dropdown-item" onclick="userAdmin.showPasswordEditor('{{_id}}', '{{escape login}}');">Modifier le mot de passe</button>
+                <button type="button" class="dropdown-item" onclick="userAdmin.showInfoEditor('{{_id}}', '{{escape login}}', '{{escape fullName}}', '{{escape email}}');">
+                  <i class="fa fa-user" aria-hidden="true"></i>
+                  Éditer les informations
+                </button>
+                <button type="button" class="dropdown-item" onclick="userAdmin.showGroupEditor('{{this}}');">
+                  <i class="fa fa-group" aria-hidden="true"></i>
+                  Éditer les groupes
+                </button>
+                <button type="button" class="dropdown-item" onclick="userAdmin.showPasswordEditor('{{_id}}', '{{escape login}}');">
+                  <i class="fa fa-user-secret" aria-hidden="true"></i>
+                  Modifier le mot de passe
+                </button>
                 <div class="dropdown-divider"></div>
-                <button type="button" class="dropdown-item" onclick="userAdmin.askDeletion('{{_id}}', '{{escape login}}', '{{escape fullName}}');">Supprimer</button>
+                <button type="button" class="dropdown-item" onclick="userAdmin.askDeletion('{{_id}}', '{{escape login}}', '{{escape fullName}}');">
+                  <i class="fa fa-trash-o" aria-hidden="true"></i>
+                  Supprimer
+                </button>
               </div>
             </div>
           </td>
@@ -98,10 +110,16 @@
     <div class="container hidden-print">
       <div class="row">
         <div class="col-xs-12 col-md-6">
-          <a class="btn btn-success-outline btn-sm" href="/admin/add-user">Ajouter un utilisateur</a>
+          <a class="btn btn-success-outline btn-sm" href="/admin/add-user">
+            <i class="fa fa-user-plus" aria-hidden="true"></i>
+            Ajouter un utilisateur
+          </a>
         </div>
         <div class="col-xs-12 col-md-6 text-md-right">
-          <button class="btn btn-primary-outline btn-sm" type="button" onclick="javascript: print()">Imprimer...</button>              
+          <button class="btn btn-primary-outline btn-sm" type="button" onclick="javascript: print()">
+            <i class="fa fa-print" aria-hidden="true"></i>
+            Imprimer...
+          </button>              
         </div>
       </div>
     </div>

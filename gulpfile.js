@@ -15,9 +15,11 @@ var target_dir = "./public";
 
 var source_js  = "./src/js";
 var source_css = "./src/scss";
+var source_fa  = "./src/font-awesome";
 
-var destination_css = target_dir + "/css";
-var destination_js  = target_dir + "/js";
+var destination_css   = target_dir + "/css";
+var destination_js    = target_dir + "/js";
+var destination_fonts = target_dir + "/fonts";
 
 var karmaConf = "karma.conf.js"
 
@@ -36,10 +38,25 @@ var copy = require('gulp-copy');
 
 // ===== DEFAULT TASK
 
-
 gulp.task('default', [ 'clean', 'build' ]);
 
 // ===== CSS
+
+gulp.task('fontawesome-css', function () {
+  return gulp.src([
+      source_fa + '/css/**.css'
+  ])
+    .pipe(gulp.dest(destination_css));
+});
+
+gulp.task('fontawesome-fonts', function () {
+  return gulp.src([
+      source_fa + '/fonts/*'
+  ])
+    .pipe(gulp.dest(destination_fonts));
+});
+
+gulp.task('fontawesome', [ "fontawesome-css", "fontawesome-fonts" ]);
 
 gulp.task('css-libs', function () {
   return gulp.src([
@@ -119,7 +136,7 @@ var UTServer = require('karma').Server;
 gulp.task('karma', function(done) {
   new UTServer({
     configFile: __dirname + "/" + karmaConf,
-    singleRun: false,
+    singleRun: false
   }, done).start();
 });
 
