@@ -1,0 +1,69 @@
+{{> page-header this }}
+
+<div class="alert alert-warning">
+  <p class="lead">
+    Espace réservé aux juges.
+  </p>
+</div>
+
+<section>
+
+  <header>
+
+    <h2>Fiches de notation</h2>
+
+  </header>
+
+  {{#each categories}}
+  <h3>{{group}}, {{label}} [{{code}}]</h3>
+
+  <article>
+    <table class="table table-striped">
+      <thead class="thead-inverse">
+        <tr>
+          <th>Noté</th>
+          <th>Display</th>
+          <th>Votre note</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {{#each submitted}}
+        <tr>
+          <td>
+
+          </td>
+
+          <td>
+            <div class="row">
+              <span class="col-xs-3">
+                <var class="">{{userInfo.accessKey}}</var>
+              </span>
+              <span class="col-xs-9">
+                <ul>
+                  {{#each items}}
+                  <li>{{name}} [{{categoryCode}}]</li>
+                  {{/each}}
+                </ul>
+              </span>
+            </div>
+          </td>
+
+          <td>
+            <select name="note" class="form-control form-control-lg" >
+              {{#each ../../notes}}
+              <option value="{{this}}">{{this}}</option>
+              {{/each}}
+            </select>
+          </td>
+        </tr>
+        {{/each}}
+
+      </tbody>
+    </table>
+  </article>
+  {{/each}}
+
+</section>
+
+{{> page-footer this }}

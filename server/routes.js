@@ -18,6 +18,7 @@ var admin = require('../controllers/admin');
 var adminUsers = require('../controllers/users');
 var categories = require('../controllers/categories');
 var register = require('../controllers/register');
+var contest = require('../controllers/contest');
 
 var authentification = require('../controllers/authentification');
 
@@ -62,6 +63,10 @@ module.exports = function(app)
         return authentification.authenticate('god', req, res, next);
     };
     
+    var enterAsElfOrBetter = function(req, res, next) {
+        return authentification.authenticate(['god', 'wizard', 'elf'], req, res, next);
+    };
+    
     // Display the administration console
     router.get('/admin', enterAsGod, admin.index);
 
@@ -90,6 +95,11 @@ module.exports = function(app)
 
     // Display the registration search
     router.get('/admin/registration', enterAsGod, register.get_all);
+
+    // ===== Contest 
+
+    // Display the registration search
+    router.get('/contest', enterAsElfOrBetter, contest.get_notation_sheet);
 
     app.use(router);
 };
