@@ -11,6 +11,9 @@
 
 var settings = require('config');
 
+var basicAuth = require('basic-auth');
+
+
 
 var MongoClient = require('mongodb').MongoClient;
 var ObjectID = require('mongodb').ObjectID;
@@ -21,6 +24,39 @@ var authentification = require('./authentification');
 
 
 // ===== DATABASE QUERY
+
+function createContestInDB(model, onSuccess, onError) {
+        var handleDbIsConnected = function(db) {
+        var contests = db.collection('Contests');
+        
+        contests.insert(model, {}, function(err, result) {
+            if ( err ) {
+                return onError({
+                    error_code: 'DB.insert',
+                    message: "Error inserting contests."
+                });
+            }
+            else {
+                db.close();
+                return onSuccess(result);
+            }
+        });
+    };
+    
+    
+    return MongoClient.connect(settings.get('db_url'), function(err, db) {
+        if ( err ) {
+            console.error('Unable to connect to MongoDB: ' + err);
+            return onError({
+                error_code: 'DB.open',
+                message: "Database connection error."
+            });
+        }
+        else {
+            return handleDbIsConnected(db);
+        }
+    });
+}
 
 function findListOfItemsPerCategory(onSuccess, onError) {
     
@@ -112,7 +148,7 @@ function findListOfItemsPerCategory(onSuccess, onError) {
 }
 
 
-// ===== REQUEST HANDLERS
+// ===== HELPERS
 
 function buildListOfNotes() {
     var notes = [ ];
@@ -124,10 +160,66 @@ function buildListOfNotes() {
     return notes;
 }
 
+
+// ===== REQUEST HANDLERS
+
+
+function getActiveContest(request, response)
+{
+    // TODO
+}
+
+
+function getListOfContests(request, response)
+{
+    // TODO
+}
+
+function createContest(request, response)
+{
+    var handleSuccessFn = function(result) {
+        var model = {
+            "contest": result,
+            helpers: {}
+        };
+
+        response.status(200).json(model);
+    };
+
+    var handleErrorFn = function(err) {
+        console.error("Contest creation - Error: " + err);
+        var model = {
+            "error": err
+        };
+
+        response.status(400).json(model);
+    };
+
+    // Check request
+
+    var isJSON = request.body.dataType === 'application/json';
+
+    if ( ! isJSON ) {
+        return response.status(400).json({message: "Invalid request"});
+    }
+
+    var model = {
+        _id: request.body.data.contest_name,
+        active:       false,
+        creationDate: new Date(),
+        closeDate:    null
+    };
+
+    return createContestInDB(model, handleSuccessFn, handleErrorFn);
+}
+
 function getNotationSheet(request, response)
 {
+    var user = basicAuth(request);
+
     var handleSuccessFn = function(data) {
         var model = {
+            "user":       user.name,
             "categories": data,
             helpers: {}
         };
@@ -150,5 +242,8 @@ function getNotationSheet(request, response)
 
 
 module.exports = {
+    index:          getListOfContests,
+    create_contest: createContest,
+    
     get_notation_sheet: getNotationSheet
 };

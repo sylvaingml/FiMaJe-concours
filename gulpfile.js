@@ -108,18 +108,25 @@ gulp.task('copy-js-src-contest', function () {
   return gulp.src(source_js+'/contest/*.js')
     .pipe(concat('FiMaJe-contest.js'))
     .pipe(gulp.dest(destination_js));
-    //.pipe(copy(destination_js, { prefix: 3 }));
+});
+
+gulp.task('copy-js-src-contest-vote', function () {
+  return gulp.src(source_js+'/contest-vote/*.js')
+    .pipe(concat('FiMaJe-contest-vote.js'))
+    .pipe(gulp.dest(destination_js));
 });
 
 gulp.task('copy-js-src-admin', function () {
   return gulp.src(source_js+'/admin/*.js')
     .pipe(concat('FiMaJe-admin.js'))
     .pipe(gulp.dest(destination_js));
-    //.pipe(copy(destination_js, { prefix: 3 }));
 });
 
 
-gulp.task('build:javascript', [ 'js-libs', 'copy-js-src-contest', 'copy-js-src-admin' ]);
+gulp.task('build:javascript', [ 
+    'js-libs', 
+    'copy-js-src-contest', 'copy-js-src-contest-vote', 'copy-js-src-admin' 
+]);
 
 
 gulp.task('clean:javascript', function () {

@@ -2,7 +2,7 @@
 
 <div class="alert alert-warning">
   <p class="lead">
-    Espace réservé aux juges.
+    <i class="fa fa-warning"></i> Espace réservé aux juges.
   </p>
 </div>
 
@@ -10,60 +10,94 @@
 
   <header>
 
-    <h2>Fiches de notation</h2>
+    <h2>Fiches de notation de {{user}}</h2>
 
   </header>
 
-  {{#each categories}}
-  <h3>{{group}}, {{label}} [{{code}}]</h3>
+<div class="alert alert-info">
+  <p>
+    Sélectionnez une catégorie pour voter sur chaque display en compétition.
+  </p>
+</div>
 
-  <article>
-    <table class="table table-striped">
-      <thead class="thead-inverse">
-        <tr>
-          <th>Noté</th>
-          <th>Display</th>
-          <th>Votre note</th>
-        </tr>
-      </thead>
+  <ul class="nav nav-pills nav-stacked m-t-2" role="tablist">
+    {{#each categories}}
+    <li class="nav-item">
+      <a data-toggle="tab" class="nav-link" href="#category_{{code}}" role="tab">
+        <div class="row">
+          <div class="col-xs-1 vote-status" data-category="{{code}}" >
+            <i class="vote-pending  fa fa-circle-o"></i>
+            <i class="vote-complete fa fa-check-circle"></i>
+          </div>
+          <div class="col-xs-1">{{code}}</div>
+          <div class="col-xs-7">{{label}}</div>
+          <div class="col-xs-3">{{group}}</div>
+        </div>
+      </a>
+    </li>  
+    {{/each}}
+  </ul>
 
-      <tbody>
-        {{#each submitted}}
-        <tr>
-          <td>
+  <div class="alert alert-info m-t-1 m-b-1">
+    <p>
+    Donnez une note à chaque display. Lorsque chaque display aura une note 
+    un cercle coché <i class="fa fa-check-circle"></i> sera indiqué en vis à vis 
+    de la catégorie.
+  </p>
+</div>
 
-          </td>
+  <div class="tab-content">
+    {{#each categories}}
+    <article id="category_{{code}}" class="tab-pane" role="tabpanel">
+      <table class="table table-striped">
+        <thead class="thead-inverse">
+          <tr>
+            <th>Display</th>
+            <th>Votre note</th>
+          </tr>
+        </thead>
 
-          <td>
-            <div class="row">
-              <span class="col-xs-3">
-                <var class="">{{userInfo.accessKey}}</var>
-              </span>
-              <span class="col-xs-9">
-                <ul>
-                  {{#each items}}
-                  <li>{{name}} [{{categoryCode}}]</li>
-                  {{/each}}
-                </ul>
-              </span>
-            </div>
-          </td>
+        <tbody>
+          {{#each submitted}}
+          <tr>
+            <td>
+              <div class="row">
+                <span class="col-xs-3">
+                  <var class="">{{userInfo.accessKey}}</var>
+                </span>
+                <span class="col-xs-9">
+                  <ul>
+                    {{#each items}}
+                    <li>{{name}} [{{categoryCode}}]</li>
+                    {{/each}}
+                  </ul>
+                </span>
+              </div>
+            </td>
 
-          <td>
-            <select name="note" class="form-control form-control-lg" >
-              {{#each ../../notes}}
-              <option value="{{this}}">{{this}}</option>
-              {{/each}}
-            </select>
-          </td>
-        </tr>
-        {{/each}}
+            <td>
+              <select name="note_{{../code}}_{{userInfo.accessKey}}" 
+                      data-category="{{../code}}" 
+                      data-display="{{userInfo.accessKey}}" 
+                      class="fmj-note form-control form-control-lg" >
+                <option value="" disabled="disabled" selected="selected">Choisir une note</option>
+                {{#each ../../notes}}
+                <option value="{{this}}">{{this}}</option>
+                {{/each}}
+              </select>
+            </td>
+          </tr>
+          {{/each}}
 
-      </tbody>
-    </table>
-  </article>
-  {{/each}}
+        </tbody>
+      </table>
+    </article>
+    {{/each}}
+  </div>
 
 </section>
 
 {{> page-footer this }}
+
+<script type="text/javascript" src="public/js/FiMaJe-contest-vote.js" ></script>
+
