@@ -9,70 +9,11 @@
  * 
  */
 
-function FMJDisplayNotes(displayId) {
-    this.displayId = displayId;
-    
-    this.voteDateTime = null;
-    this.note = null;
-}
 
-
-FMJDisplayNotes.prototype.hasNote = function() {
-    return (null !== this.voteDateTime);
-};
-
-
-FMJDisplayNotes.prototype.setNote = function(note) {
-    this.voteDateTime = new Date();
-    this.note = note;
-};
-
-
-// =====
-
-
-function FMJCategoryNotes(category) {
-    this.categoryCode = category;
-    
-    this.displayNotes = {};
-}
-
-
-FMJCategoryNotes.prototype.hasAllNotes = function() {
-    var full = true;
-    
-    var display = Object.keys(this.displayNotes);
-    for ( var index = 0 ; full && index < display.length ; ++index ) {
-        var displayId = display[index];
-        var note = this.displayNotes[ displayId ];
-        
-        full = full && (null !== note.voteDateTime);
-    }
-    
-    return full;
-};
-    
-    
-FMJCategoryNotes.prototype.setDisplayNote = function(display, note) {
-    if ( !this.displayNotes[ display ] ) {
-        this.displayNotes[ display ] = new FMJDisplayNotes(display);
-    }
-    
-    var noteRecord = this.displayNotes[ display ];
-    
-    if ( null !== note ) {
-       noteRecord.setNote(note);
-    }
-};
-
-
-// =====
-
-
-function FMJContestVoteSheet() {
+function FMJContestVoteSheet(contest, user) {
     this.bindUI();
 
-    this.buildInitialModel();
+    this.buildInitialModel(contest, user);
     this.bindEvents();
 }
 
@@ -80,8 +21,15 @@ function FMJContestVoteSheet() {
 
 FMJContestVoteSheet.prototype.bindUI = function() {
     // Find all note select input
-
     this.noteSelects = $('select.fmj-note');
+
+    // Manually submit vote to server
+    this.submitBtn = $('#submitVote');
+
+    // Hide alerts
+    $('.alert.alert-success').hide().removeAttr('hidden');
+    $('.alert.alert-warning').hide().removeAttr('hidden');
+
 };
 
 
@@ -92,14 +40,19 @@ FMJContestVoteSheet.prototype.bindEvents = function() {
     this.noteSelects.on('change', function(event) {
         me.didSelectNote(event);
     });
+    
+    this.submitBtn.on('click', function() {
+        me.submitAllVotes();
+    });
 };
 
 
 
-FMJContestVoteSheet.prototype.buildInitialModel = function() {
+FMJContestVoteSheet.prototype.buildInitialModel = function(contest, user) {
     // The model to be stored in DB
-    this.categoryVotes = {
-    };
+    this.categoryVotes = {};
+    this.contest = contest;
+    this.judge   = user;
 
     var me = this;
 
@@ -149,13 +102,62 @@ FMJContestVoteSheet.prototype.didSelectNote = function(event) {
 
 
 
-// =====
+FMJContestVoteSheet.prototype.submitAllVotes = function() {
+    this.submitBtn.prop('disabled', true);
+    
+    var url = "/api/contest/post-ballot";
+    var me = this;
+
+    var voteRecord = this.buildBallot();
+
+    console.log("MODEL", voteRecord);
+    
+    $.post(url, {
+        'dataType': "application/json",
+        'data': voteRecord
+    })
+      .done(function(data) {
+          me.ballotSaved(data);
+      })
+      .fail(function(error) {
+          me.ballotFailed();
+      })
+      .always(function() {
+          me.ballotProcessed();
+      });
+};
 
 
-var FMJVoteSheet;
+FMJContestVoteSheet.prototype.buildBallot = function() {
+    var notes = {};
+    
+    var categoryList = Object.keys(this.categoryVotes);
+    while ( categoryList.length > 0 ) {
+        var categoryCode = categoryList.shift();
+        notes[ categoryCode ] = this.categoryVotes[ categoryCode ].toJSON();
+    }
 
-// Create the main form
-$(function() {
-    FMJVoteSheet = new FMJContestVoteSheet();
-});
+    var voteRecord = {
+        contest: this.contest,
+        judge:   this.judge,
+        notes:   notes
+    };
+    
+    return voteRecord;
+};
+
+
+FMJContestVoteSheet.prototype.ballotSaved = function(response) {
+    $('.alert.alert-success').show();
+    $('.alert.alert-warning').hide();
+};
+
+FMJContestVoteSheet.prototype.ballotFailed = function() {
+    $('.alert.alert-success').hide();
+    $('.alert.alert-warning').show();
+};
+
+FMJContestVoteSheet.prototype.ballotProcessed = function() {
+    this.submitBtn.prop('disabled', false);
+};
 

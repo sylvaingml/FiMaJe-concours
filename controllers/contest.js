@@ -26,9 +26,9 @@ var authentification = require('./authentification');
 // ===== DATABASE QUERY
 
 function createContestInDB(model, onSuccess, onError) {
-        var handleDbIsConnected = function(db) {
+    var handleDbIsConnected = function(db) {
         var contests = db.collection('Contests');
-        
+
         contests.insert(model, {}, function(err, result) {
             if ( err ) {
                 return onError({
@@ -42,8 +42,8 @@ function createContestInDB(model, onSuccess, onError) {
             }
         });
     };
-    
-    
+
+
     return MongoClient.connect(settings.get('db_url'), function(err, db) {
         if ( err ) {
             console.error('Unable to connect to MongoDB: ' + err);
@@ -57,6 +57,70 @@ function createContestInDB(model, onSuccess, onError) {
         }
     });
 }
+
+
+function convertBallotToStorableForm(requestBallot)
+{
+    // We use a custom _id from contest and judge.
+    var storable = {
+        _id: {
+            contest: requestBallot.contest,
+            judge:   requestBallot.judge
+        },
+        
+        notes: requestBallot.notes
+    };
+    
+    return storable;
+}
+
+
+function postJudgeBallot(requestBallot, onSuccess, onError)
+{
+    var ballot = convertBallotToStorableForm(requestBallot);
+
+    var handleDbIsConnected = function(db) {
+        var ballots = db.collection('ContestBallots');
+
+        ballots.findOneAndUpdate(
+          {_id: ballot._id},
+          ballot, 
+          function(err, result) {
+              if ( err ) {
+                  return onError({
+                      error_code: 'DB.insert',
+                      message: "Error inserting ballot."
+                  });
+              }
+              else if ( null === result.value ) {
+                  // No object modified, create new one
+                  ballots.insert(ballot, function(error, result) {
+                      db.close();
+                      return onSuccess(result);
+                  });
+              }
+              else {
+                  db.close();
+                  return onSuccess(result);
+              }
+          });
+    };
+
+
+    return MongoClient.connect(settings.get('db_url'), function(err, db) {
+        if ( err ) {
+            console.error('Unable to connect to MongoDB: ' + err);
+            return onError({
+                error_code: 'DB.open',
+                message: "Database connection error."
+            });
+        }
+        else {
+            return handleDbIsConnected(db);
+        }
+    });
+}
+
 
 function findListOfItemsPerCategory(onSuccess, onError) {
     
@@ -219,9 +283,11 @@ function getNotationSheet(request, response)
 
     var handleSuccessFn = function(data) {
         var model = {
-            "user":       user.name,
-            "categories": data,
-            helpers: {}
+            contest:    "FiMaJe 2016", // BUG: this shall come from DB
+            user:       user.name,
+            categories: data,
+            votes:      {}, // TODO: get saved notes from DB
+            helpers:    {}
         };
 
         model.notes = buildListOfNotes();
@@ -241,9 +307,66 @@ function getNotationSheet(request, response)
 }
 
 
+
+function postNotationSheet(request, response) 
+{
+    var handleSuccessFn = function(data) {
+        var model = {
+            helpers:  {}
+        };
+        
+        if ( data.insertedIds ) {
+            // Object is new and just inserted
+            model.ballotId = data.insertedIds[0]._id;
+        }
+        else {
+            // Updated object
+            model.ballotId = data.value._id;
+        }
+
+        response.status(200).json(model);
+    };
+
+    var handleErrorFn = function(err) {
+        var model = {
+            "error": err
+        };
+
+        response.status(400).json(model);
+    };
+    
+    
+    // Check request
+
+    var isJSON = request.body.dataType === 'application/json';
+
+    if ( ! isJSON ) {
+        return response.status(400).json({message: "Invalid request"});
+    }
+
+    // We could use the incoming request body, but want to ensure that 
+    // data is limited to meaningful information.
+    //
+    var ballot = {
+        judgeId: request.body.data.judge,
+        contest: request.body.data.contest,
+        notes:   request.body.data.notes
+    };
+    
+    if ( request.body.data.ballotId ) {
+        // Set an id if provided a ballot that is beeing updated
+        ballot._id = request.body.data.ballotId;
+    }
+
+    return postJudgeBallot(ballot, handleSuccessFn, handleErrorFn);
+}
+
+
+
 module.exports = {
     index:          getListOfContests,
     create_contest: createContest,
     
-    get_notation_sheet: getNotationSheet
+    get_notation_sheet: getNotationSheet,
+    post_notation_sheet: postNotationSheet
 };

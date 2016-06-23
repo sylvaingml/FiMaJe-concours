@@ -14,11 +14,11 @@
 
   </header>
 
-<div class="alert alert-info">
-  <p>
-    Sélectionnez une catégorie pour voter sur chaque display en compétition.
-  </p>
-</div>
+  <div class="alert alert-info">
+    <p>
+      Sélectionnez une catégorie pour voter sur chaque display en compétition.
+    </p>
+  </div>
 
   <ul class="nav nav-pills nav-stacked m-t-2" role="tablist">
     {{#each categories}}
@@ -40,11 +40,11 @@
 
   <div class="alert alert-info m-t-1 m-b-1">
     <p>
-    Donnez une note à chaque display. Lorsque chaque display aura une note 
-    un cercle coché <i class="fa fa-check-circle"></i> sera indiqué en vis à vis 
-    de la catégorie.
-  </p>
-</div>
+      Donnez une note à chaque display. Lorsque chaque display aura une note 
+      un cercle coché <i class="fa fa-check-circle"></i> sera indiqué en vis à vis 
+      de la catégorie.
+    </p>
+  </div>
 
   <div class="tab-content">
     {{#each categories}}
@@ -94,9 +94,9 @@
     </article>
     {{/each}}
   </div>
-  
 
-  <div class="card-footer fmj-action-bar">
+
+  <div class="fmj-action-bar">
     <div class="row">
       <div class="col-xs-12 col-md-7 m-t-1 m-b-1">
         Vous pouvez envoyer votre vote autant de fois que nécessaire jusqu'à
@@ -104,13 +104,27 @@
       </div>
 
       <div class="col-xs-12 col-md-5  m-t-1 m-b-1 text-xs-right">
-        <button class="btn btn-primary btn-lg" type="button">
+        <button id="submitVote" class="btn btn-primary btn-lg" type="button">
           <i class="fa fa-certificate" aria-hidden="true"></i>
           Enregistrer mes votes
         </button>
       </div>
 
     </div>
+    
+    <div class="alert alert-warning" hidden="hidden">
+      <p>
+        <i class="fa fa-warning"></i> Erreur de communication. 
+        Votre vote n'a pas été enregistré.
+      </p>
+    </div>
+    
+    <div class="alert alert-success" hidden="hidden">
+      <p>
+        <i class="fa fa-check"></i> Vote validé
+      </p>
+    </div>
+  </div>
 
 
 </section>
@@ -119,3 +133,12 @@
 
 <script type="text/javascript" src="public/js/FiMaJe-contest-vote.js" ></script>
 
+<script type="text/javascript" >
+var FMJVoteSheet;
+
+// Create the main form
+$(function() {
+    FMJVoteSheet = new FMJContestVoteSheet("{{contest}}", "{{user}}");
+});
+
+</script>
