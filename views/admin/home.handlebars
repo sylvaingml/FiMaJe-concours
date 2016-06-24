@@ -12,9 +12,11 @@
     <h2 class="card-title">Gestion du concours</h2>
   </header>
 
+<!--  
 <div class="card-deck-wrapper m-t-2" >
-  <div class="card-deck">  
-    
+  <div class="card-deck">  -->
+<div class="card-columns">
+  
     <div class="card" >
       <div class="card-header">
         <h3>Inscriptions</h3>
@@ -46,9 +48,40 @@
         <a href="/admin/users"><i class="fa fa-users" aria-hidden="true"></i> Gestion des utilisateurs</a>
       </div>
     </div>
+
+    <div class="card" >
+      <div class="card-header">
+        <h3>Concours</h3>
+      </div>
+      <div class="card-block">
+        <ul class="nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/contest">
+              <i class="fa fa-trophy" aria-hidden="true"></i>
+              Liste des concours <span class="label label-pill label-warning">A Faire</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/contest/results">
+              <i class="fa fa-bar-chart-o" aria-hidden="true"></i>
+              Résultats des votes <span class="label label-pill label-warning">A Faire</span>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/contest/search-vote">
+              <i class="fa fa-envelope-square" aria-hidden="true"></i>
+              Fiche de vote
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
   
-    
+  
+<!--    
   </div>
+</div>-->
 </div>
 
 </section>

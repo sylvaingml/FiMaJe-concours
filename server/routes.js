@@ -98,8 +98,17 @@ module.exports = function(app)
 
     // ===== Contest 
 
+    // Display the list of contests, each provide link to result sheet and activation
+    router.get('/contest', enterAsGod, contest.index);
+
     // Display the registration search
-    router.get('/contest', enterAsElfOrBetter, contest.get_notation_sheet);
+    router.get('/contest/results', enterAsGod, contest.get_results);
+
+    // Display the registration search
+    router.get('/contest/search-vote', enterAsElfOrBetter, contest.search_notation_sheet);
+    
+    // Display the registration search
+    router.post('/contest/vote', enterAsElfOrBetter, contest.get_notation_sheet);
 
     // Submit a judge vote sheet
     router.post('/api/contest/post-ballot', enterAsElfOrBetter, contest.post_notation_sheet);

@@ -65,7 +65,7 @@ function convertBallotToStorableForm(requestBallot)
     var storable = {
         _id: {
             contest: requestBallot.contest,
-            judge:   requestBallot.judge
+            judge:   requestBallot.judgeId
         },
         
         notes: requestBallot.notes
@@ -283,8 +283,8 @@ function getNotationSheet(request, response)
 
     var handleSuccessFn = function(data) {
         var model = {
-            contest:    "FiMaJe 2016", // BUG: this shall come from DB
-            user:       user.name,
+            contest:    request.body.contest,
+            user:       request.body.user,
             categories: data,
             votes:      {}, // TODO: get saved notes from DB
             helpers:    {}
@@ -306,7 +306,22 @@ function getNotationSheet(request, response)
     return findListOfItemsPerCategory(handleSuccessFn, handleErrorFn);
 }
 
+function getResultSheet(request, response) 
+{
+    response.status(500).json({error: "TO DO"});
+}
 
+function searchNotationSheet(request, response) 
+{
+    var user = basicAuth(request);
+
+    var model = {
+        user: user.name,
+        contestList: [ "FiMaJe 2016" ] // TODO: return list from DB
+    };
+    
+    response.render("contest/search-notation-sheet", model);
+}
 
 function postNotationSheet(request, response) 
 {
@@ -365,8 +380,12 @@ function postNotationSheet(request, response)
 
 module.exports = {
     index:          getListOfContests,
-    create_contest: createContest,
+    create_contest: createContest, // TODO: add to routes
     
-    get_notation_sheet: getNotationSheet,
-    post_notation_sheet: postNotationSheet
+    get_results: getResultSheet,
+    
+    search_notation_sheet: searchNotationSheet,
+    get_notation_sheet:    getNotationSheet,
+    post_notation_sheet:   postNotationSheet
 };
+
