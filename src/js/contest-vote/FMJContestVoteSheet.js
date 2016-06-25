@@ -143,6 +143,10 @@ FMJContestVoteSheet.prototype.buildBallot = function() {
         notes:   notes
     };
     
+    if ( this.ballotId ) {
+        voteRecord._id = this.ballotId;
+    }
+    
     return voteRecord;
 };
 

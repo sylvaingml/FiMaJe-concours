@@ -110,6 +110,9 @@ module.exports = function(app)
     // Display the registration search
     router.post('/contest/vote', enterAsElfOrBetter, contest.get_notation_sheet);
 
+    // An API to get the list of active contests
+    router.get('/api/list-contests', contest.contest_api_get_list);
+
     // Submit a judge vote sheet
     router.post('/api/contest/post-ballot', enterAsElfOrBetter, contest.post_notation_sheet);
 

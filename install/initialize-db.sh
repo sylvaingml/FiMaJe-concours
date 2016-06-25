@@ -10,3 +10,4 @@ mongoimport --db FiMaJe --collection Users --drop --file ./data-defaults/default
 
 mongoimport --db FiMaJe --collection UserGroups --drop --file ./data-defaults/default-user-groups.json
 
+mongoimport --db FiMaJe --collection Contests --drop --file ./data-defaults/default-contests.json

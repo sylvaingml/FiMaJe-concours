@@ -25,6 +25,38 @@ var authentification = require('./authentification');
 
 // ===== DATABASE QUERY
 
+
+function getActiveContestListInDb(onSuccess) {
+    var handleDbIsConnected = function(db) {
+        return db.collection('Contests').find(
+          {active: true},
+          {_id: 0, contest: 1}
+        )
+          .toArray()
+          .then(function(data) {
+              onSuccess(data);
+        });
+    };
+
+
+    return MongoClient.connect(settings.get('db_url'), function(err, db) {
+        if ( err ) {
+            console.error('Unable to connect to MongoDB: ' + err);
+            return onError({
+                error_code: 'DB.open',
+                message: "Database connection error."
+            });
+        }
+        else {
+            return handleDbIsConnected(db);
+        }
+    });
+    
+    
+}
+
+
+
 function createContestInDB(model, onSuccess, onError) {
     var handleDbIsConnected = function(db) {
         var contests = db.collection('Contests');
@@ -63,14 +95,15 @@ function convertBallotToStorableForm(requestBallot)
 {
     // We use a custom _id from contest and judge.
     var storable = {
-        _id: {
-            contest: requestBallot.contest,
-            judge:   requestBallot.judgeId
-        },
-        
+        contest: requestBallot.contest,
+        judge: requestBallot.judgeId,
         notes: requestBallot.notes
     };
-    
+
+    if ( requestBallot._id ) {
+        storable._id = ObjectID.createFromHexString(requestBallot._id);
+    }
+
     return storable;
 }
 
@@ -83,7 +116,10 @@ function postJudgeBallot(requestBallot, onSuccess, onError)
         var ballots = db.collection('ContestBallots');
 
         ballots.findOneAndUpdate(
-          {_id: ballot._id},
+          {
+              contest: ballot.contest,
+              judge:   ballot.judge
+          },
           ballot, 
           function(err, result) {
               if ( err ) {
@@ -308,7 +344,13 @@ function getNotationSheet(request, response)
 
 function getResultSheet(request, response) 
 {
-    response.status(500).json({error: "TO DO"});
+    var listOfContests = getActiveContestListInDb();
+    
+    var model = {
+        contestList: request.body.contest
+    };
+
+    
 }
 
 function searchNotationSheet(request, response) 
@@ -322,6 +364,38 @@ function searchNotationSheet(request, response)
     
     response.render("contest/search-notation-sheet", model);
 }
+
+
+function getListOfContestsAPI(request, response) 
+{
+    var handleSuccessFn = function(data) {
+        var model = {
+            contestList: data
+        };
+        
+        response.status(200).json(model);
+    };
+
+    var handleErrorFn = function(err) {
+        var model = {
+            "error": err
+        };
+
+        response.status(400).json(model);
+    };
+    
+    // Check request
+
+    var listOfContests = getActiveContestListInDb(handleSuccessFn);
+    
+    var model = {
+        contestList: request.body.contest
+    };
+
+    return response.json(model);
+}
+
+
 
 function postNotationSheet(request, response) 
 {
@@ -380,6 +454,8 @@ function postNotationSheet(request, response)
 
 module.exports = {
     index:          getListOfContests,
+    contest_api_get_list: getListOfContestsAPI,
+    
     create_contest: createContest, // TODO: add to routes
     
     get_results: getResultSheet,

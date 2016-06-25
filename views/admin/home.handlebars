@@ -7,16 +7,16 @@
 </div>
 
 <section>
-  
+
   <header>
     <h2 class="card-title">Gestion du concours</h2>
   </header>
 
-<!--  
-<div class="card-deck-wrapper m-t-2" >
-  <div class="card-deck">  -->
-<div class="card-columns">
-  
+  <!--  
+  <div class="card-deck-wrapper m-t-2" >
+    <div class="card-deck">  -->
+  <div class="card-columns">
+
     <div class="card" >
       <div class="card-header">
         <h3>Inscriptions</h3>
@@ -38,13 +38,13 @@
         </ul>
       </div>
     </div>
-  
+
     <div class="card" >
       <div class="card-header">
         <h3>Accès utilisateurs</h3>
       </div>
       <div class="card-block">
-        
+
         <a href="/admin/users"><i class="fa fa-users" aria-hidden="true"></i> Gestion des utilisateurs</a>
       </div>
     </div>
@@ -61,13 +61,30 @@
               Liste des concours <span class="label label-pill label-warning">A Faire</span>
             </a>
           </li>
+
           <li class="nav-item">
-            <a class="nav-link" href="/contest/results">
-              <i class="fa fa-bar-chart-o" aria-hidden="true"></i>
-              Résultats des votes <span class="label label-pill label-warning">A Faire</span>
-            </a>
+
+            <form action="/contest/results" method="get" >
+              <fieldset class="form-group">
+                <label class="form-control-label" for="email">Concours&nbsp;:</label>
+                <select id="contest" name="contest"
+                        disabled="disabled"
+                        class="form-control c-select" >
+                  <option value="" disabled="disabled">Chargement en cours...</option>
+                </select>
+              </fieldset>
+              <div class="text-xs-right">
+                <button name="getContestResults"
+                        class="btn btn-primary btn-sm btn-block" 
+                        type="submit" disabled="disabled" >
+                  <i class="fa fa-bar-chart-o" aria-hidden="true"></i>
+                  Résultats
+                </button>
+              </div>
+            </form>
+
           </li>
-          
+
           <li class="nav-item">
             <a class="nav-link" href="/contest/search-vote">
               <i class="fa fa-envelope-square" aria-hidden="true"></i>
@@ -77,13 +94,50 @@
         </ul>
       </div>
     </div>
-  
-  
-<!--    
+
+
+    <!--    
+      </div>
+    </div>-->
   </div>
-</div>-->
-</div>
 
 </section>
 
 {{> page-footer this }}
+
+
+<script>
+
+  var contextSelect = $('select[name=contest]');
+  var getContestResult = $('button[name=getContestResults]')
+
+  // -----
+
+  var url = "/api/list-contests";
+  var me = this;
+
+  $.ajax(url, {
+      dataType: "application/json"
+  })
+    .done(function(data) {
+        me.updateContestList(data);
+
+        contextSelect.prop('disabled', false);
+        getContestResult.prop('disabled', false);
+    });
+
+  // -----
+
+  function updateContestList(response) {
+      var list = response.contestList;
+
+      for ( var idx = 0; idx < list; ++ idx ) {
+          var newOption = $('<option>' + list[ idx ] + '</option>', {
+              value: list[idx]
+          });
+          
+          contextSelect.append(newOption);
+      }
+  }
+
+</script>
