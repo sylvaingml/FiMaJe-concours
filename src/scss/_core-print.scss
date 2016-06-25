@@ -120,4 +120,9 @@
             line-height: 10pt;
         }
     }
+    
+    // Add pagebreak before stickers
+    article.fmj-stickers {
+        page-break-before: always;
+    }
 }
