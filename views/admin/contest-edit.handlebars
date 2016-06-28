@@ -1,0 +1,144 @@
+{{> page-header this }}
+
+<section>
+
+  <header>
+    <h2>Édition de concours</h2>
+  </header>
+
+  <form class="fmj-form" action="/admin/contest-update" method="post">
+    
+    <input type="hidden" name="uid" value="{{uid}}" >
+
+    <div class="card">
+      <div class="card-header">
+        <h3>Informations</h3>
+      </div>
+
+      <div class="card-block">                    
+        <div class="row">
+
+          <label class="form-control-label col-xs-3 col-md-2">Nom:<sup class="required-input">*</sup></label>
+
+          <div class="col-xs-9 col-md-4" >
+            <input class="form-control" type="text" name="name" maxlength="42" required="required" >
+          </div>
+
+          <div class="col-xs-12 col-md-6">
+            <label for="isActive" class="form-control-label">
+              <input id="isActive" name="is_active" type="checkbox" disabled="disabled" > 
+              Concours actif
+            </label>
+            <p class="text-muted m-b-0">
+              <small>
+                Un concours ne peut être activé que si au moins un juge est 
+                désigné.
+              </small>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3>Catégories</h3>
+      </div>
+      <div class="card-block">
+
+        <p class="alert alert-info">
+          Vous devez sélectionner au moins une catégorie pour pouvoir valider
+          ce concours.
+        </p>
+        
+        {{#each categories}}
+        <div class="row" >
+          <div class="col-xs-12">
+            <h4>{{_id}}</h4>
+          </div>
+        </div>
+
+        <div class="row" >
+          
+          {{#each categories}}
+          <div class="col-xs-6 col-md-4 col-lg-3">
+            <label for="category_{{code}}" class="form-control-label">
+              <input id="category_{{code}}" type="checkbox" class="fmj-category" value="{{code}}" >
+              {{label}}
+            </label>
+          </div>
+          {{/each}}
+
+        </div>
+        
+        {{/each}}
+
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3>Juges</h3>
+      </div>
+      <div class="card-block">
+
+        <p class="alert alert-info">
+          Sans au moins un juge sélectionné, le concours reste inactif.
+        </p>
+
+        <div class="row" >
+
+          {{#each users}}
+          <div class="col-xs-6 col-md-4 col-lg-3">
+            <label for="user_{{login}}" class="form-control-label">
+              <input id="user_{{login}}" type="checkbox" class="fmj-user" value="{{login}}" >
+              {{fullName}} ({{login}})
+            </label>
+          </div>
+          {{/each}}
+
+        </div>
+        
+      </div>
+    </div>
+
+  </form>
+
+  <hr>
+
+  <div class="container hidden-print">
+    <div class="row">
+
+      <div class="col-xs-12 col-md-6">
+        <a class="btn btn-secondary" href="/admin/contest-list">
+          <i class="fa fa-arrow-left" aria-hidden="true"></i>
+          Annuler
+        </a>
+      </div>
+
+      <div class="col-xs-12 col-md-6 text-md-right">
+        <button class="btn btn-primary" name="send_update" type="button" disabled="disabled" >
+          <i class="fa fa-check" aria-hidden="true"></i>
+          Valider
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+{{> page-footer this }}
+
+<script type="text/javascript" src="/public/js/FiMaJe-contest.js" ></script>
+
+<script>
+
+var contestForm;
+
+// Create the main form
+$(function() {
+    contestForm = new FMJContest();
+});
+
+</script>

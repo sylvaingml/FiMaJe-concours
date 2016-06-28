@@ -1,0 +1,116 @@
+{{> page-header this }}
+
+<section>
+
+  <header>
+    <h2 class="card-title">Administration des concours</h2>
+  </header>
+
+
+  <table class="table table-striped table-inverse">
+    <colgroup>
+      <col class="col-active">
+      <col class="col-name">
+      <col class="col-judges">
+      <col class="col-categories">
+      <col class="col-actions">
+    </colgroup>
+
+    {{!-- HEADING --}}
+
+    <thead class="thead-inverse">
+      <tr>
+        <th>Actif</th>
+        <th>Concours</th>
+        <th>Juges</th>
+        <th>Catégories</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    {{!-- BODY --}}
+
+    <tbody>
+
+      <tr class="fmj-contest-info " >
+        <td>
+          <label for="is_active_" class="c-input c-checkbox">
+            <input id="is_active_" name="is_active" type="checkbox" disabled="disabled" >
+            <span class="c-indicator"></span>
+          </label>
+        </td>
+
+        <td>
+          Nom du concours
+        </td>
+
+        <td>
+          Juges
+        </td>
+
+        <td>
+          Catégories
+        </td>
+
+        <td>
+          <div class="btn-group">
+            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+              Action
+            </button>
+            <div class="dropdown-menu">
+              <button type="button" class="dropdown-item" onclick="">
+                <i class="fa fa-edit" aria-hidden="true"></i>
+                Modifier
+              </button>
+
+              <div class="dropdown-divider"></div>
+
+              <button type="button" class="dropdown-item" onclick="">
+                <i class="fa fa-trophy" aria-hidden="true"></i>
+                Résultats
+              </button>
+
+              <div class="dropdown-divider"></div>
+
+              <button type="button" class="dropdown-item" onclick="">
+                <i class="fa fa-check-circle-o" aria-hidden="true"></i>
+                Activer le concours
+              </button>
+              <button type="button" class="dropdown-item" onclick="">
+                <i class="fa fa-stop-circle-o" aria-hidden="true"></i>
+                Inactiver le concours
+              </button>
+            </div>
+          </div>
+
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>  
+  
+  <hr>
+
+  <div class="container hidden-print">
+    <div class="row">
+      <div class="col-xs-12 col-md-6">
+        <a class="btn btn-success btn-sm" href="/admin/contest-edit">
+          <i class="fa fa-plus" aria-hidden="true"></i>
+          Créer un concours
+        </a>
+      </div>
+      <div class="col-xs-12 col-md-6 text-md-right">
+        <button class="btn btn-primary-outline btn-sm" type="button" onclick="javascript: print()">
+          <i class="fa fa-print" aria-hidden="true"></i>
+          Imprimer...
+        </button>              
+      </div>
+    </div>
+  </div>
+
+</section>
+
+{{> page-footer this }}
+

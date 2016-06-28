@@ -67,7 +67,7 @@ title-muted: #7D5F3F
     }
 
 
-    a {
+    a:not(.btn) {
         color: map_get($fmjColors, link);
 
         &:hover,
@@ -99,6 +99,8 @@ title-muted: #7D5F3F
     // ===== TABLES
     
     table.table.table-striped {
+        color: black;
+        
         background-color: map_get($fmjColors, paper-table);
         
         tbody tr:nth-of-type(odd) {
@@ -142,4 +144,5 @@ title-muted: #7D5F3F
             color: map_get($fmjColors, paper);
         }
     }
+    
 }

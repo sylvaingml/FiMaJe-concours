@@ -13,14 +13,13 @@ var settings = require('config');
 
 var basicAuth = require('basic-auth');
 
-
-
 var MongoClient = require('mongodb').MongoClient;
 var ObjectID = require('mongodb').ObjectID;
 
 var exphbs = require('express-handlebars');
 
 var authentification = require('./authentification');
+var dbConnector = require('./db');
 
 
 // ===== DATABASE QUERY
@@ -34,8 +33,8 @@ function getActiveContestListInDb(onSuccess) {
         )
           .toArray()
           .then(function(data) {
-              onSuccess(data);
-        });
+              return onSuccess(data);
+          });
     };
 
 
@@ -51,13 +50,11 @@ function getActiveContestListInDb(onSuccess) {
             return handleDbIsConnected(db);
         }
     });
-    
-    
 }
 
 
 
-function createContestInDB(model, onSuccess, onError) {
+function updateContestInDB(model, onSuccess, onError) {
     var handleDbIsConnected = function(db) {
         var contests = db.collection('Contests');
 
@@ -75,19 +72,7 @@ function createContestInDB(model, onSuccess, onError) {
         });
     };
 
-
-    return MongoClient.connect(settings.get('db_url'), function(err, db) {
-        if ( err ) {
-            console.error('Unable to connect to MongoDB: ' + err);
-            return onError({
-                error_code: 'DB.open',
-                message: "Database connection error."
-            });
-        }
-        else {
-            return handleDbIsConnected(db);
-        }
-    });
+    return dbConnector.connectAndProcess(onError, handleDbIsConnected);
 }
 
 
@@ -248,6 +233,9 @@ function findListOfItemsPerCategory(onSuccess, onError) {
 }
 
 
+
+
+
 // ===== HELPERS
 
 function buildListOfNotes() {
@@ -270,12 +258,42 @@ function getActiveContest(request, response)
 }
 
 
-function getListOfContests(request, response)
+
+function contestManager(request, response)
 {
-    // TODO
+    var model = {};
+    
+    response.render("admin/contest-list", model);
 }
 
-function createContest(request, response)
+function editContest(request, response)
+{
+    var model = {
+        'users':      null,
+        'categories': null
+    };
+
+    var renderResponse = function() {
+        response.render("admin/contest-edit", model);
+    };
+    
+    var fetchUserList   = function(values) {
+        model.users = values;
+        
+        renderResponse();
+    };
+    
+    var fetchCategories = function(values) {
+        model.categories = values;
+        
+        dbConnector.getCollectionAsArray("Users", fetchUserList);
+    };
+    
+    dbConnector.getCategoriesByGroup(fetchCategories);
+}
+
+
+function updateContest(request, response)
 {
     var handleSuccessFn = function(result) {
         var model = {
@@ -310,7 +328,7 @@ function createContest(request, response)
         closeDate:    null
     };
 
-    return createContestInDB(model, handleSuccessFn, handleErrorFn);
+    return updateContestInDB(model, handleSuccessFn, handleErrorFn);
 }
 
 function getNotationSheet(request, response)
@@ -453,10 +471,12 @@ function postNotationSheet(request, response)
 
 
 module.exports = {
-    index:          getListOfContests,
+    index:          contestManager,
+    edit_contest:   editContest,
+    update_contest: updateContest, 
+    
     contest_api_get_list: getListOfContestsAPI,
     
-    create_contest: createContest, // TODO: add to routes
     
     get_results: getResultSheet,
     

@@ -99,16 +99,26 @@ module.exports = function(app)
     // ===== Contest 
 
     // Display the list of contests, each provide link to result sheet and activation
-    router.get('/contest', enterAsGod, contest.index);
+    router.get('/admin/contest', enterAsGod, contest.index);
+    
+    // Display contest editor to create or update a contest
+    router.get('/admin/contest-edit', enterAsGod, contest.edit_contest);
+    
+    // Process a contest create/update request.
+    router.post('/admin/contest-update', enterAsGod, contest.update_contest);
+    
+    
 
-    // Display the registration search
-    router.get('/contest/results', enterAsGod, contest.get_results);
 
     // Display the registration search
     router.get('/contest/search-vote', enterAsElfOrBetter, contest.search_notation_sheet);
     
     // Display the registration search
     router.post('/contest/vote', enterAsElfOrBetter, contest.get_notation_sheet);
+
+
+    // Display the registration search
+    router.get('/contest/results', enterAsGod, contest.get_results);
 
     // An API to get the list of active contests
     router.get('/api/list-contests', contest.contest_api_get_list);
