@@ -63,7 +63,7 @@
           {{#each categories}}
           <div class="col-xs-6 col-md-4 col-lg-3">
             <label for="category_{{code}}" class="form-control-label">
-              <input id="category_{{code}}" type="checkbox" class="fmj-category" value="{{code}}" >
+              <input name="category_list" id="category_{{code}}" type="checkbox" class="fmj-category" value="{{code}}" >
               {{label}}
             </label>
           </div>
@@ -91,7 +91,7 @@
           {{#each users}}
           <div class="col-xs-6 col-md-4 col-lg-3">
             <label for="user_{{login}}" class="form-control-label">
-              <input id="user_{{login}}" type="checkbox" class="fmj-user" value="{{login}}" >
+              <input name="user_list" id="user_{{login}}" type="checkbox" class="fmj-user" value="{{login}}" >
               {{fullName}} ({{login}})
             </label>
           </div>

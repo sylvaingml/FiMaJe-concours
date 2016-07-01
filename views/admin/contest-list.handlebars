@@ -13,7 +13,7 @@
       <col class="col-name">
       <col class="col-judges">
       <col class="col-categories">
-      <col class="col-actions">
+      <col class="col-actions hidden-print">
     </colgroup>
 
     {{!-- HEADING --}}
@@ -22,9 +22,9 @@
       <tr>
         <th>Actif</th>
         <th>Concours</th>
-        <th>Juges</th>
         <th>Catégories</th>
-        <th>Actions</th>
+        <th>Juges</th>
+        <th class="hidden-print">Actions</th>
       </tr>
     </thead>
 
@@ -32,51 +32,70 @@
 
     <tbody>
 
-      <tr class="fmj-contest-info " >
+      {{#each contestList}}
+      
+      <tr class="fmj-contest-info " data-uid="{{_id}}" >
         <td>
-          <label for="is_active_" class="c-input c-checkbox">
-            <input id="is_active_" name="is_active" type="checkbox" disabled="disabled" >
-            <span class="c-indicator"></span>
-          </label>
+          {{#if active}}
+          <i class="fmj-contest-state-active fa fa-check-circle-o"></i>
+          {{else}}
+          <i class="fmj-contest-state-inactive fa fa-stop-circle-o"></i>
+          {{/if}}
         </td>
 
         <td>
-          Nom du concours
+          {{name}}
         </td>
 
         <td>
-          Juges
+          <ul class="list-inline">
+            {{#each categoryList}}
+            
+            <li class="list-inline-item" title='{{category_name this }} ({{category_group this }})' >
+              [{{this}}]
+            </li>
+            {{/each}}
+          </ul>
         </td>
 
         <td>
-          Catégories
+          {{#if judgeList}}
+          <ul class="list-inline">
+            {{#each judgeList}}
+            <li class="list-inline-item" title="{{user_fullName this}}" >{{this}}</li>
+            {{/each}}
+          </ul>
+          {{else}}
+          <em>Aucun juge pour l'instant...</em>
+          {{/if}}
+
         </td>
 
-        <td>
-          <div class="btn-group">
+        <td class="hidden-print">
+          <div class="btn-group btn-sm">
             <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
               Action
             </button>
             <div class="dropdown-menu">
-              <button type="button" class="dropdown-item" onclick="">
+              <button type="button" class="dropdown-item" >
                 <i class="fa fa-edit" aria-hidden="true"></i>
                 Modifier
               </button>
 
               <div class="dropdown-divider"></div>
 
-              <button type="button" class="dropdown-item" onclick="">
+              <button type="button" class="dropdown-item" >
                 <i class="fa fa-trophy" aria-hidden="true"></i>
                 Résultats
               </button>
 
               <div class="dropdown-divider"></div>
 
-              <button type="button" class="dropdown-item" onclick="">
+              <button type="button" class="dropdown-item" >
                 <i class="fa fa-check-circle-o" aria-hidden="true"></i>
                 Activer le concours
               </button>
-              <button type="button" class="dropdown-item" onclick="">
+              <button type="button" class="dropdown-item" >
                 <i class="fa fa-stop-circle-o" aria-hidden="true"></i>
                 Inactiver le concours
               </button>
@@ -86,12 +105,13 @@
         </td>
 
       </tr>
+      {{/each}}
 
     </tbody>
 
   </table>  
   
-  <hr>
+  <hr class="hidden-print">
 
   <div class="container hidden-print">
     <div class="row">

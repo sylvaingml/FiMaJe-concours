@@ -153,3 +153,16 @@ article.fmj-stickers {
     line-height: 11pt;
     text-align:  left;
 }
+
+
+// ===== CONTEST LIST
+
+.fmj-contest-info {
+    .fmj-contest-state-inactive {
+        color: darkred;
+    }
+    
+    .fmj-contest-state-active {
+        color: darkgreen;
+    }
+}

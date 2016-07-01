@@ -39,26 +39,6 @@ function db_connectAndProcess(handleDbIsConnected, handleError)
 }
 
 
-function db_getCollectionAsArray(name, processValueList)
-{
-    var getObjects = function(db) {
-        var collection = db.collection(name);
-        collection.find({}, {})
-          .toArray()
-          .then(function(objectList) {
-              db.close();
-              processValueList(objectList);
-          });
-    };
-
-    var failed = function(error) {
-        console.error("ERROR fetching content of '" + name + "' collection: " + error);
-        processValueList([ ]);
-    };
-
-    db_connectAndProcess(getObjects, failed);
-}
-
 
 function db_getSortedCollectionAsArray(name, sorting, processValueList)
 {
@@ -79,6 +59,12 @@ function db_getSortedCollectionAsArray(name, sorting, processValueList)
     };
 
     db_connectAndProcess(getObjects, failed);
+}
+
+
+function db_getCollectionAsArray(name, processValueList) 
+{
+    return db_getSortedCollectionAsArray(name, {}, processValueList);
 }
 
 
