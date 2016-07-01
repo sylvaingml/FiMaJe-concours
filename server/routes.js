@@ -102,7 +102,12 @@ module.exports = function(app)
     router.get('/admin/contest', enterAsGod, contest.index);
     
     // Display contest editor to create or update a contest
+    //
+    // - GET is mostly for creation,
+    // - POST is for update and requires an "uid" parameter.
+    // 
     router.get('/admin/contest-edit', enterAsGod, contest.edit_contest);
+    router.post('/admin/contest-edit', enterAsGod, contest.edit_contest);
     
     // Process a contest create/update request.
     router.post('/admin/contest-update', enterAsGod, contest.update_contest);

@@ -55,7 +55,7 @@ FMJContest.prototype.bindEvents = function()
         
         me.updateActiveStatus(nonEmptyUserSelection && nonEmptyCategorySelection);
     });
-
+    
     this.submitBtn.on('click', function() {
         me.submitBtn.prop('disabled', true);
         me.updateForm.submit();
