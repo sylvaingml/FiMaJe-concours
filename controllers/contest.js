@@ -85,7 +85,10 @@ function updateContestInDB(model, onSuccess, onError)
     var updateQuery = {
         $set: { 
             name: model.name, 
-            isActive: model.isActive
+            active: model.active,
+            
+            categoryList: model.categoryList,
+            judgeList: model.judgeList
         }
     };
 
@@ -93,18 +96,23 @@ function updateContestInDB(model, onSuccess, onError)
     var handleDbIsConnected = function(db) {
         var contests = db.collection('Contests');
 
-        contests.insert(model, {}, function(err, result) {
-            if ( err ) {
-                return onError({
-                    error_code: 'DB.insert',
-                    message: "Error inserting contests."
-                });
-            }
-            else {
-                db.close();
-                return onSuccess(result);
-            }
-        });
+        contests.findAndModify(
+          findQuery,
+          {},
+          updateQuery,
+          {},
+          function(err, result) {
+              if ( err ) {
+                  return onError({
+                      error_code: 'DB.update',
+                      message: "Error updating contests."
+                  });
+              }
+              else {
+                  db.close();
+                  return onSuccess(result.value);
+              }
+          });
     };
 
     return dbConnector.connectAndProcess(handleDbIsConnected, onError);
@@ -301,6 +309,7 @@ function fetchUsers(model, continueFn)
         var map = {};
         while ( results.length > 0 ) {
             var current = results.shift();
+            current.password = null;
             map[ current.login ] = current;
         }
         
@@ -355,39 +364,42 @@ function fetchContests(model, continueFn)
 }
 
 
+function renderListOfContests(model, response)
+{
+    var categoryNameFn = function(code) {
+        return model.categoryList[code].label;
+    };
+
+    var categoryGroupFn = function(code) {
+        return model.categoryList[code].group;
+    };
+
+    var userNameFn = function(login) {
+        var display = "N/A";
+        if ( login && model.userList[login] ) {
+            display = model.userList[login].fullName;
+        }
+        return display;
+    };
+
+    // Add some custom accessors to the root ctalogs
+
+    model.helpers = {
+        category_name: categoryNameFn,
+        category_group: categoryGroupFn,
+        user_fullName: userNameFn
+    };
+
+    return response.render("admin/contest-list", model);
+}
+
 function contestManager(request, response)
 {
     var model = {};
     
     var renderResponse = function(model) {
-        var categoryNameFn = function(code) {
-            return model.categoryList[code].label;
-        };
-        
-        var categoryGroupFn = function(code) {
-            return model.categoryList[code].group;
-        };
-        
-        var userNameFn = function(login) {
-            var display = "N/A";
-            if ( login && model.userList[login] ) {
-                display = model.userList[login].fullName;
-            }
-            return display;
-        };
-        
-        // Add some custom accessors to the root ctalogs
-        
-        model.helpers = {
-            category_name:  categoryNameFn,
-            category_group: categoryGroupFn,
-            
-            user_fullName: userNameFn
-        };
-        
-        return response.render("admin/contest-list", model);
+        return renderListOfContests(model, response);
     };
-    
 
     var onError = function(err) {
         var model = {
@@ -397,7 +409,6 @@ function contestManager(request, response)
         response.status(400).render("admin/contest-list", model);
     };
 
-
     return fetchContests(model, renderResponse, onError);
 }
 
@@ -405,7 +416,14 @@ function editContest(request, response)
 {
     var model = {
         'users':      null,
-        'categories': null
+        'categories': null,
+        'contest': {},
+        
+        helpers: {
+            to_json: function(obj) {
+                return JSON.stringify(obj);
+            }
+        }
     };
 
     var renderResponse = function() {
@@ -424,44 +442,26 @@ function editContest(request, response)
         dbConnector.getCollectionAsArray("Users", fetchUserList);
     };
     
-    dbConnector.getCategoriesByGroup(fetchCategories);
-}
+    if ( request.body && request.body.uid && '' !== request.body.uid ) {
+        // Existing ID was specified, this is an update
+        // fetch the existing 
+        var fetchedExisting = function(contest) {
+            model.contest = contest;
+            
+            dbConnector.getCategoriesByGroup(fetchCategories);
+        };
+        
+        dbConnector.getObjectById('Contests', request.body.uid, fetchedExisting);
+    }
+    else {
+        dbConnector.getCategoriesByGroup(fetchCategories);
+    }
+};
 
 
 function updateContest(request, response)
 {
-    var renderContestsList = function(results) {
-        var model = {
-            contestList: results
-        };
-        
-        response.render("admin/contest-list", model);
-    };
-
-    var handleSuccessFn = function(result) {
-        var model = {
-            "contest": result,
-            helpers: {}
-        };
-
-        dbConnector.getSortedCollectionAsArray(
-          "Contests",
-          {contest: 1},
-          renderContestsList
-          );
-
-    };
-
-    var handleErrorFn = function(err) {
-        console.error("Contest creation/update - Error: " + err);
-        var model = {
-            "error": err
-        };
-
-        response.status(400).render("admin/contest-list", model);
-    };
-
-    // Check request
+    // Check request and build model for DB update
 
     var model = {
         name:   request.body.name,
@@ -470,13 +470,13 @@ function updateContest(request, response)
         categoryList: [],
         judgeList: [],
         
-        closeDate:    null
+        closeDate: null
     };
     
     if ( Array.isArray(request.body.category_list) ) {        
         while ( request.body.category_list.length > 0 ) {
             var value = request.body.category_list.shift();
-            model.categoryList.push(value)
+            model.categoryList.push(value);
         }
     }
     else {
@@ -492,6 +492,17 @@ function updateContest(request, response)
     else {
         model.judgeList.push(request.body.user_list);
     }
+
+    // Perform request and return to list manager
+    
+    var handleSuccessFn = function(result) {
+        return contestManager(request, response);
+    };
+
+    var handleErrorFn = function(error) {
+        console.error("Failed to insert/update contest: ", error);
+        return contestManager(request, response);
+    };
 
     if ( request.body.uid && "" !== request.body.uid ) {
         // We have an identifier to update

@@ -15,6 +15,7 @@ var settings = require('config');
 var basicAuth = require('basic-auth');
 
 var MongoClient = require('mongodb').MongoClient;
+var ObjectID = require('mongodb').ObjectID;
 
 
 function db_connectAndProcess(handleDbIsConnected, handleError)
@@ -36,6 +37,34 @@ function db_connectAndProcess(handleDbIsConnected, handleError)
     };
 
     MongoClient.connect(dbURL, {}, connectionHandler);
+}
+
+
+function db_getObjectById(collectionName, objectId, processValue)
+{
+    var objId = ObjectID.createFromHexString(objectId);
+    var query = {
+        _id: objId
+    };
+
+    var onConnected = function(db) {
+        return db.collection(collectionName)
+          .find(query)
+          .toArray()
+          .then(function(output) {
+              var contest = null;
+              if ( output && output.length > 0 ) {
+                  contest = output[0];
+              }
+              return processValue(contest);
+          });
+    };
+
+    var onError = function(error) {
+        return processValue(null);
+    };
+
+    return db_connectAndProcess(onConnected, onError);
 }
 
 
@@ -98,6 +127,7 @@ function db_getCategoriesByGroup(processValueList)
 
 module.exports = {
     connectAndProcess: db_connectAndProcess,
+    getObjectById: db_getObjectById,
     getCollectionAsArray: db_getCollectionAsArray,
     getSortedCollectionAsArray: db_getSortedCollectionAsArray,
     getCategoriesByGroup: db_getCategoriesByGroup

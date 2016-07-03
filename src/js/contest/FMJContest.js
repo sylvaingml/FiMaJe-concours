@@ -63,6 +63,39 @@ FMJContest.prototype.bindEvents = function()
 };
 
 
+FMJContest.prototype.initializeFromModel = function(model)
+{
+    this.model = model;
+    
+    var me = this;
+    
+    // UID
+    // is set directly from template
+    
+    // Name
+    this.nameFld.val(this.model.name);
+    
+    // Active
+    this.activeChkBox.prop('checked', this.model.active);
+    
+    // Categories
+    this.categoryChkBox.each(function(){
+        var currentCode = this.value;
+        var checked = me.model.categoryList.indexOf(currentCode) >= 0;
+        this.checked = checked;
+    });
+    
+    // Users as judges
+    this.userChkBox.each(function() {
+        var currentLogin = this.value;
+        var checked = me.model.judgeList.indexOf(currentLogin) >= 0;
+        this.checked = checked;
+    });
+    
+    this.updateSubmitStatus();
+};
+
+
 // ----- 
 
 FMJContest.prototype.isNameValid = function()
