@@ -160,9 +160,23 @@ article.fmj-stickers {
 .fmj-contest-info {
     .fmj-contest-state-inactive {
         color: darkred;
+        display: none;
     }
     
     .fmj-contest-state-active {
         color: darkgreen;
+        display: none;
+    }
+    
+    .active-on {
+        .fmj-contest-state-active {
+            display: inline-block;
+        }
+    }
+    
+    .active-off {
+        .fmj-contest-state-inactive {
+            display: inline-block;
+        }
     }
 }

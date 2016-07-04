@@ -40,13 +40,60 @@ FMJContestList.prototype.bindEvents = function(event)
         }
     };
 
+
+    var activateAction = function(event) {
+        var uid = me.getContestUID($(this));
+
+        if ( uid ) {
+            var action = me.createActivateRequest(uid, true);
+            
+            var refresh = function(response) {
+                if ( 'undefined' !== typeof response.updated.active ) {
+                    me.updateActiveStatus(uid, response.updated.active);
+                }
+            };
+
+            me.doAction(action, refresh); // TODO: refresh content
+        }
+    };
+
+    var deactivateAction = function(event) {
+        var uid = me.getContestUID($(this));
+
+        if ( uid ) {
+            var action = me.createActivateRequest(uid, false);
+            
+            var refresh = function(response) {
+                if ( 'undefined' !== typeof response.updated.active ) {
+                    me.updateActiveStatus(uid, response.updated.active);
+                }
+            };
+
+            me.doAction(action, refresh); // TODO: refresh content
+        }
+    };
+
     this.editBtns.on('click', editAction);
+    this.activateBtns.on('click', activateAction);
+    this.deactivateBtns.on('click', deactivateAction);
 };
 
 FMJContestList.prototype.getContestUID = function(button)
 {
     var container = button.parents('tr');
     var uid = container.data("uid");
+
+    return uid;
+};
+
+FMJContestList.prototype.updateActiveStatus = function(uid, activeStr)
+{
+    var active = ( 'true' === activeStr ) ? true : false;
+    
+    var container = $('.fmj-contest-info[data-uid='+uid+'] .fmj-contest-state');
+    
+    container.toggleClass('active-on',   active);
+    container.toggleClass('active-off', !active);
 
     return uid;
 };
@@ -62,35 +109,51 @@ FMJContestList.prototype.submitAction = function(actionURL, uid)
     this.actionForm.submit();
 };
 
+
+// ----- ASYNC REQUEST SETUP
+
+
+FMJContestList.prototype.createActivateRequest = function(uid, activate) {
+    var action = {
+        url: "/admin/contest-activation",
+        request: {
+            uid: uid,
+            active: activate
+        }
+    };
+
+    return action;
+};
+
 // ----- ASYNC ACTIONS
 
-FMJContestList.prototype.actionSuccess = function(uid, response)
+FMJContestList.prototype.actionSuccess = function(request, response)
 {
 
 };
 
-FMJContestList.prototype.actionFailed = function(uid)
+FMJContestList.prototype.actionFailed = function(error)
 {
 
 };
 
 
-FMJContestList.prototype.doAction = function(actionURL, uid, processSuccess)
+FMJContestList.prototype.doAction = function(action, processSuccess)
 {
-    var url = actionURL;
-    var contest = {
-        uid: uid
-    };
+    var url     = action.url;
+    var request = action.request;
 
     var me = this;
 
     $.post(url, {
         'dataType': "application/json",
-        'data': contest
+        'data': request
     })
       .done(function(data) {
-          me.actionSuccess(uid, data);
-          processSuccess();
+          me.actionSuccess(request, data);
+          if ( processSuccess ) { 
+              processSuccess(data); 
+          }
       })
       .fail(function(error) {
           me.actionFailed();

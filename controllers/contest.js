@@ -100,6 +100,46 @@ function updateContestInDB(model, onSuccess, onError)
           findQuery,
           {},
           updateQuery,
+          { new: true },
+          function(err, result) {
+              if ( err ) {
+                  return onError({
+                      error_code: 'DB.update',
+                      message: "Error updating contests."
+                  });
+              }
+              else {
+                  db.close();
+                  return onSuccess(result.value);
+              }
+          });
+    };
+
+    return dbConnector.connectAndProcess(handleDbIsConnected, onError);
+}
+
+
+function updateContestActivationInDB(model, onSuccess, onError) 
+{
+    var objId = ObjectID.createFromHexString(model._id);
+    var findQuery = {
+        _id:   objId
+    };
+    
+    var updateQuery = {
+        $set: { 
+            active: model.active
+        }
+    };
+
+    
+    var handleDbIsConnected = function(db) {
+        var contests = db.collection('Contests');
+
+        contests.findAndModify(
+          findQuery,
+          {},
+          updateQuery,
           {},
           function(err, result) {
               if ( err ) {
@@ -381,13 +421,18 @@ function renderListOfContests(model, response)
         }
         return display;
     };
+    
+    var activeClassFn = function(active) {
+        return (active) ? "active-on" : "active-off";
+    };
 
     // Add some custom accessors to the root ctalogs
 
     model.helpers = {
         category_name: categoryNameFn,
         category_group: categoryGroupFn,
-        user_fullName: userNameFn
+        user_fullName: userNameFn,
+        active_class: activeClassFn
     };
 
     return response.render("admin/contest-list", model);
@@ -465,7 +510,7 @@ function updateContest(request, response)
 
     var model = {
         name:   request.body.name,
-        active: false,
+        active: ( 'true' === request.body.is_active ) ? true : false,
         
         categoryList: [],
         judgeList: [],
@@ -517,6 +562,65 @@ function updateContest(request, response)
         return insertContestInDB(model, handleSuccessFn, handleErrorFn);
     }
 }
+
+
+/** Process incoming JSON request to change 'active' property of a contest.
+ * 
+ * @param {type} request 
+ *  Incoming request.
+ *  The following parametersa re expected:
+ *      - name: string, the name of the contest to update
+ *      - active: boolean, the new value for active property.
+ *      
+ * @param {type} response 
+ *  Outgoing response will be in JSON format.
+ *  
+ * @returns {unresolved}
+ */
+function contestActivation(request, response) 
+{
+    var handleUpdateSuccess = function(updatedModel) {
+        var model = {
+            'updated': updatedModel
+        };
+        
+        return response.json(model);
+    };
+    
+    var handleError = function(error) {
+        var model = {
+            'error': error
+        };
+        return response.status(400).json(model);
+    };
+    
+    // Check request
+
+    var isJSON = request.body.dataType === 'application/json';
+
+    if ( ! isJSON ) {
+        return response.status(400).json({message: "Invalid request"});
+    }
+
+    // Process request
+   
+    var contestId     = request.body.data.uid;
+    var activateState = request.body.data.active;
+    
+    if ( contestId && ('' !== contestId) && ('undefined' !== typeof activateState) ) {
+        // Valid input, go on...
+        model = {
+            _id: contestId,
+            active: activateState
+        };
+        updateContestActivationInDB(model, handleUpdateSuccess, handleError);
+    }
+    else {
+        // Invalid or incomplete input. Return an error
+        return handleError("Invalid incoming request");
+    }
+}
+
 
 function getNotationSheet(request, response)
 {
@@ -661,6 +765,7 @@ module.exports = {
     index:          contestManager,
     edit_contest:   editContest,
     update_contest: updateContest, 
+    contest_activation: contestActivation, 
     
     contest_api_get_list: getListOfContestsAPI,
     

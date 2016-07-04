@@ -35,12 +35,9 @@
       {{#each contestList}}
       
       <tr class="fmj-contest-info " data-uid="{{_id}}" >
-        <td>
-          {{#if active}}
+        <td class="fmj-contest-state {{ active_class active }}" title="{{active}}">
           <i class="fmj-contest-state-active fa fa-check-circle-o"></i>
-          {{else}}
           <i class="fmj-contest-state-inactive fa fa-stop-circle-o"></i>
-          {{/if}}
         </td>
 
         <td>

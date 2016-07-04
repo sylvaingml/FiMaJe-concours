@@ -112,7 +112,13 @@ module.exports = function(app)
     // Process a contest create/update request.
     router.post('/admin/contest-update', enterAsGod, contest.update_contest);
     
-    
+    // Set the activation state of the contest
+    // 
+    // PARAM:
+    // - name: contest name
+    // - active: boolean the activation state
+    //
+    router.post('/admin/contest-activation', enterAsElfOrBetter, contest.contest_activation);
 
 
     // Display the registration search
