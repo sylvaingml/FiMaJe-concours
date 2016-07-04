@@ -479,7 +479,7 @@ function updateContest(request, response)
             model.categoryList.push(value);
         }
     }
-    else {
+    else if ( request.body.category_list ) {
         model.categoryList.push(request.body.category_list);
     }
 
@@ -489,7 +489,7 @@ function updateContest(request, response)
             model.judgeList.push(value);
         }
     }
-    else {
+    else if ( request.body.user_list ) {
         model.judgeList.push(request.body.user_list);
     }
 

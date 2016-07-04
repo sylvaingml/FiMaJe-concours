@@ -62,7 +62,16 @@
           {{#if judgeList}}
           <ul class="list-inline">
             {{#each judgeList}}
-            <li class="list-inline-item" title="{{user_fullName this}}" >{{this}}</li>
+            <li class="list-inline-item" title="{{user_fullName this}}" >
+              <form action="/contest/vote" method="post" >
+                <input type="hidden" name="user" value="{{this}}" >
+                <input type="hidden" name="contest" value="{{../name}}" >
+
+                <button type="submit" class="btn btn-sm btn-link" title="Feuille de vote de {{user_fullName this}}" >
+                  {{this}}
+                </button>
+              </form>
+            </li>            
             {{/each}}
           </ul>
           {{else}}
