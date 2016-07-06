@@ -68,7 +68,6 @@ function db_getObjectById(collectionName, objectId, processValue)
 }
 
 
-
 function db_fetchSortedCollectionAsArray(name, query, sorting, processValueList)
 {
     var getObjects = function(db) {

@@ -6,6 +6,33 @@
     <h2>Résultats du concours «&nbsp;{{ contest.name }}&nbsp;»</h2>
   </header>
 
+  <h3 class="m-t-2 m-b-2">Classement par catégorie</h3>
+  
+  {{#each categoryByGroup}}
+  
+  <h4 class="m-t-3">Section {{_id}}</h4>
+      
+    {{#each categories}}
+
+    <h5 class="m-t-2">Catégorie {{label}} ({{code}})</h5>
+
+    {{/each}}
+
+  {{/each}}
+  
+  <h3 class="m-t-2 m-b-2">Détails des notes</h3>
+  
+  <p>
+    Le tableau ci-dessous liste les notes obtenues par chaque display
+    (participant pour une catégorie).
+    La note moyenne est indiquée.
+  </p>
+  
+  <p class="alert alert-info">
+    Un display est identifié par le code de catégorie et le 
+    numéro d'enregistrement du participant.    
+  </p>
+  
   <table class="table table-inverse table-striped">
     <thead>
       <tr>
@@ -14,17 +41,25 @@
         <th>Notes</th>
         <th>Note moyenne</th>
     </thead>
-    
+
     {{#each displayResults}}
     <tbody>
       <tr>
         <td>{{ categoryCode }}</td>
         <td>{{ displayCode }}</td>
         <td>
-          {{ note_list notes }}
+          <ul class="list-inline">
+            {{#each notes}}
+            <li class="list-inline-item">{{format_note this}}</li>
+            {{/each}}
+          </ul>
         </td>
         <td>
-          {{ average notes }}
+          {{#if averageNote}}
+            {{ format_note averageNote }}
+          {{else}}
+            --
+          {{/if}}
         </td>
       </tr>
     </tbody>

@@ -651,6 +651,27 @@ function getNotationSheet(request, response)
     return findListOfItemsPerCategory(handleSuccessFn, handleErrorFn);
 }
 
+
+function average(valueList) 
+{
+    var sum = 0;
+    var count = 0;
+
+    valueList.forEach(function(value) {
+        if ( value >= 0 ) {
+            sum += value;
+            count += 1;
+        }
+    });
+
+    var avg = null;
+    if ( count > 0 ) {
+        avg = Math.round((sum / count) * 100) / 100;
+    }
+
+    return avg;
+}
+
 /** Convert the list of ballots to a per-display result.
  * 
  * Returned value is an object:
@@ -711,7 +732,78 @@ function buildDisplayNotes(ballotList)
         }
     }
     
+    // And now compute the average note for each disply in given category
+    var keys = Object.keys(displayResults);
+    while ( keys.length > 0 ) {
+        var resultKey = keys.shift();
+        var result = displayResults[ resultKey ];
+        
+        result.averageNote = average(result.notes);
+        
+        // And take the time to sort the list of notes
+        result.notes = result.notes.sort(function(a, b) { return a < b; });
+    }
+    
     return displayResults;
+}
+
+
+
+function buildCategoryResults(displayResults)
+{
+    var categoryResults = {};
+    
+    var keys = Object.keys(displayResults);
+    
+    // 1. Build the results for each categories
+    while ( keys.length > 0 ) {
+        var resultKey = keys.shift();
+        var result = displayResults[ resultKey ];
+        
+        // Create entry in final output if none
+        if ( ! categoryResults[ result.categoryCode ] ) {
+            categoryResults[ result.categoryCode ] = {
+                categoryCode: result.categoryCode,
+                notes: []
+            };
+        }
+        
+        // Create object to store display and its average note
+        var displayNote = {
+            displayCode: result.displayCode,
+            note: result.averageNote
+        };
+        
+        // Add this note entry to the list
+        categoryResults[ result.categoryCode ].notes.push(displayNote);
+    }
+    
+    // 2. Properly sort results in each category
+    
+    var compareDisplayNotes = function(a, b) {
+        var comparison = 0;
+                
+        if ( a.note < b.note ) {
+            comparison = -1;
+        }
+        else if ( a.note > b.note ) {
+            comparison = 1;
+        }
+        
+        return comparison;
+    };
+    
+    var categoryCodeList = Object.keys(categoryResults);
+    while ( categoryCodeList.length > 0 ) {
+        var categoryCode = categoryCodeList.shift();
+        var result = categoryResults[ categoryCode ];
+        
+        var sortedNotes = result.notes.sort(compareDisplayNotes);
+        
+        result.notes = sortedNotes;
+    }
+    
+    return categoryResults;
 }
 
 
@@ -719,58 +811,85 @@ function getResultSheet(request, response)
 {
     var contestName = request.body.contest;
     
+    var numberFormatter = Intl.NumberFormat('FR-fr', {
+        minimumIntegerDigits:  1,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+    
+    var model = {
+        contest: {
+            name: contestName
+        },
+        
+        helpers: {
+            format_note: function(note) {
+                var value = Number(note);
+                return numberFormatter.format(value);
+            }
+        }
+    };
+    
+    // Send model to the template to return proper rendering
+    //
+    var renderFinalModel = function(model) {
+        return response.render("admin/contest-results", model);
+    };
+    
+    // Fetch basic users info
+    //
+    var fetchPeople = function() {
+      var process = function(people) {
+          
+          var peopleMap = {};
+          
+          while ( people.length > 0 ) {
+              var current = people.shift();
+              peopleMap[ current.userInfo.accessKey ] = current;
+          }
+          
+          model.people = peopleMap;
+          
+          return renderFinalModel(model);
+      };
+      
+      return dbConnector.getCollectionAsArray('ContestSubmission', process);
+    };
+    
+    // Fetch categories and groups to add them to the model
+    //
+    var fetchCategories = function() {
+        
+        var process = function(categories) {
+            model.categoryByGroup = categories;
+            
+            return fetchPeople();
+        };
+        
+        return dbConnector.getCategoriesByGroup(process);
+    };
+    
+    
     // 1. Get all the voting ballots.
     // 2. Extract notes for each display
     
     var handleConnected = function(db) {
-
         var ballots = db.collection('ContestBallots');
 
         var query = {
             'contest': contestName
         };
-
+        
         return ballots
           .find(query)
           .toArray()
           .then(function(result) {
               db.close();
-              var model = {
-                  contest: {
-                      name: contestName
-                  },
-                  
-                  helpers: {
-                      note_list: function(notes) {
-                          return notes
-                            .sort(function(a, b) { return a > b; })
-                            .join(', ');
-                      },
-                      
-                      average: function(notes) {
-                          var sum = 0;
-                          var count = 0;
-                          
-                          notes.forEach(function(value) {
-                              if ( value >= 0 ) {
-                                  sum += value;
-                                  count += 1;
-                              }
-                          });
-                          
-                          var avg = "--";
-                          if ( count > 0 ) {
-                              avg = Math.round((sum / count) * 100) / 100;
-                          }
-                          
-                          return avg;
-                      }
-                  }
-              };
 
               model.displayResults = buildDisplayNotes(result);
+              model.categoryResults = buildCategoryResults(model.displayResults);
 
-              return response.render("admin/contest-results", model);
+              return fetchCategories();
           });
     };
 
