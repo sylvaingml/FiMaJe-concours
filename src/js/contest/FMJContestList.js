@@ -110,12 +110,13 @@ FMJContestList.prototype.submitAction = function(actionURL, uid)
 };
 
 
+
 // ----- ASYNC REQUEST SETUP
 
 
 FMJContestList.prototype.createActivateRequest = function(uid, activate) {
     var action = {
-        url: "/admin/contest-activation",
+        url: "/api/admin/contest-activation",
         request: {
             uid: uid,
             active: activate

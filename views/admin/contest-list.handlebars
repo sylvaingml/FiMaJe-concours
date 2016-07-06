@@ -90,11 +90,16 @@
 
               <div class="dropdown-divider"></div>
 
-              <button name="results" type="button" class="dropdown-item" >
+              <form id="results_{{_id}}" action="/admin/contest-results" method="post" >
+                <input type="hidden" name="contest" value="{{name}}" >
+              </form>
+
+              <button name="results" type="submit" class="dropdown-item" form="results_{{_id}}">
                 <i class="fa fa-trophy" aria-hidden="true"></i>
                 Résultats
               </button>
-
+              
+              
               <div class="dropdown-divider"></div>
 
               <button name="activate" type="button" class="dropdown-item" >

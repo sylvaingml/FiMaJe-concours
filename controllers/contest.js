@@ -651,15 +651,138 @@ function getNotationSheet(request, response)
     return findListOfItemsPerCategory(handleSuccessFn, handleErrorFn);
 }
 
+/** Convert the list of ballots to a per-display result.
+ * 
+ * Returned value is an object:
+ * {
+ *   displayNotes: {
+ *     DISPLAY_ID: {
+ *       categoryCode: CODE,
+ *       notes: [ NOTE, ... ],
+ *       averageNote: avg($.notes)
+ *     }
+ *   }
+ * }
+ * 
+ * 
+ * @param {type} ballotList
+ * @returns {undefined}
+ * 
+ */
+function buildDisplayNotes(ballotList) 
+{
+    var displayResults = {};
+    
+    // For each ballot...
+    for ( var ballotIdx = 0 ; ballotIdx < ballotList.length ; ++ballotIdx ) {
+        var notes = ballotList[ ballotIdx ].notes;
+        var categoryCodeList = Object.keys(notes);
+        
+        // For each category
+        for ( var categoryIdx = 0 ; categoryIdx < categoryCodeList.length ; ++categoryIdx ) {
+            var categoryCode = categoryCodeList[ categoryIdx ];
+            
+            var displayNotes = notes[ categoryCode ].displayNotes;
+            var displayIdList = Object.keys(displayNotes);
+            
+            // For each display with a note...
+            for ( var displayIdx = 0 ; displayIdx < displayIdList.length ; ++ displayIdx ) {
+                var displayId = displayIdList[ displayIdx ];
+                var currentNote = displayNotes[ displayId ];
+                
+                var displayKey = categoryCode + ':' + displayId;
+                
+                // Add this note as global results.
+                var results = displayResults[ displayKey ];
+                if ( ! results ) {
+                    // No results yet, create structure
+                    results = {
+                        displayCode: displayId,
+                        categoryCode: categoryCode,
+                        notes: [],
+                        averageNote: -1
+                    };
+                    
+                    displayResults[ displayKey ] = results;
+                }
+                
+                results.notes.push(Number(currentNote.note));
+            }
+        }
+    }
+    
+    return displayResults;
+}
+
+
 function getResultSheet(request, response) 
 {
-    var listOfContests = getActiveContestListInDb();
+    var contestName = request.body.contest;
     
-    var model = {
-        contestList: request.body.contest
+    // 1. Get all the voting ballots.
+    // 2. Extract notes for each display
+    
+    var handleConnected = function(db) {
+
+        var ballots = db.collection('ContestBallots');
+
+        var query = {
+            'contest': contestName
+        };
+
+        return ballots
+          .find(query)
+          .toArray()
+          .then(function(result) {
+              db.close();
+              var model = {
+                  contest: {
+                      name: contestName
+                  },
+                  
+                  helpers: {
+                      note_list: function(notes) {
+                          return notes
+                            .sort(function(a, b) { return a > b; })
+                            .join(', ');
+                      },
+                      
+                      average: function(notes) {
+                          var sum = 0;
+                          var count = 0;
+                          
+                          notes.forEach(function(value) {
+                              if ( value >= 0 ) {
+                                  sum += value;
+                                  count += 1;
+                              }
+                          });
+                          
+                          var avg = "--";
+                          if ( count > 0 ) {
+                              avg = Math.round((sum / count) * 100) / 100;
+                          }
+                          
+                          return avg;
+                      }
+                  }
+              };
+
+              model.displayResults = buildDisplayNotes(result);
+
+              return response.render("admin/contest-results", model);
+          });
     };
 
-    
+    var handleError = function(err) {
+        var model = {
+            "error": err
+        };
+
+        return response.render('admin/contest-list.handlebars', model);
+    };
+
+    return dbConnector.connectAndProcess(handleConnected, handleError);
 }
 
 function searchNotationSheet(request, response) 

@@ -69,11 +69,11 @@ function db_getObjectById(collectionName, objectId, processValue)
 
 
 
-function db_getSortedCollectionAsArray(name, sorting, processValueList)
+function db_fetchSortedCollectionAsArray(name, query, sorting, processValueList)
 {
     var getObjects = function(db) {
         var collection = db.collection(name);
-        collection.find({}, {})
+        collection.find(query, {})
           .sort(sorting)
           .toArray()
           .then(function(objectList) {
@@ -90,6 +90,10 @@ function db_getSortedCollectionAsArray(name, sorting, processValueList)
     db_connectAndProcess(getObjects, failed);
 }
 
+function db_getSortedCollectionAsArray(name, sorting, processValueList)
+{
+    return db_fetchSortedCollectionAsArray(name, {}, sorting, processValueList);
+}
 
 function db_getCollectionAsArray(name, processValueList) 
 {
@@ -130,6 +134,7 @@ module.exports = {
     getObjectById: db_getObjectById,
     getCollectionAsArray: db_getCollectionAsArray,
     getSortedCollectionAsArray: db_getSortedCollectionAsArray,
+    fetchSortedCollectionAsArray: db_fetchSortedCollectionAsArray,
     getCategoriesByGroup: db_getCategoriesByGroup
 };
 

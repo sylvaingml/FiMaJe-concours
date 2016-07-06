@@ -118,7 +118,7 @@ module.exports = function(app)
     // - name: contest name
     // - active: boolean the activation state
     //
-    router.post('/admin/contest-activation', enterAsElfOrBetter, contest.contest_activation);
+    router.post('/api/admin/contest-activation', enterAsElfOrBetter, contest.contest_activation);
 
 
     // Display the registration search
@@ -129,7 +129,7 @@ module.exports = function(app)
 
 
     // Display the registration search
-    router.get('/contest/results', enterAsGod, contest.get_results);
+    router.post('/admin/contest-results', enterAsGod, contest.get_results);
 
     // An API to get the list of active contests
     router.get('/api/list-contests', contest.contest_api_get_list);

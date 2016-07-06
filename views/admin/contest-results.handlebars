@@ -1,0 +1,37 @@
+{{> page-header this }}
+
+<section>
+
+  <header>
+    <h2>Résultats du concours «&nbsp;{{ contest.name }}&nbsp;»</h2>
+  </header>
+
+  <table class="table table-inverse table-striped">
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Display</th>
+        <th>Notes</th>
+        <th>Note moyenne</th>
+    </thead>
+    
+    {{#each displayResults}}
+    <tbody>
+      <tr>
+        <td>{{ categoryCode }}</td>
+        <td>{{ displayCode }}</td>
+        <td>
+          {{ note_list notes }}
+        </td>
+        <td>
+          {{ average notes }}
+        </td>
+      </tr>
+    </tbody>
+
+    {{/each}}
+  </table>
+
+</section>
+
+{{> page-footer this }}
