@@ -783,10 +783,10 @@ function buildCategoryResults(displayResults)
     var compareDisplayNotes = function(a, b) {
         var comparison = 0;
                 
-        if ( a.note < b.note ) {
+        if ( a.note > b.note ) {
             comparison = -1;
         }
-        else if ( a.note > b.note ) {
+        else if ( a.note < b.note ) {
             comparison = 1;
         }
         
@@ -804,6 +804,30 @@ function buildCategoryResults(displayResults)
     }
     
     return categoryResults;
+}
+
+
+function dispathCategoryResults(model)
+{
+    for ( var groupIdx = 0 ; groupIdx < model.categoryByGroup.length ; ++groupIdx ) {
+        // For each group of category...
+        var group = model.categoryByGroup[ groupIdx ];
+        
+        for ( var categoryIdx = 0 ; categoryIdx < group.categories.length ; ++categoryIdx ) {
+            // For each category in this group...            
+            var category = group.categories[ categoryIdx ];
+            
+            category.group = group._id;
+            
+            var categoryCode = category.code;
+            var results = model.categoryResults[ categoryCode ];
+            
+            if ( results ) {
+                var notes = results.notes;
+                category.notes = notes;
+            }
+        }
+    }
 }
 
 
@@ -850,18 +874,33 @@ function getResultSheet(request, response)
           
           model.people = peopleMap;
           
+          model.helpers.people_firstName = function(accessKey) {
+            return model.people[ accessKey ].userInfo.firstName;
+          };
+          
+          model.helpers.people_lastName = function(accessKey) {
+            return model.people[ accessKey ].userInfo.lastName;
+          };
+          
+          model.helpers.people_club = function(accessKey) {
+            return model.people[ accessKey ].userInfo.club;
+          };
+          
           return renderFinalModel(model);
       };
       
       return dbConnector.getCollectionAsArray('ContestSubmission', process);
     };
     
+
     // Fetch categories and groups to add them to the model
     //
-    var fetchCategories = function() {
+    var fetchCategoriesByGroup = function() {
         
         var process = function(categories) {
             model.categoryByGroup = categories;
+            
+            dispathCategoryResults(model);
             
             return fetchPeople();
         };
@@ -869,6 +908,27 @@ function getResultSheet(request, response)
         return dbConnector.getCategoriesByGroup(process);
     };
     
+    
+    // Fetch category dictionnary
+    //
+    var fetchCategories = function() {
+        
+        var process = function(categories) {
+            
+            var categoryMap = {};
+            
+            while ( categories.length > 0 ) {
+                var current = categories.shift();
+                categoryMap[ current.code ] = current;
+            }
+            
+            model.categories = categoryMap;
+
+            return fetchCategoriesByGroup();
+        };
+        
+        return dbConnector.getCollectionAsArray("Categories", process);
+    };
     
     // 1. Get all the voting ballots.
     // 2. Extract notes for each display
@@ -889,7 +949,7 @@ function getResultSheet(request, response)
               model.displayResults = buildDisplayNotes(result);
               model.categoryResults = buildCategoryResults(model.displayResults);
 
-              return fetchCategories();
+              return fetchCategoriesByGroup();
           });
     };
 

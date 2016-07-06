@@ -3,7 +3,7 @@
 <section>
 
   <header>
-    <h2>Résultats du concours «&nbsp;{{ contest.name }}&nbsp;»</h2>
+    <h2 class="m-t-3 m-b-3">Résultats du concours «&nbsp;{{ contest.name }}&nbsp;»</h2>
   </header>
 
   <h3 class="m-t-2 m-b-2">Classement par catégorie</h3>
@@ -14,7 +14,31 @@
       
     {{#each categories}}
 
-    <h5 class="m-t-2">Catégorie {{label}} ({{code}})</h5>
+    {{#if notes}}
+    <h5 class="m-t-2">Catégorie {{ label }} ({{ group }}) [{{ code }}]</h5>
+    
+    <table class="table table-inverse table-striped">
+      <thead>
+        <tr>
+          <th>Classement</th>
+          <th>Concurrent</th>
+          <th>Club</th>
+          <th>Note</th>
+      </thead>
+
+      <tbody>
+        {{#each notes}}
+        <tr>
+          <td>{{row_number @index}}</td>
+          <td>{{people_firstName displayCode}} {{people_lastName displayCode}}</td>
+          <td>{{people_club displayCode}}</td>
+          <td>{{format_note note}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+
+    </table>
+    {{/if}}
 
     {{/each}}
 
