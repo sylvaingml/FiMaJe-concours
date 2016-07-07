@@ -5,7 +5,7 @@
   "main": "register.js",
   "scripts": {
     "prestart": "gulp build",
-    "start": "node server.js",
+    "start": "gulp build; node server.js",
     "test": "mocha -trace -r tests-integration/server-test-helper.js -R spec tests-integration/server/**/*.test.js "
   },
   "author": "Sylvain Gamel, Cie des Trolls Antibes",
