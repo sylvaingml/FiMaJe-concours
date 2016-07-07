@@ -151,17 +151,21 @@ gulp.task('karma', function(done) {
 
 // ====== UI UNIT TESTS
 
-// TODO
+// ...TODO
 
-// ====== BUILD
+// ===== PRODUCTION DEPLOYMENT
+
+gulp.task('deploy', [ 'build' ]);
+
+// ===== BUILD
 
 gulp.task('build', [ 'build:css', 'build:javascript' ]);
 
 
-// ====== CLEAN
+// ===== CLEAN
 
 gulp.task('clean', [ 'clean:css', 'clean:javascript' ]);
 
-// ====== TESTS
+// ===== TESTS
 
 gulp.task('test', [ 'karma' ]);
