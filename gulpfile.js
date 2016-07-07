@@ -21,7 +21,7 @@ var destination_css   = target_dir + "/css";
 var destination_js    = target_dir + "/js";
 var destination_fonts = target_dir + "/fonts";
 
-var karmaConf = "karma.conf.js"
+var karmaConf = "karma.conf.js";
 
 
 // ===== DEPENDENCIES
@@ -138,13 +138,13 @@ gulp.task('clean:javascript', function () {
 
 // ====== UNIT TESTS
 
-var UTServer = require('karma').Server;
-
 gulp.task('karma', function(done) {
-  new UTServer({
-    configFile: __dirname + "/" + karmaConf,
-    singleRun: false
-  }, done).start();
+    var UTServer = require('karma').Server;
+
+    new UTServer({
+        configFile: __dirname + "/" + karmaConf,
+        singleRun: false
+    }, done).start();
 });
 
 
