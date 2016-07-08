@@ -1,12 +1,3 @@
-{
-    "contest": "FiMaJe 2016, peinture",
-    "active": true
-}
-{
-    "contest": "FiMaJe 2016, maquettes",
-    "active": true
-}
-{
-    "contest": "FiMaJe 2016, steampunk",
-    "active": true
-}
+{ "contest": "FiMaJe 2016, peinture",  "active": true }
+{ "contest": "FiMaJe 2016, maquettes", "active": true }
+{ "contest": "FiMaJe 2016, steampunk", "active": true }
