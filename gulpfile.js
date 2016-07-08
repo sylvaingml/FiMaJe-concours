@@ -16,10 +16,12 @@ var target_dir = "./public";
 var source_js  = "./src/js";
 var source_css = "./src/scss";
 var source_fa  = "./src/font-awesome";
+var source_img = "./src/img";
 
 var destination_css   = target_dir + "/css";
 var destination_js    = target_dir + "/js";
 var destination_fonts = target_dir + "/fonts";
+var destination_img   = target_dir + "/img";
 
 var karmaConf = "karma.conf.js";
 
@@ -88,7 +90,19 @@ gulp.task('clean:css', function () {
   ]);
 });
 
-gulp.task('build:css', [ "sass", "css-libs" ]);
+gulp.task('build:css', [ "sass", "css-libs", "fontawesome" ]);
+
+
+// ===== ASSETS
+
+gulp.task('build-images', function () {
+  return gulp.src([
+      source_img+'/**/*.jpeg'
+    ])
+    .pipe(gulp.dest(destination_img));
+});
+
+ gulp.task('build:assets', [ "build-images" ]);
 
 
 // ===== JAVASCRIPT
@@ -159,7 +173,7 @@ gulp.task('deploy', [ 'build' ]);
 
 // ===== BUILD
 
-gulp.task('build', [ 'build:css', 'build:javascript' ]);
+gulp.task('build', [ 'build:css', 'build:javascript', 'build:assets' ]);
 
 
 // ===== CLEAN
