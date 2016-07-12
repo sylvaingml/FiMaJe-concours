@@ -78,7 +78,7 @@ function isAuthorizedUserAndPassword(login, password, role, nextAction) {
               if ( result && Array.isArray(result) && result.length > 0) {
                   if ( !result[0].password || '' === result[0].password ) {
                       // User found but password is not set... Force setting password
-                      authorization = 'toInitialize'
+                      authorization = 'toInitialize';
                   }
                   else if ( bcrypt.compareSync(password, result[0].password) ) {
                       authorization = 'accepted';
