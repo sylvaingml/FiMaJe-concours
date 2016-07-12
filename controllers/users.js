@@ -447,7 +447,7 @@ function updateUserPassword(request, response) {
     };
 
     var handleErrorFn = function(err) {
-        console.error("Update User Info - Error: " + err);
+        console.error("Update User Info - Error: ", JSON.stringify(err));
         var model = {
             "error": err
         };
