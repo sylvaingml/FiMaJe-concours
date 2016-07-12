@@ -40,7 +40,7 @@ function authenticate(role, req, res, next) {
         return unauthorized(res);
     }
 
-    var proposedPassword = createStorablePassword(user.pass);
+    //var proposedPassword = createStorablePassword(user.pass);
 
     return isAuthorizedUserAndPassword(user.name, user.pass, role, function(authorisationStatus) {
         switch ( authorisationStatus ) {
@@ -49,7 +49,7 @@ function authenticate(role, req, res, next) {
                 break;
                 
             case 'toInitialize':
-                console.warn("Password reset needed for " + user.name);
+                console.log("Password reset needed for " + user.name);
                 return initializePassword(user.name, req, res);
                 break;
                 
