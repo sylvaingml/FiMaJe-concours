@@ -70,24 +70,31 @@ function isAuthorizedUserAndPassword(login, password, role, nextAction) {
             login: login,
             groups: {$elemMatch: {$eq: role}}
         };
-        
+
         dbUsers.find(query)
           .toArray()
           .then(function(result) {
               var authorization = 'rejected';
-            
-              if ( result && Array.isArray(result) && result.length > 0) {
-                  if ( !result[0].password || '' === result[0].password ) {
+
+              if ( result && Array.isArray(result) && result.length > 0 ) {
+                  if ( ! result[0].password || '' === result[0].password ) {
                       // User found but password is not set... Force setting password
+                      console.log("No password set for " + login);
                       authorization = 'toInitialize';
                   }
                   else if ( bcrypt.compareSync(password, result[0].password) ) {
                       authorization = 'accepted';
                   }
+                  else {
+                      console.warning("Failed login for user " + login);
+                  }
               }
-              
+              else {
+                  console.warning("Login attempt for user " + login);
+              }
+
               return nextAction(authorization);
-            });
+          });
     };
 
     return MongoClient.connect(settings.get('db_url'), function(err, db) {
