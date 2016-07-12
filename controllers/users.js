@@ -412,7 +412,7 @@ function updateUserInfo(request, response) {
     };
 
     var handleErrorFn = function(err) {
-        console.error("Update User Info - Error: " + err);
+        console.error("Update User Info - Error: ", JSON.stringify(err));
         var model = {
             "error": err
         };
@@ -425,7 +425,7 @@ function updateUserInfo(request, response) {
     var isJSON = request.body.dataType === 'application/json';
 
     if ( ! isJSON ) {
-        return response.status(400).json({message: "Requète invalide"});
+        return response.status(400).json({message: "Invalid request"});
     }
 
     // Get information from request to build user
@@ -452,7 +452,7 @@ function updateUserPassword(request, response) {
     };
 
     var handleErrorFn = function(err) {
-        console.error("Update User Info - Error: ", JSON.stringify(err));
+        console.error("Update User Password - Error: ", JSON.stringify(err));
         var model = {
             "error": err
         };
