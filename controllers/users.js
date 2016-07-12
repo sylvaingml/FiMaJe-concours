@@ -108,7 +108,7 @@ function updateUserInDB(userInfo, onSuccess, onError) {
 
 function updatePasswordInDB(profile, onSuccess, onError) {
     var userQuery = {
-        login: profile.login
+        'login': profile.login
     };
     
     if ( profile._id && '' !== profile._id ) {
@@ -126,17 +126,20 @@ function updatePasswordInDB(profile, onSuccess, onError) {
     }
     
     var updateQuery = {
-        $set: { password: profile.password }
+        '$set': { password: profile.password }
     };
-    
+
+    var options = {
+        'upsert': false,
+        'returnOriginal': false,
+        'fields': { password: 0 }
+    };
+
+
     var handleDbIsConnected = function(db) {
         var dbUsers = db.collection('Users');
         
-        var options = {
-            fields: { password: 0 }
-        };
-
-        return dbUsers.findAndModify(userQuery, { login: 1 }, updateQuery, 
+        return dbUsers.findOneAndUpdate(userQuery, updateQuery, 
             options,
             function(error, result) {
               if ( error || 0 === result.ok ) {
