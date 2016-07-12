@@ -143,6 +143,7 @@ function updatePasswordInDB(profile, onSuccess, onError) {
                   // ERROR, not found
                   return onError({
                       error_code: 'DB.notFound',
+                      error: JSON.stringify(error),
                       message: "Error updating user. Login not found."
                   });
               }
@@ -150,6 +151,7 @@ function updatePasswordInDB(profile, onSuccess, onError) {
                   // ERROR, not authorized (user found but had a password)
                   return onError({
                       error_code: 'DB.noUpdate',
+                      error: JSON.stringify(error),
                       message: "Error updating user. Login not found or password set."
                   });
               }
@@ -443,7 +445,7 @@ function updateUserPassword(request, response) {
             helpers: {}
         };
 
-        response.status(200).json(model);
+        return response.status(200).json(model);
     };
 
     var handleErrorFn = function(err) {
@@ -452,7 +454,7 @@ function updateUserPassword(request, response) {
             "error": err
         };
 
-        response.status(400).json(model);
+        return response.status(400).json(model);
     };
 
     // Check request
