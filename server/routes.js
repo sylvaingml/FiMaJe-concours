@@ -27,7 +27,7 @@ module.exports = function(app)
     // ===== Home screen
 
     router.get('/', home.index);
-
+    
     // ===== Managing categories
 
     // Display the list of categories
@@ -59,58 +59,59 @@ module.exports = function(app)
 
     // ===== ADMINISTRATION
     
-    var enterAsGod = function(req, res, next) {
-        return authentification.authenticate('god', req, res, next);
-    };
-    
-    var enterAsElfOrBetter = function(req, res, next) {
-        return authentification.authenticate(['god', 'wizard', 'elf'], req, res, next);
-    };
-    
     // Display the administration console
-    router.get('/admin', enterAsGod, admin.index);
+    router.get('/admin', authentification.enterAsGod, admin.index);
+
+    // Clear authentication
+    router.get('/user-welcome', authentification.initializePassword);
+
+    // Clear authentication
+    //router.get('/logout', authentification.logout, home.index);
+
 
     // ===== Manage Users
     
     // Display the list of users
-    router.get('/admin/users', enterAsGod, adminUsers.index);
+    router.get('/admin/users', authentification.enterAsGod, adminUsers.index);
     
     // Display the user creation form
-    router.get('/admin/add-user', enterAsGod, adminUsers.add_user);
+    router.get('/admin/add-user', authentification.enterAsGod, adminUsers.add_user);
     
     // Validate a user's creation
-    router.post('/api/admin/add-user', enterAsGod, adminUsers.add_user_confirmed);
+    router.post('/api/admin/add-user', authentification.enterAsGod, adminUsers.add_user_confirmed);
     
     // Validate a user's deletion
-    router.post('/api/admin/delete-user', enterAsGod, adminUsers.delete_user);
+    router.post('/api/admin/delete-user', authentification.enterAsGod, adminUsers.delete_user);
     
     // Validate a user's info update (name and email only)
-    router.post('/api/admin/update-user', enterAsGod, adminUsers.update_user_info);
+    router.post('/api/admin/update-user', authentification.enterAsGod, adminUsers.update_user_info);
     
     // Validate a user's password update
-    router.post('/api/admin/update-user-password', enterAsGod, adminUsers.update_user_password);
+    router.post('/api/admin/update-user-password', authentification.enterAsGod, adminUsers.update_user_password);
     
+    // Initial set of a user's password...
+    router.post('/api/admin/set-user-password', adminUsers.set_user_password);
     
     // ===== Manage Contest
 
     // Display the registration search
-    router.get('/admin/registration', enterAsGod, register.get_all);
+    router.get('/admin/registration', authentification.enterAsGod, register.get_all);
 
     // ===== Contest 
 
     // Display the list of contests, each provide link to result sheet and activation
-    router.get('/admin/contest', enterAsGod, contest.index);
+    router.get('/admin/contest', authentification.enterAsGod, contest.index);
     
     // Display contest editor to create or update a contest
     //
     // - GET is mostly for creation,
     // - POST is for update and requires an "uid" parameter.
     // 
-    router.get('/admin/contest-edit', enterAsGod, contest.edit_contest);
-    router.post('/admin/contest-edit', enterAsGod, contest.edit_contest);
+    router.get('/admin/contest-edit', authentification.enterAsGod, contest.edit_contest);
+    router.post('/admin/contest-edit', authentification.enterAsGod, contest.edit_contest);
     
     // Process a contest create/update request.
-    router.post('/admin/contest-update', enterAsGod, contest.update_contest);
+    router.post('/admin/contest-update', authentification.enterAsGod, contest.update_contest);
     
     // Set the activation state of the contest
     // 
@@ -118,24 +119,24 @@ module.exports = function(app)
     // - name: contest name
     // - active: boolean the activation state
     //
-    router.post('/api/admin/contest-activation', enterAsElfOrBetter, contest.contest_activation);
+    router.post('/api/admin/contest-activation', authentification.enterAsElfOrBetter, contest.contest_activation);
 
 
     // Display the registration search
-    router.get('/contest/search-vote', enterAsElfOrBetter, contest.search_notation_sheet);
+    router.get('/contest/search-vote', authentification.enterAsElfOrBetter, contest.search_notation_sheet);
     
     // Display the registration search
-    router.post('/contest/vote', enterAsElfOrBetter, contest.get_notation_sheet);
+    router.post('/contest/vote', authentification.enterAsElfOrBetter, contest.get_notation_sheet);
 
 
     // Display the registration search
-    router.post('/admin/contest-results', enterAsGod, contest.get_results);
+    router.post('/admin/contest-results', authentification.enterAsGod, contest.get_results);
 
     // An API to get the list of active contests
     router.get('/api/list-contests', contest.contest_api_get_list);
 
     // Submit a judge vote sheet
-    router.post('/api/contest/post-ballot', enterAsElfOrBetter, contest.post_notation_sheet);
+    router.post('/api/contest/post-ballot', authentification.enterAsElfOrBetter, contest.post_notation_sheet);
 
     app.use(router);
 };

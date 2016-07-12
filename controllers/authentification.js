@@ -40,17 +40,22 @@ function authenticate(role, req, res, next) {
         return unauthorized(res);
     }
 
-    // TODO: this shall be removed as magic password do not exists...
-    var existingPassword = createStorablePassword('ami');
     var proposedPassword = createStorablePassword(user.pass);
-    var isMatching = bcrypt.compareSync(user.pass, existingPassword);
 
-    return isAuthorizedUserAndPassword(user.name, proposedPassword, role, function(isAuthorized) {
-        if ( isAuthorized || isMatching ) {
-            return next();
-        }
-        else {
-            return unauthorized(res);
+    return isAuthorizedUserAndPassword(user.name, user.pass, role, function(authorisationStatus) {
+        switch ( authorisationStatus ) {
+            case 'accepted':
+                return next();
+                break;
+                
+            case 'toInitialize':
+                return initializePassword(user.name, req, res);
+                break;
+                
+            case 'rejected':
+            default:
+                return unauthorized(res);
+                break;
         }
     });
 }
@@ -60,18 +65,28 @@ function isAuthorizedUserAndPassword(login, password, role, nextAction) {
     var handleDbIsConnected = function(db) {
         var dbUsers = db.collection('Users');
 
-        dbUsers.find({
+        var query = {
             login: login,
-            password: password,
-            role: { $elemMatch: { $eq: role } }
-        }).toArray(function(err, result) {
-            var authorized = result && ! ! ! err && result.length > 0;
-            if ( ! err ) {
-                db.close();
-            }
-
-            return nextAction(authorized);
-        });
+            groups: {$elemMatch: {$eq: role}}
+        };
+        
+        dbUsers.find(query)
+          .toArray()
+          .then(function(result) {
+              var authorization = 'rejected';
+            
+              if ( result && Array.isArray(result) && result.length > 0) {
+                  if ( !result[0].password || '' === result[0].password ) {
+                      // User found but password is not set... Force setting password
+                      authorization = 'toInitialize'
+                  }
+                  else if ( bcrypt.compareSync(password, result[0].password) ) {
+                      authorization = 'accepted';
+                  }
+              }
+              
+              return nextAction(authorization);
+            });
     };
 
     return MongoClient.connect(settings.get('db_url'), function(err, db) {
@@ -86,12 +101,55 @@ function isAuthorizedUserAndPassword(login, password, role, nextAction) {
 }
 
 
+// ===== REQUEST HANDLERS
+
+function initializePassword(userLogin, request, response) {
+    
+    var model = {
+        login: userLogin
+    };
+    
+    return response.render("admin/user-init", model);
+}
+
+function authenticateAsGod(request, response, next) {
+    return authenticate('god', request, response, next);
+}
+
+
+function authenticateAsElfOrBetter(request, response, next) {
+    return authenticate([ 'god', 'wizard', 'elf' ], request, response, next);
+}
+
+/** End session
+ * 
+ * Current implementation is not working and is not used in UI.
+ * We need to replace basic WWW authentication with more secure system.
+ * 
+ * @param {type} request
+ * @param {type} response
+ * @param {type} next
+ * @returns {unresolved}
+ * 
+ */
+function logout(request, response, next) {
+    response.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+    
+    return response.status(401).redirect('/');
+}
+
+
+
 // ===== EXPORTED MODULE
 
 
 module.exports = {
     authenticate: authenticate,
-    createStorablePassword: createStorablePassword
-};
-
+    initializePassword: initializePassword,
+    createStorablePassword: createStorablePassword,
     
+    enterAsGod: authenticateAsGod,
+    enterAsElfOrBetter: authenticateAsElfOrBetter,
+    
+    logout: logout
+};

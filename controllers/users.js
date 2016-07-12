@@ -107,11 +107,22 @@ function updateUserInDB(userInfo, onSuccess, onError) {
 
 
 function updatePasswordInDB(profile, onSuccess, onError) {
-    var objId = ObjectID.createFromHexString(profile._id);
     var userQuery = {
-        _id:   objId,
         login: profile.login
     };
+    
+    if ( profile._id && '' !== profile._id ) {
+        // A user's ID was provided, this is normal update request
+        var objId = ObjectID.createFromHexString(profile._id);
+        
+        userQuery._id = objId;
+    }
+    else {
+        // We only have a login, so this is a init request.
+        // The current password MUST be empty to be updated.
+        //
+        userQuery.password = { $eq: '' };
+    }
     
     var updateQuery = {
         $set: { password: profile.password }
@@ -127,11 +138,18 @@ function updatePasswordInDB(profile, onSuccess, onError) {
         return dbUsers.findAndModify(userQuery, { login: 1 }, updateQuery, 
             options,
             function(error, result) {
-              if ( error || 0 == result.ok ) {
+              if ( error || 0 === result.ok ) {
                   // ERROR, not found
                   return onError({
                       error_code: 'DB.notFound',
                       message: "Error updating user. Login not found."
+                  });
+              }
+              else if ( null === result.value ) {
+                  // ERROR, not authorized (user found but had a password)
+                  return onError({
+                      error_code: 'DB.noUpdate',
+                      message: "Error updating user. Login not found or password set."
                   });
               }
               else {
@@ -456,7 +474,8 @@ function updateUserPassword(request, response) {
 
     return updatePasswordInDB(model, handleSuccessFn, handleErrorFn);
 }
-    
+
+
 // ===== EXPORTED MODULE
 
 
@@ -466,7 +485,8 @@ module.exports = {
     add_user_confirmed: createUser,
     delete_user: deleteUser,
     update_user_info: updateUserInfo,
-    update_user_password: updateUserPassword
+    update_user_password: updateUserPassword,
+    set_user_password: updateUserPassword // Yes, same function but adapted logic
 };
 
     

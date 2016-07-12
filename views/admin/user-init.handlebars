@@ -1,0 +1,60 @@
+{{> page-header this }}
+
+<section>
+
+  <header>
+    <h2 class="card-title">Activez votre compte utilisateur</h2>
+  </header>
+
+  <p class="alert alert-info" hidden='hidden' >
+    Vous n'avez pas encore de mot de passe.
+    Il est nécessaire de définir un mot de passe pour pouvoir 
+    vous identifier sur le site.
+  </p>
+
+  <div class="card">
+    <div class="card-block">
+      <p class="alert alert-warning" hidden="hidden" >
+        <i class="fa fa-warning"></i>
+        Impossible de modifier le mot de passe de cet utilisateur pour l'instant.
+        Réessayez dans quelques instants.
+      </p>
+
+      <form>
+        <input type="hidden" name="login" value="{{login}}">
+        <fieldset class="form-group">
+          <label for="password">Nouveau mot de passe&nbsp;:</label>
+          <input type="password" class="form-control" id="password" value="" >
+        </fieldset>
+
+        <fieldset class="form-group">
+          <label for="passwordConfirmation">Confirmez ce mot de passe&nbsp;:</label>
+          <input type="password" class="form-control" id="passwordConfirmation" value="" >
+        </fieldset>
+
+      </form>
+    </div>
+
+    <div class="card-footer text-xs-center">
+      <button type="submit" class="btn btn-success btn-lg">
+        <i class="fa fa-check-circle-o"></i>
+        Valider
+      </button>
+    </div>
+  </div>
+</section>
+
+{{> page-footer this }}
+
+<script type="text/javascript" src="/public/js/FiMaJe-admin.js" ></script>
+
+<script>
+
+var userForm;
+
+// Create the main form
+$(function() {
+    userForm = new FMJUserWelcome();
+});
+
+</script>
