@@ -70,7 +70,7 @@ function isAuthorizedUserAndPassword(login, password, role, nextAction) {
 
         var query = {
             login: login,
-            groups: {$elemMatch: {$eq: role}}
+            groups: {$in: [ role ] }
         };
 
         dbUsers.find(query)
