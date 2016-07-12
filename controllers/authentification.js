@@ -49,6 +49,7 @@ function authenticate(role, req, res, next) {
                 break;
                 
             case 'toInitialize':
+                console.warn("Password reset needed for " + user.name);
                 return initializePassword(user.name, req, res);
                 break;
                 

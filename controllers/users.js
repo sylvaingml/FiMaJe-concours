@@ -121,7 +121,8 @@ function updatePasswordInDB(profile, onSuccess, onError) {
         // We only have a login, so this is a init request.
         // The current password MUST be empty to be updated.
         //
-        userQuery.password = { $eq: '' };
+        console.warn("Updating password for " + profile.login);
+        userQuery.password = {$eq: ''};
     }
     
     var updateQuery = {
