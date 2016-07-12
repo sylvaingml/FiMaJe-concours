@@ -63,6 +63,8 @@ function authenticate(role, req, res, next) {
 
 
 function isAuthorizedUserAndPassword(login, password, role, nextAction) {
+    console.log("ACCESS CHECK POINT for user " + login + " ; role " + role);
+    
     var handleDbIsConnected = function(db) {
         var dbUsers = db.collection('Users');
 
@@ -86,11 +88,11 @@ function isAuthorizedUserAndPassword(login, password, role, nextAction) {
                       authorization = 'accepted';
                   }
                   else {
-                      console.warning("Failed login for user " + login);
+                      console.log("FAILED login for user " + login);
                   }
               }
               else {
-                  console.warning("Login attempt for user " + login);
+                  console.log("Login attempt FAILED for user " + login);
               }
 
               return nextAction(authorization);
