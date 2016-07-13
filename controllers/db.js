@@ -23,17 +23,28 @@ function db_connectAndProcess(handleDbIsConnected, handleError)
     var dbURL = settings.get('db_url');
 
     var connectionHandler = function(error, db) {
+        var rc;
+        
         if ( error ) {
-            console.error('Unable to connect to MongoDB: ' + error);
+            console.error('Unable to connect to MongoDB: ' + JSON.stringify(error));
 
-            return handleError({
+            rc = handleError({
                 error_code: 'DB.open',
+                error: error,
                 message: "Database connection error."
             });
         }
         else {
-            return handleDbIsConnected(db);
+            rc = handleDbIsConnected(db);
         }
+
+        rc.then(function() {
+            if ( db ) {
+                db.close();
+            }
+        });
+
+        return rc;
     };
 
     MongoClient.connect(dbURL, {}, connectionHandler);

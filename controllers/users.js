@@ -18,6 +18,7 @@ var ObjectID = require('mongodb').ObjectID;
 var exphbs = require('express-handlebars');
 
 var authentification = require('./authentification');
+var dbConnector = require('./db');
 
 // ===== IMPLEMENTATION
 
@@ -39,18 +40,7 @@ function findListOfCategories(onSuccess, onError) {
         });
     };
 
-    return MongoClient.connect(settings.get('db_url'), function(err, db) {
-        if ( err ) {
-            console.error('Unable to connect to MongoDB: ' + err);
-            return onError({
-                error_code: 'DB.open',
-                message: "Database connection error."
-            });
-        }
-        else {
-            return handleDbIsConnected(db);
-        }
-    });
+    return dbConnector.connectAndProcess(handleDbIsConnected, onError);
 }
 
 
@@ -76,7 +66,7 @@ function updateUserInDB(userInfo, onSuccess, onError) {
         return dbUsers.findAndModify(userQuery, { login: 1 }, updateQuery, 
             options,
             function(error, result) {
-              if ( error || 0 == result.ok ) {
+              if ( error || 0 === result.ok ) {
                   // ERROR, not found
                   return onError({
                       error_code: 'DB.notFound',
@@ -90,19 +80,7 @@ function updateUserInDB(userInfo, onSuccess, onError) {
           });
     };
     
-    
-    return MongoClient.connect(settings.get('db_url'), function(err, db) {
-        if ( err ) {
-            console.error('Unable to connect to MongoDB: ' + err);
-            return onError({
-                error_code: 'DB.open',
-                message: "Database connection error."
-            });
-        }
-        else {
-            return handleDbIsConnected(db);
-        }
-    });    
+    return dbConnector.connectAndProcess(handleDbIsConnected, onError);
 }
 
 
@@ -165,19 +143,7 @@ function updatePasswordInDB(profile, onSuccess, onError) {
           });
     };
     
-    
-    return MongoClient.connect(settings.get('db_url'), function(err, db) {
-        if ( err ) {
-            console.error('Unable to connect to MongoDB: ' + err);
-            return onError({
-                error_code: 'DB.open',
-                message: "Database connection error."
-            });
-        }
-        else {
-            return handleDbIsConnected(db);
-        }
-    });    
+    return dbConnector.connectAndProcess(handleDbIsConnected, onError);
 }
 
 
@@ -223,19 +189,7 @@ function deleteUserInDB(userInfo, onSuccess, onError) {
           });
     };
     
-    
-    return MongoClient.connect(settings.get('db_url'), function(err, db) {
-        if ( err ) {
-            console.error('Unable to connect to MongoDB: ' + err);
-            return onError({
-                error_code: 'DB.open',
-                message: "Database connection error."
-            });
-        }
-        else {
-            return handleDbIsConnected(db);
-        }
-    });
+    return dbConnector.connectAndProcess(handleDbIsConnected, onError);
 }
 
 function insertUserInDB(profile, onSuccess, onError) {
@@ -276,18 +230,7 @@ function insertUserInDB(profile, onSuccess, onError) {
           });
     };
 
-    return MongoClient.connect(settings.get('db_url'), function(err, db) {
-        if ( err ) {
-            console.error('Unable to connect to MongoDB: ' + err);
-            return onError({
-                error_code: 'DB.open',
-                message: "Database connection error."
-            });
-        }
-        else {
-            return handleDbIsConnected(db);
-        }
-    });
+    return dbConnector.connectAndProcess(handleDbIsConnected, onError);
 }
 
 // ===== Requests handlers

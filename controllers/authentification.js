@@ -18,6 +18,8 @@ var exphbs = require('express-handlebars');
 var bcrypt = require('bcrypt');
 
 var basicAuth = require('basic-auth');
+var dbConnector = require('./db');
+
 
 // ===== IMPLEMENTATION
 
@@ -73,7 +75,7 @@ function isAuthorizedUserAndPassword(login, password, role, nextAction) {
             groups: {$in: [ role ] }
         };
 
-        dbUsers.find(query)
+        return dbUsers.find(query)
           .toArray()
           .then(function(result) {
               var authorization = 'rejected';
@@ -99,15 +101,11 @@ function isAuthorizedUserAndPassword(login, password, role, nextAction) {
           });
     };
 
-    return MongoClient.connect(settings.get('db_url'), function(err, db) {
-        if ( err ) {
-            console.error('Unable to connect to MongoDB: ' + err);
-            return false;
-        }
-        else {
-            return handleDbIsConnected(db);
-        }
-    });
+    var handleNoConnection = function() {
+        return 'rejected';
+    };
+
+    return dbConnector.connectAndProcess(handleDbIsConnected, handleNoConnection);
 }
 
 
