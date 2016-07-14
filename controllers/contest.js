@@ -25,7 +25,7 @@ var dbConnector = require('./db');
 // ===== DATABASE QUERY
 
 
-function getActiveContestListInDb(onSuccess) {
+function getActiveContestListInDb(onSuccess, handleNoConnection) {
     var handleDbIsConnected = function(db) {
         return db.collection('Contests').find(
           {active: true},
@@ -37,19 +37,7 @@ function getActiveContestListInDb(onSuccess) {
           });
     };
 
-
-    return MongoClient.connect(settings.get('db_url'), function(err, db) {
-        if ( err ) {
-            console.error('Unable to connect to MongoDB: ' + err);
-            return onError({
-                error_code: 'DB.open',
-                message: "Database connection error."
-            });
-        }
-        else {
-            return handleDbIsConnected(db);
-        }
-    });
+    return dbConnector.connectAndProcess(handleDbIsConnected, handleNoConnection);
 }
 
 
@@ -210,19 +198,7 @@ function postJudgeBallot(requestBallot, onSuccess, onError)
           });
     };
 
-
-    return MongoClient.connect(settings.get('db_url'), function(err, db) {
-        if ( err ) {
-            console.error('Unable to connect to MongoDB: ' + err);
-            return onError({
-                error_code: 'DB.open',
-                message: "Database connection error."
-            });
-        }
-        else {
-            return handleDbIsConnected(db);
-        }
-    });
+    return dbConnector.connectAndProcess(handleDbIsConnected, onError);
 }
 
 
@@ -301,18 +277,7 @@ function findListOfItemsPerCategory(onSuccess, onError) {
         });
     };
 
-    return MongoClient.connect(settings.get('db_url'), function(err, db) {
-        if ( err ) {
-            console.error('Unable to connect to MongoDB: ' + err);
-            return onError({
-                error_code: 'DB.open',
-                message: "Database connection error."
-            });
-        }
-        else {
-            return handleDbIsConnected(db);
-        }
-    });
+    return dbConnector.connectAndProcess(handleDbIsConnected, onError);
 }
 
 
@@ -388,11 +353,11 @@ function fetchCategories(model, continueFn)
 function fetchContests(model, continueFn)
 {
     var continueAfterCategories = function(model) {
-        fetchUsers(model, continueFn);
+        return fetchUsers(model, continueFn);
     };
     
     var continueAfterContests = function(model) {
-        fetchCategories(model, continueAfterCategories);
+        return fetchCategories(model, continueAfterCategories);
     };
     
     var processResults = function(results) {
@@ -451,7 +416,7 @@ function contestManager(request, response)
             "error": err
         };
 
-        response.status(400).render("admin/contest-list", model);
+        return response.status(400).render("admin/contest-list", model);
     };
 
     return fetchContests(model, renderResponse, onError);
@@ -984,7 +949,7 @@ function getListOfContestsAPI(request, response)
             contestList: data
         };
         
-        response.status(200).json(model);
+        return response.status(200).json(model);
     };
 
     var handleErrorFn = function(err) {
@@ -992,18 +957,12 @@ function getListOfContestsAPI(request, response)
             "error": err
         };
 
-        response.status(400).json(model);
+        return response.status(400).json(model);
     };
     
     // Check request
 
-    var listOfContests = getActiveContestListInDb(handleSuccessFn);
-    
-    var model = {
-        contestList: request.body.contest
-    };
-
-    return response.json(model);
+    return getActiveContestListInDb(handleSuccessFn, handleErrorFn);
 }
 
 

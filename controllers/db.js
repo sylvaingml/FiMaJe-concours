@@ -38,11 +38,11 @@ function db_connectAndProcess(handleDbIsConnected, handleError)
             rc = handleDbIsConnected(db);
         }
 
-        rc.then(function() {
-            if ( db ) {
+        if ( rc && db ) {
+            rc.then(function() {
                 db.close();
-            }
-        });
+            });
+        }
 
         return rc;
     };
@@ -83,7 +83,7 @@ function db_fetchSortedCollectionAsArray(name, query, sorting, processValueList)
 {
     var getObjects = function(db) {
         var collection = db.collection(name);
-        collection.find(query, {})
+        return collection.find(query, {})
           .sort(sorting)
           .toArray()
           .then(function(objectList) {
@@ -94,10 +94,10 @@ function db_fetchSortedCollectionAsArray(name, query, sorting, processValueList)
 
     var failed = function(error) {
         console.error("ERROR fetching content of '" + name + "' collection: " + error);
-        processValueList([ ]);
+        return processValueList([ ]);
     };
 
-    db_connectAndProcess(getObjects, failed);
+    return db_connectAndProcess(getObjects, failed);
 }
 
 function db_getSortedCollectionAsArray(name, sorting, processValueList)

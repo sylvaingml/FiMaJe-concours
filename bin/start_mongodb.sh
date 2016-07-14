@@ -1,4 +1,4 @@
 #!/bin/bash
 
-mongod --maxConns 10
+mongod --maxConns 14
 
