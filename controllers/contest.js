@@ -921,16 +921,28 @@ function getResultSheet(request, response)
     return dbConnector.connectAndProcess(handleConnected, handleError);
 }
 
-function searchNotationSheet(request, response) 
+function searchNotationSheet(request, response)
 {
     var user = basicAuth(request);
 
-    var model = {
-        user: user.name,
-        contestList: [ "FiMaJe 2016" ] // TODO: return list from DB
-    };
-    
-    response.render("contest/search-notation-sheet", model);
+    return dbConnector
+      .getCollectionAsArray('Contests', function(contestList) {
+          
+        var contestNameList = [];
+        while ( contestList.length > 0 ) {
+            var current = contestList.shift();
+            contestNameList.push(current.name);
+        }
+        
+        contestNameList.sort();
+          
+          var model = {
+              user: user.name,
+              contestList: contestNameList
+          };
+
+          return response.render("contest/search-notation-sheet", model);
+      });
 }
 
 
