@@ -17,37 +17,43 @@ var basicAuth = require('basic-auth');
 var MongoClient = require('mongodb').MongoClient;
 var ObjectID = require('mongodb').ObjectID;
 
+var _db = null;
+
+
+function getDb() {
+    return _db;
+}
 
 function db_connectAndProcess(handleDbIsConnected, handleError)
 {
-    var dbURL = settings.get('db_url');
-
-    var connectionHandler = function(error, db) {
-        var rc;
+    if ( null === _db ) {
+        // No connexion yet, just open one...
+        var dbURL = settings.get('db_url');
         
-        if ( error ) {
-            console.error('Unable to connect to MongoDB: ' + JSON.stringify(error));
-
-            rc = handleError({
-                error_code: 'DB.open',
-                error: error,
-                message: "Database connection error."
-            });
-        }
-        else {
-            rc = handleDbIsConnected(db);
-        }
-
-        if ( rc && db ) {
-            rc.then(function() {
-                db.close();
-            });
-        }
-
-        return rc;
-    };
-
-    MongoClient.connect(dbURL, {}, connectionHandler);
+        var connectionHandler = function(error, db) {
+            if ( error ) {
+                console.error('Unable to connect to MongoDB: ' + JSON.stringify(error));
+                
+                return handleError({
+                    error_code: 'DB.open',
+                    error: error,
+                    message: "Database connection error."
+                });
+            }
+            
+            if ( db ) {
+                // We have a connexion
+                _db = db;
+                return handleDbIsConnected(_db);
+            }
+        };
+        
+        return MongoClient.connect(dbURL, {}, connectionHandler);
+    }
+    else {
+        // Connexion exist, just call the method
+        return handleDbIsConnected(_db);
+    }
 }
 
 
@@ -87,7 +93,6 @@ function db_fetchSortedCollectionAsArray(name, query, sorting, processValueList)
           .sort(sorting)
           .toArray()
           .then(function(objectList) {
-              db.close();
               processValueList(objectList);
           });
     };
@@ -126,7 +131,6 @@ function db_getCategoriesByGroup(processValueList)
             }
         ]).toArray()
           .then(function(objectList) {
-              db.close();
               processValueList(objectList);
           });
     };
@@ -140,6 +144,7 @@ function db_getCategoriesByGroup(processValueList)
 }
 
 module.exports = {
+    getDb: getDb,
     connectAndProcess: db_connectAndProcess,
     getObjectById: db_getObjectById,
     getCollectionAsArray: db_getCollectionAsArray,

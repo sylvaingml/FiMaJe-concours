@@ -70,9 +70,16 @@ function isAuthorizedUserAndPassword(login, password, role, nextAction) {
     var handleDbIsConnected = function(db) {
         var dbUsers = db.collection('Users');
 
+        // We are searchin in an array, so default is to expect an array
+        var roleList = role;
+        if ( !Array.isArray(role) ) {
+            // But if value is not an array, build one to wrap this value
+            roleList = [ role ];
+        }
+
         var query = {
             login: login,
-            groups: {$in: [ role ] }
+            groups: {$in: roleList }
         };
 
         return dbUsers.find(query)

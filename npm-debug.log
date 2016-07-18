@@ -7,35 +7,34 @@
 3 info using node@v4.3.1
 4 verbose run-script [ 'prestart', 'start', 'poststart' ]
 5 info prestart fimaje-concours@1.0.0
-6 verbose unsafe-perm in lifecycle true
-7 info start fimaje-concours@1.0.0
-8 verbose unsafe-perm in lifecycle true
-9 info fimaje-concours@1.0.0 Failed to exec start script
-10 verbose stack Error: fimaje-concours@1.0.0 start: `node server.js`
-10 verbose stack Exit status 1
-10 verbose stack     at EventEmitter.<anonymous> (/usr/local/lib/node_modules/npm/lib/utils/lifecycle.js:214:16)
-10 verbose stack     at emitTwo (events.js:87:13)
-10 verbose stack     at EventEmitter.emit (events.js:172:7)
-10 verbose stack     at ChildProcess.<anonymous> (/usr/local/lib/node_modules/npm/lib/utils/spawn.js:24:14)
-10 verbose stack     at emitTwo (events.js:87:13)
-10 verbose stack     at ChildProcess.emit (events.js:172:7)
-10 verbose stack     at maybeClose (internal/child_process.js:821:16)
-10 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:211:5)
-11 verbose pkgid fimaje-concours@1.0.0
-12 verbose cwd /Users/sylvain/Sites/Netbeans/FiMaJe-concours
-13 error Darwin 15.5.0
-14 error argv "/usr/local/bin/node" "/usr/local/bin/npm" "run-script" "start"
-15 error node v4.3.1
-16 error npm  v2.14.12
-17 error code ELIFECYCLE
-18 error fimaje-concours@1.0.0 start: `node server.js`
-18 error Exit status 1
-19 error Failed at the fimaje-concours@1.0.0 start script 'node server.js'.
-19 error This is most likely a problem with the fimaje-concours package,
-19 error not with npm itself.
-19 error Tell the author that this fails on your system:
-19 error     node server.js
-19 error You can get their info via:
-19 error     npm owner ls fimaje-concours
-19 error There is likely additional logging output above.
-20 verbose exit [ 1, true ]
+6 info start fimaje-concours@1.0.0
+7 verbose unsafe-perm in lifecycle true
+8 info fimaje-concours@1.0.0 Failed to exec start script
+9 verbose stack Error: fimaje-concours@1.0.0 start: `node server.js`
+9 verbose stack Exit status 1
+9 verbose stack     at EventEmitter.<anonymous> (/usr/local/lib/node_modules/npm/lib/utils/lifecycle.js:214:16)
+9 verbose stack     at emitTwo (events.js:87:13)
+9 verbose stack     at EventEmitter.emit (events.js:172:7)
+9 verbose stack     at ChildProcess.<anonymous> (/usr/local/lib/node_modules/npm/lib/utils/spawn.js:24:14)
+9 verbose stack     at emitTwo (events.js:87:13)
+9 verbose stack     at ChildProcess.emit (events.js:172:7)
+9 verbose stack     at maybeClose (internal/child_process.js:821:16)
+9 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:211:5)
+10 verbose pkgid fimaje-concours@1.0.0
+11 verbose cwd /Users/sylvain/Sites/Netbeans/FiMaJe-concours
+12 error Darwin 15.5.0
+13 error argv "/usr/local/bin/node" "/usr/local/bin/npm" "run-script" "start"
+14 error node v4.3.1
+15 error npm  v2.14.12
+16 error code ELIFECYCLE
+17 error fimaje-concours@1.0.0 start: `node server.js`
+17 error Exit status 1
+18 error Failed at the fimaje-concours@1.0.0 start script 'node server.js'.
+18 error This is most likely a problem with the fimaje-concours package,
+18 error not with npm itself.
+18 error Tell the author that this fails on your system:
+18 error     node server.js
+18 error You can get their info via:
+18 error     npm owner ls fimaje-concours
+18 error There is likely additional logging output above.
+19 verbose exit [ 1, true ]

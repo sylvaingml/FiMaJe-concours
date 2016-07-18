@@ -53,7 +53,6 @@ function insertContestInDB(model, onSuccess, onError) {
                 });
             }
             else {
-                db.close();
                 return onSuccess(result);
             }
         });
@@ -97,7 +96,6 @@ function updateContestInDB(model, onSuccess, onError)
                   });
               }
               else {
-                  db.close();
                   return onSuccess(result.value);
               }
           });
@@ -137,7 +135,6 @@ function updateContestActivationInDB(model, onSuccess, onError)
                   });
               }
               else {
-                  db.close();
                   return onSuccess(result.value);
               }
           });
@@ -187,12 +184,10 @@ function postJudgeBallot(requestBallot, onSuccess, onError)
               else if ( null === result.value ) {
                   // No object modified, create new one
                   ballots.insert(ballot, function(error, result) {
-                      db.close();
                       return onSuccess(result);
                   });
               }
               else {
-                  db.close();
                   return onSuccess(result);
               }
           });
@@ -270,7 +265,6 @@ function findListOfItemsPerCategory(onSuccess, onError) {
                 });
             }
             else {
-                db.close();
                 var model = filterResult(result);
                 return onSuccess(model);
             }
@@ -909,8 +903,6 @@ function getResultSheet(request, response)
           .find(query)
           .toArray()
           .then(function(result) {
-              db.close();
-
               model.displayResults = buildDisplayNotes(result);
               model.categoryResults = buildCategoryResults(model.displayResults);
 
@@ -929,16 +921,28 @@ function getResultSheet(request, response)
     return dbConnector.connectAndProcess(handleConnected, handleError);
 }
 
-function searchNotationSheet(request, response) 
+function searchNotationSheet(request, response)
 {
     var user = basicAuth(request);
 
-    var model = {
-        user: user.name,
-        contestList: [ "FiMaJe 2016" ] // TODO: return list from DB
-    };
-    
-    response.render("contest/search-notation-sheet", model);
+    return dbConnector
+      .getCollectionAsArray('Contests', function(contestList) {
+          
+        var contestNameList = [];
+        while ( contestList.length > 0 ) {
+            var current = contestList.shift();
+            contestNameList.push(current.name);
+        }
+        
+        contestNameList.sort();
+          
+          var model = {
+              user: user.name,
+              contestList: contestNameList
+          };
+
+          return response.render("contest/search-notation-sheet", model);
+      });
 }
 
 

@@ -34,7 +34,6 @@ function findListOfCategories(onSuccess, onError) {
                 });
             }
             else {
-                db.close();
                 return onSuccess(result);
             }
         });
@@ -74,7 +73,6 @@ function updateUserInDB(userInfo, onSuccess, onError) {
                   });
               }
               else {
-                  db.close();
                   return onSuccess(result.value);
               }
           });
@@ -137,7 +135,6 @@ function updatePasswordInDB(profile, onSuccess, onError) {
                   });
               }
               else {
-                  db.close();
                   return onSuccess(result.value);
               }
           });
@@ -164,7 +161,6 @@ function deleteUserInDB(userInfo, onSuccess, onError) {
                 });
             }
             else {
-                db.close();
                 return onSuccess(result);
             }
         });
@@ -202,7 +198,6 @@ function insertUserInDB(profile, onSuccess, onError) {
                 });
             }
             else {
-                db.close();
                 return onSuccess(result);
             }
         });
