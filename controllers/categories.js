@@ -169,20 +169,18 @@ module.exports = {
     
     get_groups: function(request, response)
     {
-        return MongoClient.connect(settings.get('db_url'), function(err, db)
-        {
-            if ( err ) {
-                console.error('Unable to connect to MongoDB: ' + err);
-                response.status(400).json({'error': err});
-            }
-            else {
-                db.collection('Categories').distinct('group', function(err, result)
-                {
-                    response.status(200).json(result);
-                    db.close();
-                });
-            }
-        });
+        var handleSuccessFn = function(db) {
+            return db.collection('Categories')
+              .distinct('group', function(err, result) {
+                  response.status(200).json(result);
+              });
+        };
+        
+        var handleErrorFn = function(error) {
+            return response.status(400).json({'error': "DB.noConnexion"});
+        };
+        
+        dbConnector.connectAndProcess(handleSuccessFn, handleErrorFn);
     },
 
     get_categories_and_groups: function(request, response)
