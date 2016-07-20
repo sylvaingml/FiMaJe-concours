@@ -580,15 +580,203 @@ function contestActivation(request, response)
     }
 }
 
+function getNotationSheet(request, response) {
+    var user = basicAuth(request);
+    
+    var contestName = request.body.contest;
+    var judgeLogin = request.body.user;
 
-function getNotationSheet(request, response)
+    // Core model for ballot: judge and contest name.
+    var model = {
+        contest:    contestName,
+        user:       judgeLogin,
+        categories:  [], // Will be set in fetchContestCategories
+        submissions: [], // Will be set in fetchContestSubmission
+        helpers:    {}
+    };
+
+    // Model provide a list of possible notes
+    model.notes = buildListOfNotes();
+
+    var handleErrorFn = function(err) {
+        var model = {
+            "error": err
+        };
+
+        response.render('home.handlebars', model);
+    };
+    
+    // Get each value from model.submission and insert it in corresponding model.categories
+    //
+    var injectSubmissionInCategories = function() {
+      for ( var index = 0 ; index < model.submissions.length ; ++index ) {
+          var submission = model.submissions[ index ];
+          var categoryIndex = model.categoryIndex[ submission._id.categoryCode ];
+          var category = model.categories[ categoryIndex ];
+          
+          if ( !category.submitted ) {
+              // No list of submission yet, create one
+              category.submitted = [];
+          }
+          
+          for ( var itemIdx = 0 ; itemIdx < submission.submitted.length ; ++itemIdx ) {
+              var item = submission.submitted[ itemIdx ];
+              category.submitted.push(item);
+          }
+      }
+    };
+
+    // Post-process data and render the final page.
+    var handleSuccessFn = function() {  
+        injectSubmissionInCategories();
+        
+        return response.render("contest/notation-sheet", model);
+    };
+
+
+    // Build a predicate to search a categoryCode value
+    // To be used as 'or' condition in '$filter' action of fetchContestSubmission()
+    //
+    var createItemSubfilter = function(path, valueList) {
+      var conditions = [];
+      
+      for ( var idx = 0 ; idx < valueList.length ; ++idx ) {
+          var currentValue = valueList[ idx ];
+          var testValue = { '$eq': [path, currentValue] };
+          
+          conditions.push(testValue);
+      }
+      
+      return conditions;
+    };
+
+    var fetchContestSubmission = function(db, codeList) {
+        var pipeline = [
+            {
+                // Only people submission containing any category from this contest
+                $match: {
+                    'items.categoryCode': { $in: codeList }
+                }
+            },
+            {
+                // Remove submission that are not part of current contest
+                $project: {
+                    userAccessKey: '$userInfo.accessKey',
+                    itemsContest: {
+                        $filter: {
+                            input: '$items',
+                            as: 'items',
+                            cond: {
+                                $or: createItemSubfilter('$$items.categoryCode', codeList)
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                // Flatten submissions list in the result
+                $unwind: {
+                    path: '$itemsContest',
+                    includeArrayIndex: 'itemIndex',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                // Flatten itemsContest object in the result
+                $project: {
+                    userAccessKey: 1,
+                    itemName: '$itemsContest.name',
+                    itemCategory: '$itemsContest.categoryCode'
+                }
+            },
+            {
+                // Group by category code
+                $group: {
+                    _id: { categoryCode: '$itemCategory' },
+                    count: { $sum: 1 },
+                    submitted: {
+                        // Each submission is an entry in the result element
+                        $push: {
+                            accessKey: '$userAccessKey',
+                            itemName: '$itemName',
+                            categoryCode: '$itemCategory'
+                        }
+                    }
+                }
+            }
+        ];
+
+        return db.collection('ContestSubmission')
+          .aggregate(pipeline)
+          .toArray()
+          .then(function(result) {
+              model.submissions = result;
+
+              return handleSuccessFn();
+          });
+    };
+
+    // Build a mapping from category code to index in the list
+    var createCodeToIndexMap = function(categoryList) {
+        var map = {};
+        
+        for ( var index = 0 ; index < categoryList.length ; ++index ) {
+            var code = categoryList[ index ].code;
+            map[ code ] = index;
+        }
+        
+        return map;
+    };
+
+    // Build list of category objets for this contest
+    var fetchContestCategories = function(db, codeList) {
+        var query = {
+            code: { $in: codeList }
+        };
+
+        return db.collection('Categories')
+          .find(query)
+          .toArray()
+          .then(function(categoryList) {
+              model.categories = categoryList;
+              model.categoryIndex = createCodeToIndexMap(categoryList);
+              return fetchContestSubmission(db, codeList);
+          });
+    };
+
+    var fetchContestCategoriesCodes = function(db) {
+        var query = {
+            'name': contestName
+        };
+        var mapping = {
+            _id: 0,
+            categoryList: 1
+        };
+
+        db.collection('Contests')
+          .find(query, mapping)
+          .toArray()
+          .then(function(result) {
+              var categoryCodeList = result[ 0 ].categoryList;
+
+              return fetchContestCategories(db, categoryCodeList);
+          });
+    };
+    
+    return dbConnector.connectAndProcess(fetchContestCategoriesCodes, handleErrorFn);
+}
+
+
+function getNotationSheetOLD(request, response)
 {
     var user = basicAuth(request);
+    var contestName = request.body.contest;
+    var judgeLogin = request.body.user;
 
     var handleSuccessFn = function(data) {
         var model = {
-            contest:    request.body.contest,
-            user:       request.body.user,
+            contest:    contestName,
+            user:       judgeLogin,
             categories: data,
             votes:      {}, // TODO: get saved notes from DB
             helpers:    {}

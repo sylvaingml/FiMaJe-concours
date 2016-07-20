@@ -45,10 +45,21 @@
       de la catégorie.
     </p>
   </div>
-
+  
   <div class="tab-content">
     {{#each categories}}
+    
     <article id="category_{{code}}" class="tab-pane" role="tabpanel">
+      {{#unless submitted}}
+      <div class="card alert alert-info">
+        <div class="card-block">
+          <p>
+            Aucun display n'a été proposé pour cette catégorie du concours.
+          </p>
+        </div>
+      </div>
+      {{/unless}}
+    
       <table class="table table-striped">
         <thead class="thead-inverse">
           <tr>
@@ -63,22 +74,18 @@
             <td>
               <div class="row">
                 <span class="col-xs-3">
-                  <var class="">{{userInfo.accessKey}}</var>
+                  <var class="">{{accessKey}}</var>
                 </span>
                 <span class="col-xs-9">
-                  <ul>
-                    {{#each items}}
-                    <li>{{name}} [{{categoryCode}}]</li>
-                    {{/each}}
-                  </ul>
+                    <li>{{itemName}} [{{categoryCode}}]</li>
                 </span>
               </div>
             </td>
 
             <td>
-              <select name="note_{{../code}}_{{userInfo.accessKey}}" 
+              <select name="note_{{../code}}_{{accessKey}}" 
                       data-category="{{../code}}" 
-                      data-display="{{userInfo.accessKey}}" 
+                      data-display="{{accessKey}}" 
                       class="fmj-note form-control form-control-lg" >
                 <option value="" disabled="disabled" selected="selected">Choisir une note</option>
                 {{#each ../../notes}}
