@@ -14,20 +14,24 @@
 
   </header>
 
-  <div class="alert alert-info">
+  <div class="alert alert-info hidden-print">
     <p>
-      Sélectionnez une catégorie pour voter sur chaque display en compétition.
+      1. Sélectionnez une catégorie pour voter sur chaque display en compétition.
     </p>
   </div>
 
-  <ul class="nav nav-pills nav-stacked m-t-2" role="tablist">
+  <ul class="nav nav-pills nav-stacked m-t-2 hidden-print" role="tablist">
     {{#each categories}}
     <li class="nav-item">
       <a data-toggle="tab" class="nav-link" href="#category_{{code}}" role="tab">
         <div class="row">
           <div class="col-xs-1 vote-status" data-category="{{code}}" >
+            {{#if submitted}}
             <i class="vote-pending  fa fa-circle-o"></i>
             <i class="vote-complete fa fa-check-circle"></i>
+            {{else}}
+            <i class="vote-impossible fa fa-ban"></i>
+            {{/if}}
           </div>
           <div class="col-xs-1">{{code}}</div>
           <div class="col-xs-9 col-md-7">{{label}}</div>
@@ -38,9 +42,11 @@
     {{/each}}
   </ul>
 
-  <div class="alert alert-info m-t-1 m-b-1">
+  <div class="alert alert-info m-t-1 m-b-1 hidden-print">
     <p>
-      Donnez une note à chaque display. Lorsque chaque display aura une note 
+      2. Donnez une note à chaque display.</p>
+    <p>
+      Lorsque chaque display aura une note 
       un cercle coché <i class="fa fa-check-circle"></i> sera indiqué en vis à vis 
       de la catégorie.
     </p>
@@ -49,21 +55,33 @@
   <div class="tab-content">
     {{#each categories}}
     
-    <article id="category_{{code}}" class="tab-pane" role="tabpanel">
+    <article id="category_{{ code }}" class="tab-pane category-ballot" role="tabpanel">
       {{#unless submitted}}
-      <div class="card alert alert-info">
+      <div class="card alert alert-info hidden-print">
         <div class="card-block">
-          <p>
-            Aucun display n'a été proposé pour cette catégorie du concours.
-          </p>
+          <h3>[{{ code }}] {{ label }} ({{ group }})</h3>
+      
+          Aucun display n'a été proposé pour cette catégorie du concours.
         </div>
       </div>
       {{/unless}}
     
+      {{#if submitted}}
       <table class="table table-striped">
+        <caption>
+          <h3>[{{ code }}] {{ label }} ({{ group }})</h3>
+        </caption>
+        
+        <colgroup>
+          <col class="ref">
+          <col class="details">
+          <col class="vote">
+        </colgroup>
+        
         <thead class="thead-inverse">
           <tr>
             <th>Display</th>
+            <th>Détails</th>
             <th>Votre note</th>
           </tr>
         </thead>
@@ -72,38 +90,39 @@
           {{#each submitted}}
           <tr>
             <td>
-              <div class="row">
-                <span class="col-xs-3">
-                  <var class="">{{accessKey}}</var>
-                </span>
-                <span class="col-xs-9">
-                    <li>{{itemName}} [{{categoryCode}}]</li>
-                </span>
-              </div>
+              <var class="">{{accessKey}}</var>
             </td>
 
+            <td>
+              <ul class="list-unstyled">
+                <li>{{itemName}} [{{categoryCode}}]</li>
+              </ul>
+            </td>
+            
             <td>
               <select name="note_{{../code}}_{{accessKey}}" 
                       data-category="{{../code}}" 
                       data-display="{{accessKey}}" 
-                      class="fmj-note form-control form-control-lg" >
+                      class="fmj-note form-control form-control-lg hidden-print" >
                 <option value="" disabled="disabled" selected="selected">Choisir une note</option>
                 {{#each ../../notes}}
                 <option value="{{this}}">{{this}}</option>
                 {{/each}}
               </select>
+              <div class="note-list Xvisible-print-block"></div>
             </td>
           </tr>
           {{/each}}
 
         </tbody>
       </table>
+      {{/if}}
     </article>
     {{/each}}
   </div>
 
 
-  <div class="fmj-action-bar">
+  <div class="fmj-action-bar hidden-print">
     <div class="row">
       <div class="col-xs-12 col-md-7 m-t-1 m-b-1">
         Vous pouvez envoyer votre vote autant de fois que nécessaire jusqu'à

@@ -13,6 +13,11 @@
     Author     : Sylvain Gamel <contact@SylvainGamel.fr>
 */
 
+.category-ballot caption {
+    caption-side: top;
+    color: black;
+}
+
 .vote-status {
 
     i.vote-pending {
@@ -23,6 +28,10 @@
         color:   darkgreen;
         // Hidden by default
         display: none;
+    }
+    
+    i.vote-impossible {
+        color: darkgray;
     }
 
     &.vote-complete {

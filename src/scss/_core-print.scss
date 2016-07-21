@@ -125,4 +125,72 @@
     article.fmj-stickers {
         page-break-before: always;
     }
+    
+    
+    // ===== VOTING BALLOTS
+    
+    .category-ballot {
+        
+        font-size: 12pt;
+        
+        page-break-before: auto;
+        page-break-inside: avoid;
+        
+        caption {
+            caption-side: top;
+        }
+        
+        col.ref {
+            width: 17rem;
+        }
+        col.details {
+            width: auto;
+        }
+        col.vote {
+            width: 10rem;
+        }
+        
+        tr {
+            border-bottom: 1px grey dotted;            
+        }
+        
+        
+        h3 {
+            margin: 42px 0px 32px 0px;
+            padding: 8px 0px;
+            
+            font-size: 24pt;
+            font-weight: normal;
+            line-height: 1.2;
+            
+            color: black;
+        }
+        
+        .alert.alert-info {
+            display: inline-block;
+            margin: -2rem auto 0px auto;
+            padding: 8px;
+            
+            font-size: 70%;
+            font-style: italic;
+            
+            color: darkgray;
+            background-color: transparent;
+            border: none;
+        }
+        
+        .note-list {
+            display: block;
+            width:   7rem;
+            height:  3rem;
+            padding: 0px;
+            margin:  0px;
+            border:  1px lightgrey solid;
+        }
+    }
+    
+    .tab-content > .tab-pane.category-ballot {
+        display: block !important;
+    }
+    
 }
