@@ -79,11 +79,6 @@ gulp.task('sass', function () {
 });
  
  
-gulp.task('sass:watch', function () {
-  gulp.watch(source_css+'/**/*.scss', [ 'sass' ]);
-});
-
-
 gulp.task('clean:css', function () {
   return del([
     destination_css
@@ -92,6 +87,14 @@ gulp.task('clean:css', function () {
 
 gulp.task('build:css', [ "sass", "css-libs", "fontawesome" ]);
 
+
+gulp.task('sass:watch', function () {
+  gulp.watch(source_css+'/**/*.scss', [ 'sass' ]);
+});
+
+
+
+gulp.task('build:css:watch', [ "build", "sass:watch" ]);
 
 // ===== ASSETS
 
@@ -104,6 +107,11 @@ gulp.task('build-images', function () {
 
  gulp.task('build:assets', [ "build-images" ]);
 
+gulp.task('build:assets:watch', function () {
+  gulp.watch([
+      source_img+'/**/*.jpeg' 
+  ], [ 'build:assets' ]);
+});
 
 // ===== JAVASCRIPT
 
@@ -142,6 +150,12 @@ gulp.task('build:javascript', [
     'copy-js-src-contest', 'copy-js-src-contest-vote', 'copy-js-src-admin' 
 ]);
 
+gulp.task('build:javascript:watch', function () {
+  gulp.watch([
+      source_js+'/**/*.js' 
+  ], [ 'build:javascript' ]);
+});
+
 
 gulp.task('clean:javascript', function () {
   return del([
@@ -174,6 +188,7 @@ gulp.task('deploy', [ 'build' ]);
 // ===== BUILD
 
 gulp.task('build', [ 'build:css', 'build:javascript', 'build:assets' ]);
+gulp.task('build-continuous', [ 'build:css:watch', 'build:javascript:watch', 'build:assets:watch' ]);
 
 
 // ===== CLEAN
