@@ -90,12 +90,14 @@
           {{#each submitted}}
           <tr>
             <td>
-              <var class="">{{accessKey}}</var>
+              <var class="">{{ accessKey }}</var>
             </td>
 
             <td>
               <ul class="list-unstyled">
-                <li>{{itemName}} [{{categoryCode}}]</li>
+                {{#each entries}}
+                <li>{{ this }}</li>
+                {{/each}}
               </ul>
             </td>
             

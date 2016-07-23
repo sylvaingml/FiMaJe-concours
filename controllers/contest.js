@@ -609,21 +609,54 @@ function getNotationSheet(request, response) {
     // Get each value from model.submission and insert it in corresponding model.categories
     //
     var injectSubmissionInCategories = function() {
-      for ( var index = 0 ; index < model.submissions.length ; ++index ) {
-          var submission = model.submissions[ index ];
-          var categoryIndex = model.categoryIndex[ submission._id.categoryCode ];
-          var category = model.categories[ categoryIndex ];
-          
-          if ( !category.submitted ) {
-              // No list of submission yet, create one
-              category.submitted = [];
-          }
-          
-          for ( var itemIdx = 0 ; itemIdx < submission.submitted.length ; ++itemIdx ) {
-              var item = submission.submitted[ itemIdx ];
-              category.submitted.push(item);
-          }
-      }
+        // Build a list of items and store it in a category-specific map 
+        // where key is the display code.
+        for ( var index = 0; index < model.submissions.length; ++ index ) {
+            var submission = model.submissions[ index ];
+            var categoryIndex = model.categoryIndex[ submission._id.categoryCode ];
+            var category = model.categories[ categoryIndex ];
+
+            if ( ! category.submitted ) {
+                // No list of submission yet, create one
+                category.submitted = {};
+            }
+
+            for ( var itemIdx = 0; itemIdx < submission.submitted.length; ++ itemIdx ) {
+                var item = submission.submitted[ itemIdx ];
+
+                if ( ! category.submitted[ item.accessKey ] ) {
+                    category.submitted[ item.accessKey ] = [ ];
+                }
+
+                category.submitted[ item.accessKey ].push(item.itemName);
+            }
+        }
+
+        // Now that we have a map, we need to convert to a display-friendly list
+        // of items per display.
+
+        for ( var categoryIndex = 0; categoryIndex < model.categories.length; ++ categoryIndex ) {
+            var category = model.categories[ categoryIndex ];
+            var displayMap = category.submitted;
+            var displayList = [ ];
+
+            if ( displayMap ) {
+                // Got a map, convert to list
+                var displayKeys = Object.keys(displayMap);
+                while ( displayKeys.length > 0 ) {
+                    var accessKey = displayKeys.shift();
+
+                    var displayEntry = {
+                        accessKey: accessKey,
+                        entries: displayMap[ accessKey ]
+                    };
+
+                    displayList.push(displayEntry);
+                }
+            }
+            
+            category.submitted = displayList;
+        }
     };
 
     // Post-process data and render the final page.
