@@ -21,6 +21,7 @@
       <thead>
         <tr>
           <th>Classement</th>
+          <th>N° de display</th>
           <th>Concurrent</th>
           <th>Club</th>
           <th>Note</th>
@@ -30,6 +31,7 @@
         {{#each notes}}
         <tr>
           <td>{{row_number @index}}</td>
+          <td>{{displayCode}}</td>
           <td>{{people_firstName displayCode}} {{people_lastName displayCode}}</td>
           <td>{{people_club displayCode}}</td>
           <td>{{format_note note}}</td>
