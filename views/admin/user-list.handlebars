@@ -83,7 +83,7 @@
                   <i class="fa fa-user" aria-hidden="true"></i>
                   Éditer les informations
                 </button>
-                <button type="button" class="dropdown-item" onclick="userAdmin.showGroupEditor('{{this}}');">
+                <button type="button" class="dropdown-item" onclick="userAdmin.showGroupEditor({{ @index }});">
                   <i class="fa fa-group" aria-hidden="true"></i>
                   Éditer les groupes
                 </button>
@@ -135,6 +135,9 @@
 {{!-- MODAL FOR INFORMATION EDITOR --}}
 {{> admin/modal-user-info-edit this }}
 
+{{!-- MODAL FOR GROUP EDITOR --}}
+{{> admin/modal-user-group-edit this }}
+
 
 {{!-- MODAL FOR PASSWORD EDITOR --}}
 {{> admin/modal-user-password-edit this }}
@@ -150,7 +153,12 @@ var userAdmin;
 
 // Create the main form
 $(function() {
-    userAdmin = new FMJUserAdmin();
+  var model = {
+    'users': {{{ to_json users }}},
+    'groups': {{{ to_json groups }}}
+  };
+  
+  userAdmin = new FMJUserAdmin(model);
 });
 
 </script>

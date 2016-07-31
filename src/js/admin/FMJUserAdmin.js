@@ -10,7 +10,13 @@
  */
 
 
-function FMJUserAdmin() {
+function FMJUserAdmin(model) {
+    // Setup up initial data model
+    
+    this.model = model;
+    
+    // Global listener for editor closed
+    
     var me = this;
     var genericSuccessCallback = function() {
         me.refreshContent();
@@ -19,6 +25,7 @@ function FMJUserAdmin() {
     // UI Bindings
 
     this.userInfoEditModal   = new FMJUserInfoEdit('userInfoEditor', genericSuccessCallback);
+    this.userGroupEditModal  = new FMJUserGroupEdit('userGroupEditor', genericSuccessCallback);
     this.passwordEditorModal = new FMJUserPasswordEdit('passwordEditor', genericSuccessCallback);
     this.deleteConfirmModal  = new FMJUserDelete('deleteConfirm', genericSuccessCallback);
 }
@@ -43,6 +50,21 @@ FMJUserAdmin.prototype.showInfoEditor = function(uid, login, name, email) {
     };
     
     this.userInfoEditModal.showEditor(user);
+};
+
+FMJUserAdmin.prototype.showGroupEditor = function(userIndex) {
+    
+    var user = this.model.users[ userIndex ];
+    /*
+    var user = {
+        _id:   uid, 
+        login: unescape(login),
+        
+        fullName: unescape(name), 
+        email:    unescape(email)
+    };
+    */
+    this.userGroupEditModal.showEditor(user);
 };
 
 // ----- UPDATE PASSWORD UPDATE

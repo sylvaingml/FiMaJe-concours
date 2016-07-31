@@ -22,26 +22,6 @@ var dbConnector = require('./db');
 
 // ===== IMPLEMENTATION
 
-function findListOfCategories(onSuccess, onError) {
-    var handleDbIsConnected = function(db) {
-        var dbUsers = db.collection('Users');
-
-        dbUsers.find().toArray(function(err, result) {
-            if ( err ) {
-                return onError({
-                    error_code: 'DB.fetch',
-                    message: "Error fetching users from stored collection."
-                });
-            }
-            else {
-                return onSuccess(result);
-            }
-        });
-    };
-
-    return dbConnector.connectAndProcess(handleDbIsConnected, onError);
-}
-
 
 function updateUserInDB(userInfo, onSuccess, onError) {
     var objId = ObjectID.createFromHexString(userInfo._id);
@@ -231,28 +211,32 @@ function insertUserInDB(profile, onSuccess, onError) {
 // ===== Requests handlers
 
 function getUserList(request, response) {
-    var handleSuccessFn = function(users) {
-        var model = {
-            "users": users,
-            helpers: {
-                escape: function(input) {
-                    return escape(input);
-                }
+    var model = {
+        "users": [],
+        "groups": [],
+        
+        helpers: {
+            escape: function(input) {
+                return escape(input);
             }
-        };
+        }
+    };
+        
+        
+    var handleSuccessFn = function(groups) {
+        model.groups = groups;
+        
         response.render('admin/user-list.handlebars', model);
     };
 
-    var handleErrorFn = function(err) {
-        console.error("Users - Error: " + err);
-        var model = {
-            "error": err
-        };
-
-        response.render('admin/user-list.handlebars', model);
+    
+    var fetchUserGroups = function(users) {
+        model.users = users;
+        
+        return dbConnector.getSortedCollectionAsArray('UserGroups', { 'label': 1 }, handleSuccessFn);
     };
-
-    return findListOfCategories(handleSuccessFn, handleErrorFn);
+    
+    return dbConnector.getSortedCollectionAsArray('Users', { 'fullName': 1 }, fetchUserGroups);
 }
 
 

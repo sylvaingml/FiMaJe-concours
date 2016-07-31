@@ -141,6 +141,56 @@ FMJUserLoginEditor.prototype.checkEmailValue = function() {
     return valid;
 };
 
+// ===== EDITOR FOR GROUPS
+
+function FMJUserGroupEditor(uiElementPath, onValidityUpdate, initialValues) {
+    // UI Binding
+
+    this.groupChkBoxList = $(uiElementPath[ 'groupInput' ]);
+
+    this.onValidityUpdate = onValidityUpdate;
+
+    // Prefill
+
+    if ( initialValues && initialValues.groupList ) {
+        this.setGroupList(initialValues.groupList);
+    }
+
+    // Event listeners
+    var me = this;
+
+    this.groupChkBoxList.on('change', function(event) {
+        me.onGroupUpdate(event.target);
+    });
+}
+
+FMJUserGroupEditor.prototype.getGroupList = function() {
+    // Returns list of checked checkboxes
+    
+    var list = [];
+    
+    list = this.groupChkBoxList.filter(':checked').val();
+    
+    return list;
+};
+
+FMJUserGroupEditor.prototype.setGroupList = function(groupList) {
+    // Set checked properties according to values in list
+    this.groupChkBoxList.each(function() {
+        var $checkbox = $(this);
+        var value = $checkbox.val();
+        var checked = groupList.indexOf(value) >= 0;
+        
+        $checkbox.prop('checked', checked ? 'checked' : null);
+    });
+};
+
+FMJUserGroupEditor.prototype.onGroupUpdate = function(checkbox) {
+    // Shall we perform any kind of check?
+    this.onValidityUpdate(true);
+};
+
+
 // ===== EDITOR FOR PASSWORDS
 
 function FMJUserPasswordEditor(uiElementPath, onValidityUpdate) {

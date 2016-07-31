@@ -1,0 +1,36 @@
+<div id="userGroupEditor" class="modal fade">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Modifier les groupes de <var class="fmj-login">LOGIN</var></h4>
+      </div>
+
+      <div class="modal-body">
+        <p class="alert alert-warning" hidden="hidden" >
+          Impossible de modifier les informations de cet utilisateur pour l'instant.
+          Réessayez dans quelques instants.
+        </p>
+
+        <form>
+          <fieldset class="form-group">
+            <legend>Sélection des groupes</legend>
+            
+            {{#each groups}}
+            <label for="group_{{ @index }}" class="form-control-label">
+              <input name="group_list" id="group_{{ @index }}" name="group-list" type="checkbox" class="fmj-group" value="{{ code }}" >
+              {{label}}
+            </label>
+            {{/each}}
+            
+          </fieldset>
+
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" name="cancel">Annuler</button>
+        <button type="submit" class="btn btn-primary">Appliquer</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
