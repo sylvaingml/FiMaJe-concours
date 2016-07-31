@@ -40,43 +40,32 @@ FMJUserAdmin.prototype.refreshContent = function() {
 
 
 
-FMJUserAdmin.prototype.showInfoEditor = function(uid, login, name, email) {
-    var user = {
-        _id:   uid, 
-        login: unescape(login),
-        
-        fullName: unescape(name), 
-        email:    unescape(email)
-    };
+FMJUserAdmin.prototype.showInfoEditor = function(userIndex) {
+    var user = this.model.users[ userIndex ];
     
     this.userInfoEditModal.showEditor(user);
 };
 
+
 FMJUserAdmin.prototype.showGroupEditor = function(userIndex) {
-    
     var user = this.model.users[ userIndex ];
-    /*
-    var user = {
-        _id:   uid, 
-        login: unescape(login),
-        
-        fullName: unescape(name), 
-        email:    unescape(email)
-    };
-    */
+    
     this.userGroupEditModal.showEditor(user);
 };
 
+
 // ----- UPDATE PASSWORD UPDATE
 
-FMJUserAdmin.prototype.showPasswordEditor = function(uid, login) {
+
+FMJUserAdmin.prototype.showPasswordEditor = function(userIndex) {
     var user = {
-        _id:   uid, 
-        login: unescape(login)
+        _id:   this.model.users[ userIndex ].uid, 
+        login: this.model.users[ userIndex ].login
     };
     
     this.passwordEditorModal.showEditor(user);
 };
+
 
 /** Public API to call to delete a user.
  * 
@@ -86,6 +75,8 @@ FMJUserAdmin.prototype.showPasswordEditor = function(uid, login) {
  * 
  * @returns {undefined}
  */
-FMJUserAdmin.prototype.askDeletion = function(uid, login, name) {
-    this.deleteConfirmModal.askDeletion(uid, login, name);
+FMJUserAdmin.prototype.askDeletion = function(userIndex) {
+    var user = this.model.users[ userIndex ];
+    
+    this.deleteConfirmModal.askDeletion(user.uid, user.login, user.fullName);
 };
