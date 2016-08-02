@@ -86,6 +86,9 @@ module.exports = function(app)
     // Validate a user's info update (name and email only)
     router.post('/api/admin/update-user', authentification.enterAsGod, adminUsers.update_user_info);
     
+    // Validate a user's group update
+    router.post('/api/admin/update-user-groups', authentification.enterAsGod, adminUsers.update_user_groups);
+    
     // Validate a user's password update
     router.post('/api/admin/update-user-password', authentification.enterAsGod, adminUsers.update_user_password);
     

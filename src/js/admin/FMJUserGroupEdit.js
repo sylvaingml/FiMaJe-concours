@@ -21,7 +21,7 @@ function FMJUserGroupEdit(modalId, successCallback) {
 
     // UI Binding
 
-    this.loginVar  = $('var.fmj-login');
+    this.loginVar  = $('var.fmj-login', this.modal);
     this.cancelBtn = $('button[name=cancel]', this.modal);
     this.submitBtn = $('button[type=submit]', this.modal);
 
@@ -30,12 +30,15 @@ function FMJUserGroupEdit(modalId, successCallback) {
 
     // Editor
     
-    this.groupEditor = new FMJUserGroupEditor({
+    var uiSelectors = {
         groupInput: 'input[name=group_list][type=checkbox]'
-    },
-    function(valid) {
+    };
+    
+    var onSubmit = function(valid) {
         me.updateSubmitButton(me.checkIsSubmitAllowed());
-    });
+    };
+    
+    this.groupEditor = new FMJUserGroupEditor(uiSelectors, onSubmit);
     
     // Event listeners
 
@@ -44,10 +47,8 @@ function FMJUserGroupEdit(modalId, successCallback) {
         event.preventDefault();
         event.stopPropagation();
 
-        me.submitUserUpdateRequest();
+        me.submitUserGroupUpdateRequest();
     });
-    
-    this.updateSubmitButton(false);
 }
 
 
@@ -88,19 +89,13 @@ FMJUserGroupEdit.prototype.showEditor = function(user) {
  * @returns {undefined}
  */
 FMJUserGroupEdit.prototype.groupEditorReady = function() {
-    var me = this;
-    
     // UI Updates and additional bindings
     
     this.alert.hide();
     
     this.loginVar.html(this.user.login);
     
-    this.updateSubmitButton(false);
-
-    this.submitBtn.on('click', function() {
-        me.submitUserUpdateRequest();
-    });
+    //this.updateSubmitButton(false);
 };
 
 
@@ -109,8 +104,6 @@ FMJUserGroupEdit.prototype.groupEditorReady = function() {
  * @returns {undefined}
  */
 FMJUserGroupEdit.prototype.groupEditorDismissed = function() {
-    this.submitBtn.off('click');
-    
     this.user = {};
 };
 
@@ -118,8 +111,10 @@ FMJUserGroupEdit.prototype.groupEditorDismissed = function() {
 // ====== REQUEST SUBMISSION
 
 
-FMJUserGroupEdit.prototype.submitUserUpdateRequest = function() {
+FMJUserGroupEdit.prototype.submitUserGroupUpdateRequest = function() {
     this.updateSubmitButton(false);
+    
+    var groupList = this.groupEditor.getGroupList();
     
     var updateRequest = {
         // Identification
@@ -127,19 +122,23 @@ FMJUserGroupEdit.prototype.submitUserUpdateRequest = function() {
         login: this.user.login,
         
         // Updated values
-        groups: this.groupEditor.getGroupList()
+        groups: JSON.stringify(groupList)
     };
     
     var url = "/api/admin/update-user-groups";
     var me = this;
-
-    $.post(url, {
+    
+    var postRequest = {
         'dataType': "application/json",
         'data': updateRequest
-    })
-      .done(function(data) {
+    };
+    
+    var onSuccess = function(data) {
           me.userInfoUpdated(data);
-      })
+    };
+
+    $.post(url, postRequest)
+      .done(onSuccess)
       .fail(function(error) {
           me.userInfoUpdateFailed();
       });
@@ -150,7 +149,8 @@ FMJUserGroupEdit.prototype.userInfoUpdated = function(user) {
     this.modal.modal('hide');
     this.successCallback();
 };
-    
+
+
 FMJUserGroupEdit.prototype.userInfoUpdateFailed = function() {
     this.updateSubmitButton(false);
     this.alert.show();

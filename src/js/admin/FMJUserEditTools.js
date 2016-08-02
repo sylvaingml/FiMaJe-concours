@@ -160,7 +160,9 @@ function FMJUserGroupEditor(uiElementPath, onValidityUpdate, initialValues) {
     var me = this;
 
     this.groupChkBoxList.on('change', function(event) {
-        me.onGroupUpdate(event.target);
+        if ( event ) {
+            me.onGroupUpdate(event.target);
+        }
     });
 }
 
@@ -169,7 +171,9 @@ FMJUserGroupEditor.prototype.getGroupList = function() {
     
     var list = [];
     
-    list = this.groupChkBoxList.filter(':checked').val();
+    this.groupChkBoxList
+      .filter(':checked')
+      .map( function() { list.push(this.value); } );
     
     return list;
 };

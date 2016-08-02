@@ -23,17 +23,12 @@ var dbConnector = require('./db');
 // ===== IMPLEMENTATION
 
 
-function updateUserInDB(userInfo, onSuccess, onError) {
+function updateUserInDB(userInfo, updateQuery, onSuccess, onError) {
     var objId = ObjectID.createFromHexString(userInfo._id);
     var userQuery = {
         _id:   objId,
         login: userInfo.login
     };
-    
-    var updateQuery = {
-        $set: { fullName: userInfo.fullName, email: userInfo.email }
-    };
-    
     
     var handleDbIsConnected = function(db) {
         var dbUsers = db.collection('Users');
@@ -358,9 +353,59 @@ function updateUserInfo(request, response) {
         fullName: request.body.data.fullName,
         email: (request.body.data.email) ? request.body.data.email : ""
     };
+    
+    var updateQuery = {
+        $set: { fullName: userInfo.fullName, email: userInfo.email }
+    };    
 
-    return updateUserInDB(model, handleSuccessFn, handleErrorFn);
+    return updateUserInDB(model, updateQuery, handleSuccessFn, handleErrorFn);
 }
+ 
+ 
+function updateUserGroups(request, response) {
+    var handleSuccessFn = function(result) {
+        var model = {
+            "user": result,
+            helpers: {}
+        };
+
+        response.status(200).json(model);
+    };
+
+    var handleErrorFn = function(err) {
+        console.error("Update User Groups - Error: ", JSON.stringify(err));
+        var model = {
+            "error": err
+        };
+
+        response.status(400).json(model);
+    };
+
+    // Check request
+
+    var isJSON = request.body.dataType === 'application/json';
+
+    if ( ! isJSON ) {
+        return response.status(400).json({message: "Invalid request"});
+    }
+
+    // Get information from request to build user
+
+    var parsedGroups = JSON.parse( request.body.data.groups );
+    
+    var model = {
+        _id: request.body.data._id,
+        login: request.body.data.login,
+        groups: parsedGroups
+    };
+
+    var updateQuery = {
+        $set: { groups: model.groups }
+    };
+
+    return updateUserInDB(model, updateQuery, handleSuccessFn, handleErrorFn);
+}
+  
  
  
 function updateUserPassword(request, response) {
@@ -413,6 +458,7 @@ module.exports = {
     add_user_confirmed: createUser,
     delete_user: deleteUser,
     update_user_info: updateUserInfo,
+    update_user_groups: updateUserGroups,
     update_user_password: updateUserPassword,
     set_user_password: updateUserPassword // Yes, same function but adapted logic
 };
