@@ -586,13 +586,53 @@ function getNotationSheet(request, response) {
     var contestName = request.body.contest;
     var judgeLogin = request.body.user;
 
+    var existingNote = function(category, display) {
+        var note = null;
+        
+        if ( model.judgeNotes && model.judgeNotes[ category ] ) {
+            var categoryNotes = model.judgeNotes[ category ];
+            
+            if ( categoryNotes.displayNotes 
+              && categoryNotes.displayNotes[ display ]
+              && categoryNotes.displayNotes[ display ].note ) {
+                note = categoryNotes.displayNotes[ display ].note;
+            }
+        }
+        
+        return note;
+    };
+    
+    
+    var isSelected = function(category, display, noteToCheck) {
+        var existing = existingNote(category, display);
+
+        // Important to keep == as one value is string, the other a number
+        var selected = existing && (noteToCheck == existing);
+
+        return selected;
+    };
+    
+    var selectedAttr = function(category, display, noteToCheck) {
+        var attr = "";
+        
+        if ( isSelected(category, display, noteToCheck) ) {
+            attr="selected=\"selected\"";
+        }
+        
+        return attr;
+    };
+
     // Core model for ballot: judge and contest name.
     var model = {
         contest:    contestName,
         user:       judgeLogin,
         categories:  [], // Will be set in fetchContestCategories
         submissions: [], // Will be set in fetchContestSubmission
-        helpers:    {}
+        judgeNotes:       {}, // 
+        helpers:     {
+            existing_note: existingNote,
+            selected_attr: selectedAttr
+        }
     };
 
     // Model provide a list of possible notes
@@ -796,40 +836,25 @@ function getNotationSheet(request, response) {
           });
     };
     
-    return dbConnector.connectAndProcess(fetchContestCategoriesCodes, handleErrorFn);
+    var fetchCurrentBallot = function(db) {
+      var query = {
+          'contest': contestName,
+          'judge':   judgeLogin
+      };
+      
+      db.collection('ContestBallots')
+          .find(query)
+          .toArray()
+          .then(function(result) {
+              model.judgeNotes = result[ 0 ].notes;
+
+              return fetchContestCategoriesCodes(db);
+          });
+    };
+    
+    return dbConnector.connectAndProcess(fetchCurrentBallot, handleErrorFn);
 }
 
-
-function getNotationSheetOLD(request, response)
-{
-    var user = basicAuth(request);
-    var contestName = request.body.contest;
-    var judgeLogin = request.body.user;
-
-    var handleSuccessFn = function(data) {
-        var model = {
-            contest:    contestName,
-            user:       judgeLogin,
-            categories: data,
-            votes:      {}, // TODO: get saved notes from DB
-            helpers:    {}
-        };
-
-        model.notes = buildListOfNotes();
-
-        response.render("contest/notation-sheet", model);
-    };
-
-    var handleErrorFn = function(err) {
-        var model = {
-            "error": err
-        };
-
-        response.render('home.handlebars', model);
-    };
-
-    return findListOfItemsPerCategory(handleSuccessFn, handleErrorFn);
-}
 
 
 function average(valueList) 

@@ -106,12 +106,13 @@
                       data-category="{{../code}}" 
                       data-display="{{accessKey}}" 
                       class="fmj-note form-control form-control-lg hidden-print" >
-                <option value="" disabled="disabled" selected="selected">Choisir une note</option>
+                <option value="" disabled="disabled" >Choisir une note</option>
+                
                 {{#each ../../notes}}
-                <option value="{{this}}">{{this}}</option>
+                  <option value="{{this}}" {{{ selected_attr ../../code ../accessKey this }}} >{{this}}</option>
                 {{/each}}
               </select>
-              <div class="note-list Xvisible-print-block"></div>
+              <div class="note-list Xvisible-print-block">{{ existing_note ../../code ../accessKey }}</div>
             </td>
           </tr>
           {{/each}}
