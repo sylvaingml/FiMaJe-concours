@@ -106,7 +106,7 @@
                       data-category="{{../code}}" 
                       data-display="{{accessKey}}" 
                       class="fmj-note form-control form-control-lg hidden-print" >
-                <option value="" disabled="disabled" >Choisir une note</option>
+                <option value="" disabled="disabled" {{{ placeholder_selected_attr ../../code ../accessKey }}}>Choisir une note</option>
                 
                 {{#each ../../notes}}
                   <option value="{{this}}" {{{ selected_attr ../../code ../accessKey this }}} >{{this}}</option>

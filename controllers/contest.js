@@ -612,6 +612,17 @@ function getNotationSheet(request, response) {
         return selected;
     };
     
+    var selectedAttrForPlaceholder = function(category, display) {
+        var currentNote = existingNote(category, display);
+        var attr = "";
+        
+        if ( null === currentNote ) {
+            attr="selected=\"selected\"";
+        }
+        
+        return attr;
+    };
+    
     var selectedAttr = function(category, display, noteToCheck) {
         var attr = "";
         
@@ -631,7 +642,8 @@ function getNotationSheet(request, response) {
         judgeNotes:       {}, // 
         helpers:     {
             existing_note: existingNote,
-            selected_attr: selectedAttr
+            selected_attr: selectedAttr,
+            placeholder_selected_attr: selectedAttrForPlaceholder
         }
     };
 
@@ -837,17 +849,18 @@ function getNotationSheet(request, response) {
     };
     
     var fetchCurrentBallot = function(db) {
-      var query = {
-          'contest': contestName,
-          'judge':   judgeLogin
-      };
-      
-      db.collection('ContestBallots')
+        var query = {
+            'contest': contestName,
+            'judge': judgeLogin
+        };
+
+        db.collection('ContestBallots')
           .find(query)
           .toArray()
           .then(function(result) {
-              model.judgeNotes = result[ 0 ].notes;
-
+              if ( result && result.length > 0 ) {
+                  model.judgeNotes = result[ 0 ].notes;
+              }
               return fetchContestCategoriesCodes(db);
           });
     };

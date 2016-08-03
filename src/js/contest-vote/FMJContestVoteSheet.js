@@ -15,6 +15,9 @@ function FMJContestVoteSheet(contest, user) {
 
     this.buildInitialModel(contest, user);
     this.bindEvents();
+    
+    // Ensure that we check existing saved note values
+    this.noteSelects.trigger('change');
 }
 
 
@@ -110,8 +113,6 @@ FMJContestVoteSheet.prototype.submitAllVotes = function() {
 
     var voteRecord = this.buildBallot();
 
-    console.log("MODEL", voteRecord);
-    
     $.post(url, {
         'dataType': "application/json",
         'data': voteRecord
