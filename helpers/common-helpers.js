@@ -27,14 +27,21 @@ function formatDateWithPattern(aDate, context) {
 
 
 module.exports = {
+    to_json: function(object) {
+        return JSON.stringify(object);
+    },
+    
     row_number: function(index) {
         return index + 1;
     },
+    
     email_link: function(email) {
         return "<a href='mailto:" + email + "' >" + email + "</a>";
     },
+    
     phone_link: function(tel) {
         return "<a href='tel:" + tel + "' >" + tel + "</a>";
     },
+    
     format_date: formatDateWithPattern
 };

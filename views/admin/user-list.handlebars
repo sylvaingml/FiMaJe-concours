@@ -79,20 +79,20 @@
                 Actions
               </button>
               <div class="dropdown-menu">
-                <button type="button" class="dropdown-item" onclick="userAdmin.showInfoEditor('{{_id}}', '{{escape login}}', '{{escape fullName}}', '{{escape email}}');">
+                <button type="button" class="dropdown-item" onclick="userAdmin.showInfoEditor({{ @index }});">
                   <i class="fa fa-user" aria-hidden="true"></i>
                   Éditer les informations
                 </button>
-                <button type="button" class="dropdown-item" onclick="userAdmin.showGroupEditor('{{this}}');">
+                <button type="button" class="dropdown-item" onclick="userAdmin.showGroupEditor({{ @index }});">
                   <i class="fa fa-group" aria-hidden="true"></i>
                   Éditer les groupes
                 </button>
-                <button type="button" class="dropdown-item" onclick="userAdmin.showPasswordEditor('{{_id}}', '{{escape login}}');">
+                <button type="button" class="dropdown-item" onclick="userAdmin.showPasswordEditor({{ @index }});">
                   <i class="fa fa-user-secret" aria-hidden="true"></i>
                   Modifier le mot de passe
                 </button>
                 <div class="dropdown-divider"></div>
-                <button type="button" class="dropdown-item" onclick="userAdmin.askDeletion('{{_id}}', '{{escape login}}', '{{escape fullName}}');">
+                <button type="button" class="dropdown-item" onclick="userAdmin.askDeletion({{ @index }});">
                   <i class="fa fa-trash-o" aria-hidden="true"></i>
                   Supprimer
                 </button>
@@ -135,6 +135,9 @@
 {{!-- MODAL FOR INFORMATION EDITOR --}}
 {{> admin/modal-user-info-edit this }}
 
+{{!-- MODAL FOR GROUP EDITOR --}}
+{{> admin/modal-user-group-edit this }}
+
 
 {{!-- MODAL FOR PASSWORD EDITOR --}}
 {{> admin/modal-user-password-edit this }}
@@ -150,7 +153,12 @@ var userAdmin;
 
 // Create the main form
 $(function() {
-    userAdmin = new FMJUserAdmin();
+  var model = {
+    'users': {{{ to_json users }}},
+    'groups': {{{ to_json groups }}}
+  };
+  
+  userAdmin = new FMJUserAdmin(model);
 });
 
 </script>
