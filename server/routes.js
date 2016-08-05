@@ -19,6 +19,7 @@ var adminUsers = require('../controllers/users');
 var categories = require('../controllers/categories');
 var register = require('../controllers/register');
 var contest = require('../controllers/contest');
+var pricing = require('../controllers/pricing');
 
 var authentification = require('../controllers/authentification');
 
@@ -28,6 +29,11 @@ module.exports = function(app)
 
     router.get('/', home.index);
     
+    // ===== Pricing Information
+
+    // Display the list of categories
+    router.get('/pricing', pricing.index);
+
     // ===== Managing categories
 
     // Display the list of categories
