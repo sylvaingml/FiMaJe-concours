@@ -16,6 +16,7 @@ var MongoClient = require('mongodb').MongoClient;
 var categories = require('../controllers/categories');
 
 var dbConnector = require('./db');
+var pricing = require('./pricing');
 
 // ===== INTERNALS
 
@@ -166,7 +167,18 @@ function createItemListPerCategory(itemList) {
  * @returns {undefined} 
  */
 function registerForm(request, response) {
-    response.render("register_form", {});
+    
+    var model = {
+        'pricing': {}
+    };
+    
+    var pricePromise = pricing.fetchCurrentPricing();
+    
+    return pricePromise.then(function(priceModel) {
+        model.pricing = priceModel;
+        
+        return response.render("register_form", model);
+    });
 }
 
 

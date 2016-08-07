@@ -18,19 +18,18 @@ var dbConnector = require('./db');
 
 
 module.exports = {
-    index: processListCurrentPricingRequest
+    index: processListCurrentPricingRequest,
+    
+    // API
+    fetchCurrentPricing: fetchCurrentPricing
 };
 
 
-
-/** Returns the list of categories as JSON data.
+/** Returns a promise that will resolve as pricing model.
  * 
- * @param {type} request
- * @param {type} response
- * 
- * @returns {undefined} 
+ * @returns {unresolved}
  */
-function processListCurrentPricingRequest(request, response) {
+function fetchCurrentPricing() {
     var today = new Date();
     var year  = today.getFullYear();
     var model = {
@@ -41,7 +40,7 @@ function processListCurrentPricingRequest(request, response) {
     var processValuesFn = function(data) {
         model.pricing = data;
 
-        response.render('pricing_list.handlebars', model);
+        return model;
     };
     
     
@@ -51,5 +50,21 @@ function processListCurrentPricingRequest(request, response) {
     
     var ordering = { 'year': 1, 'rateCode': 1 };
     
-    dbConnector.fetchSortedCollectionAsArray("Pricing", query, ordering, processValuesFn);
+    return dbConnector
+      .fetchSortedCollectionAsArray("Pricing", query, ordering, processValuesFn);
+}
+
+
+/** Returns the list of categories as JSON data.
+ * 
+ * @param {type} request
+ * @param {type} response
+ * 
+ * @returns {undefined} 
+ */
+function processListCurrentPricingRequest(request, response) {
+    var modelPromise = fetchCurrentPricing();
+    return modelPromise.then(function(model) {
+        return response.render('pricing_list.handlebars', model);
+    });
 }
