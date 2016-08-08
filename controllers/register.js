@@ -14,6 +14,7 @@ var settings = require('config');
 var MongoClient = require('mongodb').MongoClient;
 
 var categories = require('../controllers/categories');
+var authentification = require('../controllers/authentification');
 
 var dbConnector = require('./db');
 var pricing = require('./pricing');
@@ -169,10 +170,43 @@ function createItemListPerCategory(itemList) {
 function registerForm(request, response) {
     
     var model = {
-        'pricing': {}
+        'pricing': {},
+        
+        // YES, 10 is always the "pre-order" rate, 20 the normal
+        'defaultRate': 10, 
+        
+        // Is user allowed to pick alternate pricing?
+        'canPickRate': false,
+        
+        'helpers': {
+            selected_attr: function(rate) {
+                var attr = '';
+                
+                if ( rate == model.defaultRate ) {
+                    attr= 'checked="checked"';
+                }
+                
+                return attr;
+            },
+            
+            disabled_attr: function() {
+                var attr = '';
+                
+                if ( !model.canPickRate ) {
+                    attr= 'disabled="disabled"';
+                }
+                
+                return attr;
+            }
+            
+        }
     };
     
     var pricePromise = pricing.fetchCurrentPricing();
+    
+    // Check if user is able to change price rate
+    var hasAuthority = authentification.isLoggedElfOrBetter(request);
+    model.canPickRate = hasAuthority;
     
     return pricePromise.then(function(priceModel) {
         model.pricing = priceModel;

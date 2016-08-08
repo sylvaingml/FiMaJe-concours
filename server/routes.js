@@ -54,6 +54,9 @@ module.exports = function(app)
     // Display the registration form
     router.get('/register', register.index);
 
+    // Display the registration form for administration 
+    router.get('/admin/register', authentification.enterAsGod, register.index);
+
     // Display the registration search
     router.get('/registration-search', register.search);
 
