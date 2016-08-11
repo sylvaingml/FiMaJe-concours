@@ -93,7 +93,7 @@ function db_fetchSortedCollectionAsArray(name, query, sorting, processValueList)
           .sort(sorting)
           .toArray()
           .then(function(objectList) {
-              processValueList(objectList);
+              return processValueList(objectList);
           });
     };
 

@@ -26,7 +26,15 @@ function formatDateWithPattern(aDate, context) {
 }
 
 
+function formatAmount(value, context) {
+    var amount = new Number(value);
+    var formatted = amount.toFixed(2);
+    
+    return formatted;
+}
+
 module.exports = {
+    format_amount: formatAmount,
     to_json: function(object) {
         return JSON.stringify(object);
     },

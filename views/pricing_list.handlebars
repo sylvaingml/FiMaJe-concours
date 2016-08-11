@@ -1,0 +1,29 @@
+{{> page-header this }}
+
+<h2>Tarifs des inscription</h2>
+
+<p>
+  Ces tarifs s'appliquent à l'édition {{year}}.
+</p>
+
+<table class="table table-striped">
+  <thead class="thead-inverse">
+    <tr>
+      <th>Tarif</th>
+      <th>Montant</th>
+      <th>Détails</th>
+    </tr>
+  </thead>
+  
+  <tbody>
+    {{#each pricing}}
+    <tr>
+      <td>{{{ label }}}</td>
+      <td class="text-xs-right">{{ format_amount amount }}&nbsp;€</td>
+      <td>{{{ description }}}</td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+{{> page-footer this }}

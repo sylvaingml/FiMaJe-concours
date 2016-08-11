@@ -12,9 +12,23 @@
 
 {{> register/user-items this }}
 
+{{> register/user-pricing this }}
+
 {{> register/user-submission this }}
 
-
-<script type="text/javascript" src="public/js/FiMaJe-contest.js" ></script>
+<script type="text/javascript" src="/public/js/FiMaJe-contest.js" ></script>
 
 {{> page-footer this }}
+
+<script>
+
+var FMJForm;
+var model = {{{ to_json this }}};
+
+// Create the main form
+$(function() {
+    FMJForm = new FMJContestSubmission(model);
+    model = null;
+});
+
+</script>

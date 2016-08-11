@@ -44,9 +44,11 @@ function authenticate(role, req, res, next) {
 
     //var proposedPassword = createStorablePassword(user.pass);
 
-    return isAuthorizedUserAndPassword(user.name, user.pass, role, function(authorisationStatus) {
+    return isAuthorizedUserAndPassword(user.name, user.pass, role, function(authorisationStatus, effectiveGroups) {
         switch ( authorisationStatus ) {
             case 'accepted':
+                // Track the list of groups for this identified user
+                req.params._groupList = effectiveGroups;
                 return next();
                 break;
                 
@@ -86,6 +88,7 @@ function isAuthorizedUserAndPassword(login, password, role, nextAction) {
           .toArray()
           .then(function(result) {
               var authorization = 'rejected';
+                var groupList = [];
 
               if ( result && Array.isArray(result) && result.length > 0 ) {
                   if ( ! result[0].password || '' === result[0].password ) {
@@ -95,6 +98,7 @@ function isAuthorizedUserAndPassword(login, password, role, nextAction) {
                   }
                   else if ( bcrypt.compareSync(password, result[0].password) ) {
                       authorization = 'accepted';
+                      groupList = result[0].groups;
                   }
                   else {
                       console.log("FAILED login for user " + login);
@@ -104,7 +108,7 @@ function isAuthorizedUserAndPassword(login, password, role, nextAction) {
                   console.log("Login attempt FAILED for user " + login);
               }
 
-              return nextAction(authorization);
+              return nextAction(authorization, groupList);
           });
     };
 
@@ -113,6 +117,29 @@ function isAuthorizedUserAndPassword(login, password, role, nextAction) {
     };
 
     return dbConnector.connectAndProcess(handleDbIsConnected, handleNoConnection);
+}
+
+
+function getGroupsOfLoggedUser(request) {
+    var groups = [];
+    
+    if ( request.params._groupList ) {
+        groups = request.params._groupList;
+    }
+    
+    return groups;
+};
+
+
+function isLoggedElfOrBetter(request) {
+    var groups = this.getGroupsOfLoggedUser(request);
+    var hasRights = false;
+    
+    if ( groups.indexOf('god') >= 0 || groups.indexOf('elf') >= 0 ) {
+        hasRights = true;
+    }
+    
+    return hasRights;
 }
 
 
@@ -165,6 +192,9 @@ module.exports = {
     
     enterAsGod: authenticateAsGod,
     enterAsElfOrBetter: authenticateAsElfOrBetter,
+    
+    getGroupsOfLoggedUser: getGroupsOfLoggedUser,
+    isLoggedElfOrBetter: isLoggedElfOrBetter,
     
     logout: logout
 };

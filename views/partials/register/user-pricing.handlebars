@@ -1,0 +1,43 @@
+<form class="m-b-2 fmj-hide-on-success">
+
+  <h2><span class="label label-pill label-default">4</span>
+    Frais d'inscription {{ pricing.year }}
+  </h2>
+
+  {{#unless canPickRate }}
+  <p class="text-muted m-t-1 m-b-1 ">
+    Vous n'êtes pas autorisé à choisir le tarif applicable. 
+    Cette information est donnée à titre informatif.
+  </p>
+  {{/unless}}
+
+  
+  <ul class="list-group">
+
+    {{#each pricing.pricing}}
+
+    <li class="list-group-item">
+      <div class="row" >
+        <div class="col-xs-2 text-xs-right">
+          <label for="price_rate_{{ rateCode }}" 
+                 class="h4 c-input c-radio">
+            {{ format_amount amount }}&nbsp;€
+            <input id="price_rate_{{ rateCode }}" type="radio" name="price_rate" 
+                   {{{ selected_attr rateCode }}}
+                   {{{ disabled_attr }}}
+                   value="{{ rateCode }}" >
+            <span class="c-indicator"></span>
+          </label>
+        </div>
+        <div class="col-xs-10">
+          <h4 class="media-heading">{{{ label }}}</h4>
+          {{{ description }}}
+        </div>
+      </div>
+    </li>
+
+    {{/each }}
+
+  </ul>
+  
+</form>

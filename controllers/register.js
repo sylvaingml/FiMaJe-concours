@@ -14,8 +14,10 @@ var settings = require('config');
 var MongoClient = require('mongodb').MongoClient;
 
 var categories = require('../controllers/categories');
+var authentification = require('../controllers/authentification');
 
 var dbConnector = require('./db');
+var pricing = require('./pricing');
 
 // ===== INTERNALS
 
@@ -28,6 +30,7 @@ function createDbObjectFromRequest(requestData) {
     (new Date()).getTime() % 420024;
 
     var dbObject = {
+        // Personnal informations
         userInfo: {
             firstName: "",
             lastName: "",
@@ -38,7 +41,15 @@ function createDbObjectFromRequest(requestData) {
             registerDate: new Date(),
             accessKey: accessKey
         },
-        items: [ ]
+        
+        // Registered items for contests
+        items: [ ],
+        
+        // Payment information
+        price: {
+            rateCode: null,
+            amount: null
+        }
     };
 
     // Populate person's details
@@ -63,7 +74,16 @@ function createDbObjectFromRequest(requestData) {
 
         dbObject.items.push(itemInfo);
     }
-
+    
+    // Populate pricing information
+    
+    if ( requestData.price ) {
+        dbObject.price.rateCode = requestData.price[ 'rateCode' ];
+        // Price that person expected to pay, even if we change the value in 
+        // pricing collection.
+        dbObject.price.amount   = Number.parseFloat( requestData.price[ 'amount' ] );
+    }
+    
     return dbObject;
 }
 
@@ -166,7 +186,51 @@ function createItemListPerCategory(itemList) {
  * @returns {undefined} 
  */
 function registerForm(request, response) {
-    response.render("register_form", {});
+    
+    var model = {
+        'pricing': {},
+        
+        // YES, 10 is always the "pre-order" rate, 20 the normal
+        'defaultRate': 10, 
+        
+        // Is user allowed to pick alternate pricing?
+        'canPickRate': false,
+        
+        'helpers': {
+            selected_attr: function(rate) {
+                var attr = '';
+                
+                if ( rate == model.defaultRate ) {
+                    attr= 'checked="checked"';
+                }
+                
+                return attr;
+            },
+            
+            disabled_attr: function() {
+                var attr = '';
+                
+                if ( !model.canPickRate ) {
+                    attr= 'disabled="disabled"';
+                }
+                
+                return attr;
+            }
+            
+        }
+    };
+    
+    var pricePromise = pricing.fetchCurrentPricing();
+    
+    // Check if user is able to change price rate
+    var hasAuthority = authentification.isLoggedElfOrBetter(request);
+    model.canPickRate = hasAuthority;
+    
+    return pricePromise.then(function(priceModel) {
+        model.pricing = priceModel;
+        
+        return response.render("register_form", model);
+    });
 }
 
 
