@@ -30,6 +30,7 @@ function createDbObjectFromRequest(requestData) {
     (new Date()).getTime() % 420024;
 
     var dbObject = {
+        // Personnal informations
         userInfo: {
             firstName: "",
             lastName: "",
@@ -40,7 +41,15 @@ function createDbObjectFromRequest(requestData) {
             registerDate: new Date(),
             accessKey: accessKey
         },
-        items: [ ]
+        
+        // Registered items for contests
+        items: [ ],
+        
+        // Payment information
+        price: {
+            rateCode: null,
+            amount: null
+        }
     };
 
     // Populate person's details
@@ -65,7 +74,16 @@ function createDbObjectFromRequest(requestData) {
 
         dbObject.items.push(itemInfo);
     }
-
+    
+    // Populate pricing information
+    
+    if ( requestData.price ) {
+        dbObject.price.rateCode = requestData.price[ 'rateCode' ];
+        // Price that person expected to pay, even if we change the value in 
+        // pricing collection.
+        dbObject.price.amount   = Number.parseFloat( requestData.price[ 'amount' ] );
+    }
+    
     return dbObject;
 }
 
