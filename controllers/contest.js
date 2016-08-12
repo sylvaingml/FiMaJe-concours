@@ -613,9 +613,9 @@ function getNotationSheet(request, response) {
     };
     
     var selectedAttrForPlaceholder = function(category, display) {
-        var currentNote = existingNote(category, display);
         var attr = "";
         
+        var currentNote = existingNote(category, display);
         if ( null === currentNote ) {
             attr="selected=\"selected\"";
         }
@@ -795,8 +795,13 @@ function getNotationSheet(request, response) {
           .aggregate(pipeline)
           .toArray()
           .then(function(result) {
-              model.submissions = result;
-
+              if ( result && result.length > 0 ) {
+                model.submissions = result;
+              }
+              else {
+                  console.log("Accessing voting ballot when no submission was registered.");
+              }
+              
               return handleSuccessFn();
           });
     };
@@ -842,8 +847,9 @@ function getNotationSheet(request, response) {
           .find(query, mapping)
           .toArray()
           .then(function(result) {
-              var categoryCodeList = result[ 0 ].categoryList;
-
+              if ( result && (result.length > 0) ) {
+                var categoryCodeList = result[ 0 ].categoryList;
+              }
               return fetchContestCategories(db, categoryCodeList);
           });
     };
@@ -858,7 +864,7 @@ function getNotationSheet(request, response) {
           .find(query)
           .toArray()
           .then(function(result) {
-              if ( result && result.length > 0 ) {
+              if ( result && (result.length > 0) ) {
                   model.judgeNotes = result[ 0 ].notes;
               }
               return fetchContestCategoriesCodes(db);
