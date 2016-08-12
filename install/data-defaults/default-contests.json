@@ -1,4 +1,4 @@
-{ "contest": "FiMaJe 2016, peinture",  "active": true, "categoryList": [ "JU", "MH", "DH", "CT", "S", "STM", "GK", "MF", "CF", "DF", "CH" ], "judgeList": [] }
-{ "contest": "FiMaJe 2016, maquettes", "active": true, "categoryList": [ "MA", "MBA", "MC", "MB" ], "judgeList": [] }
-{ "contest": "FiMaJe 2016, steampunk", "active": true, "categoryList": [ "STM" ], "judgeList": [] }
-{ "contest": "FiMaJe 2016, Manga",     "active": true, "categoryList": [ "GK" ], "judgeList": [] }
+{ "name": "FiMaJe 2016, peinture",  "active": true, "categoryList": [ "JU", "MH", "DH", "CT", "S", "STM", "GK", "MF", "CF", "DF", "CH" ], "judgeList": [] }
+{ "name": "FiMaJe 2016, maquettes", "active": true, "categoryList": [ "MA", "MBA", "MC", "MB" ], "judgeList": [] }
+{ "name": "FiMaJe 2016, steampunk", "active": true, "categoryList": [ "STM" ], "judgeList": [] }
+{ "name": "FiMaJe 2016, Manga",     "active": true, "categoryList": [ "GK" ], "judgeList": [] }
