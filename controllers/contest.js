@@ -635,7 +635,7 @@ function getNotationSheet(request, response) {
 
     // Core model for ballot: judge and contest name.
     var model = {
-        contest:    contestName,
+        name:       contestName,
         user:       judgeLogin,
         categories:  [], // Will be set in fetchContestCategories
         submissions: [], // Will be set in fetchContestSubmission
