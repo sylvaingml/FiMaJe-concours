@@ -584,10 +584,13 @@ function getNotationSheet(request, response) {
     var user = basicAuth(request);
     
     var contestName = request.body.contest;
-    var judgeLogin = request.body.user;
+    var judgeLogin  = request.body.user;
 
+    console.log("getNotationSheet: contestName=" +contestName + " ; judgeLogin=" + judgeLogin);
+    
     var existingNote = function(category, display) {
         var note = null;
+        console.log("existingNote: " + category + ", " + category);
         
         if ( model.judgeNotes && model.judgeNotes[ category ] ) {
             var categoryNotes = model.judgeNotes[ category ];
@@ -604,6 +607,8 @@ function getNotationSheet(request, response) {
     
     
     var isSelected = function(category, display, noteToCheck) {
+        console.log("isSelected: " + category + ", " + display + ", " + noteToCheck);
+        
         var existing = existingNote(category, display);
 
         // Important to keep == as one value is string, the other a number
@@ -614,6 +619,7 @@ function getNotationSheet(request, response) {
     
     var selectedAttrForPlaceholder = function(category, display) {
         var attr = "";
+        console.log("selectedAttrForPlaceholder: " + category + ", " + display);
         
         var currentNote = existingNote(category, display);
         if ( null === currentNote ) {
@@ -624,6 +630,7 @@ function getNotationSheet(request, response) {
     };
     
     var selectedAttr = function(category, display, noteToCheck) {
+        console.log("selectedAttr: " + category + ", " + display + ", " + noteToCheck);
         var attr = "";
         
         if ( isSelected(category, display, noteToCheck) ) {
@@ -661,6 +668,7 @@ function getNotationSheet(request, response) {
     // Get each value from model.submission and insert it in corresponding model.categories
     //
     var injectSubmissionInCategories = function() {
+        console.log("injectSubmissionInCategories:");
         // Build a list of items and store it in a category-specific map 
         // where key is the display code.
         for ( var index = 0; index < model.submissions.length; ++ index ) {
@@ -714,6 +722,7 @@ function getNotationSheet(request, response) {
     // Post-process data and render the final page.
     var handleSuccessFn = function() {  
         injectSubmissionInCategories();
+        console.log("handleSuccessFn:");
         
         return response.render("contest/notation-sheet", model);
     };
@@ -791,6 +800,8 @@ function getNotationSheet(request, response) {
             }
         ];
 
+        console.log("Fetching ContestSubmission: pipeline=" + JSON.stringify(pipeline));
+              
         return db.collection('ContestSubmission')
           .aggregate(pipeline)
           .toArray()
@@ -801,6 +812,7 @@ function getNotationSheet(request, response) {
               else {
                   console.log("Accessing voting ballot when no submission was registered.");
               }
+              console.log("model.submissions" + JSON.stringify(model.submissions));
               
               return handleSuccessFn();
           });
@@ -824,12 +836,18 @@ function getNotationSheet(request, response) {
             code: { $in: codeList }
         };
 
+        console.log("fetchContestCategories: query=" + JSON.stringify(query));
+
         return db.collection('Categories')
           .find(query)
           .toArray()
           .then(function(categoryList) {
               model.categories = categoryList;
               model.categoryIndex = createCodeToIndexMap(categoryList);
+
+              console.log("model.categories=" + JSON.stringify(model.categories));
+              console.log("model.categoryIndex=" + JSON.stringify(model.categoryIndex));
+              
               return fetchContestSubmission(db, codeList);
           });
     };
@@ -842,6 +860,9 @@ function getNotationSheet(request, response) {
             _id: 0,
             categoryList: 1
         };
+        
+        console.log("fetchContestCategoriesCodes: query=" + JSON.stringify(query));
+
 
         db.collection('Contests')
           .find(query, mapping)
@@ -850,6 +871,7 @@ function getNotationSheet(request, response) {
               if ( result && (result.length > 0) ) {
                 var categoryCodeList = result[ 0 ].categoryList;
               }
+              console.log("categoryCodeList=" + JSON.stringify(categoryCodeList));
               return fetchContestCategories(db, categoryCodeList);
           });
     };
@@ -860,12 +882,15 @@ function getNotationSheet(request, response) {
             'judge': judgeLogin
         };
 
+        console.log("fetchCurrentBallot:");
+
         db.collection('ContestBallots')
           .find(query)
           .toArray()
           .then(function(result) {
               if ( result && (result.length > 0) ) {
                   model.judgeNotes = result[ 0 ].notes;
+                  console.log("model.judgeNotes=" + JSON.stringify(model.judgeNotes));
               }
               return fetchContestCategoriesCodes(db);
           });
