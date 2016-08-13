@@ -754,30 +754,28 @@ function getNotationSheet(request, response) {
             },
             {
                 // Remove submission that are not part of current contest
-                $project: {
-                    userAccessKey: '$userInfo.accessKey',
-                    itemsContest: {
-                        $filter: {
-                            input: '$items',
-                            as: 'items',
-                            cond: {
-                                $or: createItemSubfilter('$$items.categoryCode', codeList)
-                            }
-                        }
-                    }
+                "$project": {
+                    "itemsContest": "$items",
+                    "userAccessKey": "$userInfo.accessKey"
                 }
             },
             {
                 // Flatten submissions list in the result
-                $unwind: {
+                "$unwind": {
                     path: '$itemsContest',
                     includeArrayIndex: 'itemIndex',
                     preserveNullAndEmptyArrays: true
                 }
             },
             {
+                // Only people submission containing any category from this contest
+                "$match": {
+                    'itemsContest.categoryCode': { $in: codeList }
+                }
+            },
+            {
                 // Flatten itemsContest object in the result
-                $project: {
+                "$project": {
                     userAccessKey: 1,
                     itemName: '$itemsContest.name',
                     itemCategory: '$itemsContest.categoryCode'
@@ -785,12 +783,12 @@ function getNotationSheet(request, response) {
             },
             {
                 // Group by category code
-                $group: {
+                "$group": {
                     _id: { categoryCode: '$itemCategory' },
                     count: { $sum: 1 },
                     submitted: {
                         // Each submission is an entry in the result element
-                        $push: {
+                        "$push": {
                             accessKey: '$userAccessKey',
                             itemName: '$itemName',
                             categoryCode: '$itemCategory'
