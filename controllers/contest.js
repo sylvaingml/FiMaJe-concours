@@ -802,20 +802,30 @@ function getNotationSheet(request, response) {
 
         console.log("Fetching ContestSubmission: pipeline=" + JSON.stringify(pipeline));
               
-        return db.collection('ContestSubmission')
-          .aggregate(pipeline)
-          .toArray()
-          .then(function(result) {
-              if ( result && result.length > 0 ) {
-                model.submissions = result;
-              }
-              else {
-                  console.log("Accessing voting ballot when no submission was registered.");
-              }
-              console.log("model.submissions" + JSON.stringify(model.submissions));
-              
-              return handleSuccessFn();
-          });
+        var aggregatePromise = null;
+        var returned = null;
+        
+        try {
+            db.collection('ContestSubmission').aggregate(pipeline)
+              .toArray()
+              .then(function(result) {
+                  if ( result && result.length > 0 ) {
+                      model.submissions = result;
+                  }
+                  else {
+                      console.log("Accessing voting ballot when no submission was registered.");
+                  }
+                  console.log("model.submissions" + JSON.stringify(model.submissions));
+
+                  return handleSuccessFn();
+              });
+        }
+        catch ( error ) {
+            console.error("ERROR on aggregate: " + error);
+            returned = handleSuccessFn();
+        }
+        
+        return returned;
     };
 
     // Build a mapping from category code to index in the list
