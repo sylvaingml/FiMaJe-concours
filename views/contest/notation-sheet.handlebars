@@ -10,7 +10,19 @@
 
   <header>
 
-    <h2>Fiches de notation de {{user}}</h2>
+    <h2>Fiche de notation</h2>
+    
+    <div class="card">
+      <div class="card-block">
+        <div class="row">
+          <div class="col-xs-6 text-xs-right">Concours&nbsp;:</div>
+          <strong class="col-xs-6 text-xs-left">{{{name}}}</strong>
+
+          <div class="col-xs-6 text-xs-right">Juge&nbsp;:</div>
+          <strong class="col-xs-6 text-xs-left">{{{user}}}</strong>
+        </div>
+      </div>
+    </div>
 
   </header>
 
@@ -167,7 +179,7 @@ var FMJVoteSheet;
 
 // Create the main form
 $(function() {
-    FMJVoteSheet = new FMJContestVoteSheet("{{contest}}", "{{user}}");
+    FMJVoteSheet = new FMJContestVoteSheet("{{name}}", "{{user}}");
 });
 
 </script>

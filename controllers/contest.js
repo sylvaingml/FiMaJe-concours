@@ -590,7 +590,7 @@ function getNotationSheet(request, response) {
     
     var existingNote = function(category, display) {
         var note = null;
-        console.log("existingNote: " + category + ", " + category);
+        console.log("existingNote: " + category + ", " + display);
         
         if ( model.judgeNotes && model.judgeNotes[ category ] ) {
             var categoryNotes = model.judgeNotes[ category ];
@@ -884,7 +884,7 @@ function getNotationSheet(request, response) {
             'judge': judgeLogin
         };
 
-        console.log("fetchCurrentBallot:");
+        console.log("fetchCurrentBallot: "+ JSON.stringify(query));
 
         db.collection('ContestBallots')
           .find(query)
