@@ -748,52 +748,44 @@ function getNotationSheet(request, response) {
         var pipeline = [
             {
                 // Only people submission containing any category from this contest
-                $match: {
-                    'items.categoryCode': { $in: codeList }
+                "$match": { "items.categoryCode": { "$in": codeList } }
+            },
+            {
+                // Keep only user key and items
+                "$project": {
+                    "itemsContest": "$items",
+                    "userAccessKey": "$userInfo.accessKey"
                 }
             },
             {
-                // Remove submission that are not part of current contest
-                $project: {
-                    userAccessKey: '$userInfo.accessKey',
-                    itemsContest: {
-                        $filter: {
-                            input: '$items',
-                            as: 'items',
-                            cond: {
-                                $or: createItemSubfilter('$$items.categoryCode', codeList)
-                            }
-                        }
-                    }
-                }
+                // Expand submissions list array as multiple result rows
+                "$unwind": "$itemsContest"
             },
             {
-                // Flatten submissions list in the result
-                $unwind: {
-                    path: '$itemsContest',
-                    includeArrayIndex: 'itemIndex',
-                    preserveNullAndEmptyArrays: true
+                // Only people submission containing any category from this contest
+                "$match" : { 
+                    "itemsContest.categoryCode": { "$in": codeList } 
                 }
             },
             {
                 // Flatten itemsContest object in the result
-                $project: {
-                    userAccessKey: 1,
-                    itemName: '$itemsContest.name',
-                    itemCategory: '$itemsContest.categoryCode'
+                "$project": {
+                    "userAccessKey": 1,
+                    "itemName": "$itemsContest.name",
+                    "categoryCode": "$itemsContest.categoryCode"
                 }
             },
             {
                 // Group by category code
-                $group: {
-                    _id: { categoryCode: '$itemCategory' },
-                    count: { $sum: 1 },
-                    submitted: {
+                "$group": {
+                    "_id": { "categoryCode": "$categoryCode" },
+                    "count": { "$sum": 1 },
+                    "submitted": {
                         // Each submission is an entry in the result element
-                        $push: {
-                            accessKey: '$userAccessKey',
-                            itemName: '$itemName',
-                            categoryCode: '$itemCategory'
+                        "$push": {
+                            "accessKey": "$userAccessKey",
+                            "itemName": "$itemName",
+                            "categoryCode": "$categoryCode"
                         }
                     }
                 }
@@ -802,20 +794,30 @@ function getNotationSheet(request, response) {
 
         console.log("Fetching ContestSubmission: pipeline=" + JSON.stringify(pipeline));
               
-        return db.collection('ContestSubmission')
-          .aggregate(pipeline)
-          .toArray()
-          .then(function(result) {
-              if ( result && result.length > 0 ) {
-                model.submissions = result;
-              }
-              else {
-                  console.log("Accessing voting ballot when no submission was registered.");
-              }
-              console.log("model.submissions" + JSON.stringify(model.submissions));
-              
-              return handleSuccessFn();
-          });
+        var aggregatePromise = null;
+        var returned = null;
+        
+        try {
+            var cursor = db.collection('ContestSubmission').aggregate(pipeline);
+            
+            cursor.on('data', function(doc) {
+                console.log("submission found: " + JSON.stringify(doc));
+                model.submissions.push(doc);
+            });
+            
+            cursor.on('end', function() {
+                console.log("model.submissions" + JSON.stringify(model.submissions));
+                return handleSuccessFn();
+            });
+            
+            return cursor;
+        }
+        catch ( error ) {
+            console.error("ERROR on aggregate: " + error);
+            returned = handleSuccessFn();
+        }
+        
+        return returned;
     };
 
     // Build a mapping from category code to index in the list
