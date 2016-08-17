@@ -759,7 +759,7 @@ function getNotationSheet(request, response) {
             },
             {
                 // Expand submissions list array as multiple result rows
-                "$unwind": { "path": "$itemsContest" }
+                "$unwind": "$itemsContest"
             },
             {
                 // Only people submission containing any category from this contest
