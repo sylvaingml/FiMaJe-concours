@@ -748,50 +748,44 @@ function getNotationSheet(request, response) {
         var pipeline = [
             {
                 // Only people submission containing any category from this contest
-                $match: {
-                    'items.categoryCode': { $in: codeList }
-                }
+                "$match": { "items.categoryCode": { "$in": codeList } }
             },
             {
-                // Remove submission that are not part of current contest
+                // Keep only user key and items
                 "$project": {
                     "itemsContest": "$items",
                     "userAccessKey": "$userInfo.accessKey"
                 }
             },
             {
-                // Flatten submissions list in the result
-                "$unwind": {
-                    path: '$itemsContest',
-                    includeArrayIndex: 'itemIndex',
-                    preserveNullAndEmptyArrays: true
-                }
+                // Expand submissions list array as multiple result rows
+                "$unwind": { "path": "$itemsContest" }
             },
             {
                 // Only people submission containing any category from this contest
-                "$match": {
-                    'itemsContest.categoryCode': { $in: codeList }
+                "$match" : { 
+                    "itemsContest.categoryCode": { "$in": codeList } 
                 }
             },
             {
                 // Flatten itemsContest object in the result
                 "$project": {
-                    userAccessKey: 1,
-                    itemName: '$itemsContest.name',
-                    itemCategory: '$itemsContest.categoryCode'
+                    "userAccessKey": 1,
+                    "itemName": "$itemsContest.name",
+                    "categoryCode": "$itemsContest.categoryCode"
                 }
             },
             {
                 // Group by category code
                 "$group": {
-                    _id: { categoryCode: '$itemCategory' },
-                    count: { $sum: 1 },
-                    submitted: {
+                    "_id": { "categoryCode": "$categoryCode" },
+                    "count": { "$sum": 1 },
+                    "submitted": {
                         // Each submission is an entry in the result element
                         "$push": {
-                            accessKey: '$userAccessKey',
-                            itemName: '$itemName',
-                            categoryCode: '$itemCategory'
+                            "accessKey": "$userAccessKey",
+                            "itemName": "$itemName",
+                            "categoryCode": "$categoryCode"
                         }
                     }
                 }
