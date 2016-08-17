@@ -798,19 +798,19 @@ function getNotationSheet(request, response) {
         var returned = null;
         
         try {
-            db.collection('ContestSubmission').aggregate(pipeline)
-              .toArray()
-              .then(function(result) {
-                  if ( result && result.length > 0 ) {
-                      model.submissions = result;
-                  }
-                  else {
-                      console.log("Accessing voting ballot when no submission was registered.");
-                  }
-                  console.log("model.submissions" + JSON.stringify(model.submissions));
-
-                  return handleSuccessFn();
-              });
+            var cursor = db.collection('ContestSubmission').aggregate(pipeline);
+            
+            cursor.on('data', function(doc) {
+                console.log("submission found: " + JSON.stringify(doc));
+                model.submissions.push(doc);
+            });
+            
+            cursor.on('end', function() {
+                console.log("model.submissions" + JSON.stringify(model.submissions));
+                return handleSuccessFn();
+            });
+            
+            return cursor;
         }
         catch ( error ) {
             console.error("ERROR on aggregate: " + error);
