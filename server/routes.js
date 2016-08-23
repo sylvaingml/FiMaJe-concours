@@ -25,14 +25,6 @@ var authentification = require('../controllers/authentification');
 
 module.exports = function(app)
 {
-    // ===== Redirect to secure connection
-
-    if ( app.get('production') ) {
-        router.get('*', function(req, res) {
-            res.redirect('https://' + req.url);
-        });
-    }
-
     // ===== Home screen
 
     router.get('/', home.index);
