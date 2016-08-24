@@ -48,7 +48,7 @@ function requireHTTPS(request, response, next)
 
 // ===== Redirect to secure connection
 
-if ( app.get('production') ) {
+if ( "production" == process.env.NODE_ENV ) {
     app.use(requireHTTPS);
 }
 
