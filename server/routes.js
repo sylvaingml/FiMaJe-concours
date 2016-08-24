@@ -23,8 +23,35 @@ var pricing = require('../controllers/pricing');
 
 var authentification = require('../controllers/authentification');
 
+
+/** Simple HTTP to HTTPS forwarding middleware function.
+ * 
+ * @param {type} request
+ * @param {type} response
+ * @param {type} next
+ * 
+ * @returns {unresolved}
+ */
+function requireHTTPS(request, response, next) 
+{
+  if ( !request.secure ) {
+    return response.redirect('https://' + request.headers.host + request.url);
+  }
+  
+  next();
+}
+
+
+
+
 module.exports = function(app)
 {
+    // ===== Redirect to secure connection
+
+    if ( true || app.get('production') ) {
+        app.use(requireHTTPS);
+    }
+
     // ===== Home screen
 
     router.get('/', home.index);
