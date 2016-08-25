@@ -25,34 +25,6 @@ app.set('port',   process.env.PORT   || settings.get("port")   || 3300);
 app.set('views', __dirname + '/views');
 app = configure(app);
 
-// ===== Middleware functions
-
-/** Simple HTTP to HTTPS forwarding middleware function.
- * 
- * @param {type} request
- * @param {type} response
- * @param {type} next
- * 
- * @returns {unresolved}
- */
-function requireHTTPS(request, response, next) 
-{
-    if ( ! request.secure ) {
-        console.log("Accessed in non-secure way. Redirecting to: " + request.headers.host + request.url);
-        return response.redirect('https://' + request.headers.host + request.url);
-    }
-
-    next();
-}
-
-// ===== Redirect to secure connection
-
-if ( "production" == process.env.NODE_ENV ) {
-    console.log("PRODUCTION ENV detected, will force https...");
-    app.use(requireHTTPS);
-}
-
-
 
 // ===== Application Routing
 
