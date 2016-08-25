@@ -24,26 +24,6 @@ var pricing = require('../controllers/pricing');
 var authentification = require('../controllers/authentification');
 
 
-// ===== Middleware functions
-
-/** Simple HTTP to HTTPS forwarding middleware function.
- * 
- * @param {type} request
- * @param {type} response
- * @param {type} next
- * 
- * @returns {unresolved}
- */
-function requireHTTPS(request, response, next) 
-{
-    if ( ! request.secure ) {
-        console.log("Accessed in non-secure way. Redirecting to: " + request.headers.host + request.url);
-        return response.redirect('https://' + request.headers.host + request.url);
-    }
-
-    next();
-}
-
 // ===== Routing Configuration
 
 module.exports = function(app)
@@ -173,11 +153,6 @@ module.exports = function(app)
     // Submit a judge vote sheet
     router.post('/api/contest/post-ballot', authentification.enterAsElfOrBetter, contest.post_notation_sheet);
 
-    if ( "production" === process.env.NODE_ENV ) {
-        console.log("PRODUCTION ENV detected, will force https...");
-        app.use(requireHTTPS);
-    }
-    
     app.use(router);
 };
 
