@@ -70,6 +70,20 @@
       </tbody>
     </table>
 
+    <table class="table table-bordered table-inverse">
+      <tbody>
+        <tr>
+          <th scope="row">Nombre d'inscrit payants&nbsp;:</th>
+          <td class="text-xs-right">{{ summary.count }}</td>
+        </tr>
+
+        <tr>
+          <th scope="row">Montant total des inscriptions&nbsp;:</th>
+          <td class="text-xs-right">{{ format_amount summary.total }}&nbsp;€</td>
+        </tr>
+      </tbody>
+    </table>
+
     <div class="m-t-2 text-xs-right hidden-print">
       <button class="btn btn-info-outline btn-sm" type="button" onclick="javascript: print()">
         <i class="fa fa-print" aria-hidden="true"></i>

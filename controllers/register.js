@@ -134,6 +134,52 @@ function findUserSubmission(userEmail, accessKey, onSuccessFn, onErrorFn)
 
 
 
+function fetchRegistrationSummary(onSuccessFn, onErrorFn)
+{
+    var connectedToDb = function(db) {
+        var dbTable = db.collection('ContestSubmission');
+
+        var pipe = [
+            {
+                $match: {'price.amount': {'$exists': true}}
+            },
+            {
+                $group: {
+                    _id: null,
+                    'total': {'$sum': '$price.amount'},
+                    'count': {'$sum': 1}
+                }
+            }
+        ];
+
+        dbTable
+          .aggregate(pipe)
+          .toArray(function(error, result) {
+              var summary = {
+                  'total': 0.0,
+                  'count': 0
+              };
+              
+              if ( result && result[0] ) {
+                  summary = {
+                      'total': result[0][ 'total' ],
+                      'count': result[0][ 'count' ]
+                  };   
+              }
+
+              if ( error || null === result ) {
+                  onErrorFn(error);
+              }
+              else {
+                  onSuccessFn(summary);
+              }
+          });
+    };
+
+    return dbConnector.connectAndProcess(connectedToDb, onErrorFn);
+}
+
+
 function findAllUserSubmission(onSuccessFn, onErrorFn)
 {
     var connectedToDb = function(db) {
@@ -332,20 +378,31 @@ function getRegistrationDetails(request, response)
 
 function getAllRegistrations(request, response)
 {
-    var handleSuccessFn = function(model)
-    {
-        var today = new Date();
-        var displayDate = today.toLocaleString('fr-FR', {
-            weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-            hour: '2-digit', minutes: '2-digit', hour12: false
-        });
+    var today = new Date();
+    var displayDate = today.toLocaleString('fr-FR', {
+        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+        hour: '2-digit', minutes: '2-digit', hour12: false
+    });
 
-        var returnedModel = {
-            reportDate: today,
-            reportDisplayDate: displayDate,
-            registration: model,
-            helpers: {}
-        };
+    var returnedModel = {
+        reportDate: today,
+        reportDisplayDate: displayDate,
+        registration: [],
+        summary: {},
+        helpers: {}
+    };
+
+
+    var processSummary = function(summary) {
+        returnedModel.summary = summary;
+        
+        return findAllUserSubmission(processRegistrationList, handleErrorFn);
+    };
+
+
+    var processRegistrationList = function(model)
+    {
+        returnedModel.registration = model;
 
         return response.render('registration_list', returnedModel);
     };
@@ -365,7 +422,8 @@ function getAllRegistrations(request, response)
         return response.render('home', model);
     };
 
-    return findAllUserSubmission(handleSuccessFn, handleErrorFn);
+    
+    return fetchRegistrationSummary(processSummary, handleErrorFn);
 }
 
 
