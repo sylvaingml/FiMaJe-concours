@@ -23,6 +23,19 @@ var pricing = require('../controllers/pricing');
 
 var authentification = require('../controllers/authentification');
 
+
+function requireHTTPS(request, response, next) {
+    if ( 'https' === request.headers[ 'x-forwarded-proto' ] ) { 
+        return next(); 
+    } else {
+        console.log("REDIRECT to secure...");
+        response.redirect('https://' + request.headers.host + request.path);
+    }
+}
+
+
+// ===== Routing Configuration
+
 module.exports = function(app)
 {
     // ===== Home screen
@@ -150,6 +163,11 @@ module.exports = function(app)
     // Submit a judge vote sheet
     router.post('/api/contest/post-ballot', authentification.enterAsElfOrBetter, contest.post_notation_sheet);
 
+    if ( "production" === process.env.NODE_ENV ) {
+        console.log("PRODUCTION ENV detected, will force https...");
+        app.use(requireHTTPS);
+    }
+    
     app.use(router);
 };
 
