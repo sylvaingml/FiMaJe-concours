@@ -19,6 +19,7 @@
           </th>
           <th>Club</th>
           <th>Pièces</th>
+          <th>Inscription</th>
         </tr>
       </thead>
 
@@ -28,6 +29,7 @@
           <th scope="row">
             {{row_number @index}}
           </th>
+          
           <td>
             <div>
               <form action="/registration-details" method="POST" >
@@ -39,18 +41,29 @@
             </div>
             <div>{{ format_date userInfo.registerDate pattern="ddd DD MMMM" }}</div>
           </td>
+          
           <td>
               <div>{{ userInfo.firstName }} <span class="text-smallcaps">{{ userInfo.lastName }}</span></div>
               <div>{{{ email_link userInfo.email }}}</div>
               <div>{{{ phone_link userInfo.phone }}}</div>
           </td>
+          
           <td>{{ userInfo.club }}</td>
+          
           <td>
             <ul>
               {{#each items }}
               <li>{{name}} ({{ categoryCode }})</li> 
               {{/each}}
             </ul>
+          </td>
+          
+          <td>
+            {{#if price}}
+            {{format_amount price.amount}}&nbsp;€
+            {{else}}
+            --
+            {{/if}}
           </td>
         </tr>
         {{/each}}
