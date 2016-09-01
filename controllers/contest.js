@@ -585,7 +585,7 @@ function getNotationSheet(request, response) {
     
     var contestName = request.body.contest;
     var judgeLogin  = request.body.user;
-
+    
     console.log("getNotationSheet: contestName=" +contestName + " ; judgeLogin=" + judgeLogin);
     
     var existingNote = function(category, display) {
@@ -898,7 +898,26 @@ function getNotationSheet(request, response) {
           });
     };
     
-    return dbConnector.connectAndProcess(fetchCurrentBallot, handleErrorFn);
+    // Security check
+    // Only admins can access other judge sheet... Or the judge himself
+    var hasAdminRight = authentification.isLoggedWizardOrBetter(request);
+    if ( !hasAdminRight ) {
+        // Not an admin? Is this the judge himself?
+        var userIsJudge = judgeLogin === user.name;
+    }
+    
+    var allowed = hasAdminRight || userIsJudge;
+    
+    var output = undefined;
+    
+    if ( !allowed ) {
+        output = handleErrorFn("Accès refusé.");
+    }
+    else  {
+        output = dbConnector.connectAndProcess(fetchCurrentBallot, handleErrorFn);
+    }
+    
+    return output;
 }
 
 
