@@ -55,7 +55,9 @@ function FMJContestSubmission(model)
         me.validateBtn.prop("disabled", ! allowed);
     });
 
-    this.validateBtn.on('click', function() {
+    this.validateBtn.on('click', function(event) {
+    	event.preventDefault();
+    
         me.validateBtn.prop("disabled", true); // Ensure we do not double submit
         me.sendUserSubmission();
     });
