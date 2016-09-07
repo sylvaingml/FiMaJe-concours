@@ -414,6 +414,9 @@ function updateUserPassword(request, response) {
             "user": result,
             helpers: {}
         };
+        
+        // Do not send back the password hash
+        model.user.password = null; 
 
         return response.status(200).json(model);
     };

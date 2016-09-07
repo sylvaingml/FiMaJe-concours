@@ -59,7 +59,7 @@ FMJUserAdmin.prototype.showGroupEditor = function(userIndex) {
 
 FMJUserAdmin.prototype.showPasswordEditor = function(userIndex) {
     var user = {
-        _id:   this.model.users[ userIndex ].uid, 
+        _id:   this.model.users[ userIndex ]._id, 
         login: this.model.users[ userIndex ].login
     };
     

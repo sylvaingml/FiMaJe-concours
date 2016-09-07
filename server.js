@@ -25,9 +25,10 @@ app.set('port',   process.env.PORT   || settings.get("port")   || 3300);
 app.set('views', __dirname + '/views');
 app = configure(app);
 
+
 // ===== Application Routing
 
-app.get('/about', function(req, res){
+app.get('/about', function(req, res) {
    res.send('FiMaJe, version 1.0.0 - 2016 Sylvain Gamel et la Compagnie des Trolls (Antibes, France)'); 
 });
 

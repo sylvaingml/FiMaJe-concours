@@ -135,7 +135,19 @@ function isLoggedElfOrBetter(request) {
     var groups = this.getGroupsOfLoggedUser(request);
     var hasRights = false;
     
-    if ( groups.indexOf('god') >= 0 || groups.indexOf('elf') >= 0 ) {
+    if ( groups.indexOf('god') >= 0 || groups.indexOf('wizard') >= 0 || groups.indexOf('elf') >= 0 ) {
+        hasRights = true;
+    }
+    
+    return hasRights;
+}
+
+
+function isLoggedWizardOrBetter(request) {
+    var groups = this.getGroupsOfLoggedUser(request);
+    var hasRights = false;
+    
+    if ( groups.indexOf('god') >= 0 || groups.indexOf('wizard') >= 0 ) {
         hasRights = true;
     }
     
@@ -161,6 +173,10 @@ function authenticateAsGod(request, response, next) {
 
 function authenticateAsElfOrBetter(request, response, next) {
     return authenticate([ 'god', 'wizard', 'elf' ], request, response, next);
+}
+
+function authenticateAsWizardOrBetter(request, response, next) {
+    return authenticate([ 'god', 'wizard' ], request, response, next);
 }
 
 /** End session
@@ -190,11 +206,14 @@ module.exports = {
     initializePassword: initializePassword,
     createStorablePassword: createStorablePassword,
     
-    enterAsGod: authenticateAsGod,
-    enterAsElfOrBetter: authenticateAsElfOrBetter,
+    enterAsGod:            authenticateAsGod,
+    enterAsWizardOrBetter: authenticateAsWizardOrBetter,
+    enterAsElfOrBetter:    authenticateAsElfOrBetter,
     
     getGroupsOfLoggedUser: getGroupsOfLoggedUser,
-    isLoggedElfOrBetter: isLoggedElfOrBetter,
+    
+    isLoggedElfOrBetter:    isLoggedElfOrBetter,
+    isLoggedWizardOrBetter: isLoggedWizardOrBetter,
     
     logout: logout
 };
