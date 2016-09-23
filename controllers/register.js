@@ -88,6 +88,38 @@ function createDbObjectFromRequest(requestData) {
 }
 
 
+function createRegistrationIndexes(db, callback) {
+    var registrations = db.collection('ContestSubmission');
+    
+    // Email of user shall be unique. Build an index for that
+    var initEmailIndex = function() {
+        registrations.createIndex(
+          {'userInfo.email': 1},
+          {'unique': true},
+          function(error, indexName) {
+            if ( error ) {
+                console.error("Index creation error", error);
+            }
+            
+            callback(db);
+          }
+        );
+    };
+
+    // Main unique key, should be the _id value...
+    registrations.createIndex(
+        { 'userInfo.accessKey': 1 }, 
+        { 'unique': true },
+        function(error, indexName) {
+            if ( error ) {
+                console.error("Index creation error", error);
+            }
+            
+            initEmailIndex();
+        }
+    );
+}
+
 
 function registerUserSubmission(submissionDetails, onSuccessFn, onErrorFn)
 {
@@ -95,16 +127,26 @@ function registerUserSubmission(submissionDetails, onSuccessFn, onErrorFn)
         var dbTable = db.collection('ContestSubmission');
 
         dbTable.insertMany([ submissionDetails ], function(error, result) {
+            var message = "Erreur interne lors de votre enregistrement. Merci d'essayer à nouveau";
+            
             if ( error ) {
-                return onErrorFn(error);
+                switch ( error.code ) {
+                    case 11000: 
+                        message = "Il semblerait qu'une inscription ait déjà été enregistrée. Merci de contacter l'organisation.";
+                }
+                return onErrorFn(message);
             }
             else {
                 return onSuccessFn(result);
             }
         });
     };
+    
+    var initIndexes = function(db) {
+      createRegistrationIndexes(db, connectedToDb);
+    };
 
-    return dbConnector.connectAndProcess(connectedToDb, onErrorFn);
+    return dbConnector.connectAndProcess(initIndexes, onErrorFn);
 }
 
 
@@ -128,7 +170,12 @@ function findUserSubmission(userEmail, accessKey, onSuccessFn, onErrorFn)
         });
     };
 
-    return dbConnector.connectAndProcess(connectedToDb, onErrorFn);
+    var initIndexes = function(db) {
+      createRegistrationIndexes(db, connectedToDb);
+    };
+
+
+    return dbConnector.connectAndProcess(initIndexes, onErrorFn);
 }
 
 
@@ -175,8 +222,13 @@ function fetchRegistrationSummary(onSuccessFn, onErrorFn)
               }
           });
     };
+    
+    var initIndexes = function(db) {
+      createRegistrationIndexes(db, connectedToDb);
+    };
 
-    return dbConnector.connectAndProcess(connectedToDb, onErrorFn);
+
+    return dbConnector.connectAndProcess(initIndexes, onErrorFn);
 }
 
 

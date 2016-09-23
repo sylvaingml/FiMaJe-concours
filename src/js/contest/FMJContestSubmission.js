@@ -84,20 +84,25 @@ FMJContestSubmission.prototype.sendUserSubmission = function() {
     var me = this;
 
     var jsonRequest = this.toJSON();
+    
+    var $errorAlert   = $('#error-info');
+    var $errorMessage = $('#error-msg');
+
+    $errorAlert.prop('hidden', true);
+    $errorMessage.html("");
 
     $.post(url, {
         'dataType': "application/json",
         'data': jsonRequest
     })
       .done(function(data) {
-          console.log("Done: " + data);
           me.handleSubmissionSucceed(data);
       })
       .fail(function(error) {
-          console.log("error: " + error);
+          $errorMessage.html(error.responseJSON.message);
+          $errorAlert.prop('hidden', false);
       })
       .always(function() {
-          console.log("complete");
       });
 };
 
